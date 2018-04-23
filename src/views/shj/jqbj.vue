@@ -29,51 +29,19 @@
 export default {
   data() {
     return {
-      jglb: [{
-        lx: "kc",
-        value: '库存不足',
-        num: 10,
-      }, {
-        lx: "gw",
-        value: '高温',
-        num: 2,
-      }, {
-        lx: "hdgz",
-        value: '货到故障',
-        num: 10,
-      }, {
-        lx: "lx",
-        value: '离线',
-        num: 10,
-      }, {
-        lx: "lq",
-        value: '零钱不足',
-        num: 1,
-      }, {
-        lx: "sbgz",
-        value: '设备故障',
-        num: 10,
-      }, {
-        lx: "rjgz",
-        value: '软件故障',
-        num: 10,
-      }, {
-        lx: "ewm",
-        value: '二维码',
-        num: 10,
-      }, {
-        lx: "jqsz",
-        value: '机器设置',
-        num: 10,
-      }, {
-        lx: "wy",
-        value: '位移',
-        num: 10,
-      }, {
-        lx: "kgm",
-        value: '开关门',
-        num: 10,
-      }],
+      jglb: [
+        { lx: "kc", value: '库存不足', num: 10, },
+        { lx: "gw", value: '高温', num: 2, },
+        { lx: "hdgz", value: '货到故障', num: 10, },
+        { lx: "lx", value: '离线', num: 10, },
+        { lx: "lq", value: '零钱不足', num: 1, },
+        { lx: "sbgz", value: '设备故障', num: 10, },
+        { lx: "rjgz", value: '软件故障', num: 10, },
+        { lx: "ewm", value: '二维码', num: 10, },
+        { lx: "jqsz", value: '机器设置', num: 10, },
+        { lx: "wy", value: '位移', num: 10, },
+        { lx: "kgm", value: '开关门', num: 10, }
+      ],
       listQuery: {
         pageSize: 10, //默认每页的数据量
         currentPage: 1, //当前页码

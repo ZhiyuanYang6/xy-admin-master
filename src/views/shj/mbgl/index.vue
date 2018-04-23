@@ -38,9 +38,7 @@
 import shjMbsz from './components/shjMbsz'
 
 export default {
-  components: {
-    shjMbsz
-  },
+  components: { shjMbsz },
   data() {
     return {
       formInline: {

@@ -1,147 +1,47 @@
 <template>
   <div class="smain">
-    <!-- 左侧表单 -->
-    <el-form :inline="true" :model="formInline" size="small" class="demo-form-inline">
-      <el-form-item>
-        <el-input v-model="formInline.jqbh" style="width: 150px;" placeholder="机器名称/编号"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-input v-model="formInline.jqmc" style="width: 120px;" placeholder="机器类型"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-input v-model="formInline.jqmc" style="width: 120px;" placeholder="商户名称/编号"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-input v-model="formInline.jqmc" style="width: 120px;" placeholder="点位/区域/线路"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-date-picker v-model="formInline.ftime" type="daterange" :picker-options="pickerOptions2" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
-        </el-date-picker>
-      </el-form-item>
-      <!-- 右侧按钮 -->
-      <el-form-item>
-        <el-button type="warning" @click="onloadtable">查询</el-button>
-      </el-form-item>
-    </el-form>
-    <!-- 表格 -->
-    <div class="stable">
-      <!-- @sort-change="sortChange"v-loading="loading" -->
-      <el-table :data="tableData1" style="width:100%" border>
-        <el-table-column prop="jqbh" label="机器编号" width="100" align="center"> </el-table-column>
-        <el-table-column prop="jqmc" label="机器名称" width="100" align="center"> </el-table-column>
-        <el-table-column prop="dw" label="点位" width="100" align="center"> </el-table-column>
-        <el-table-column prop="xl" label="线路" align="center"> </el-table-column>
-        <el-table-column prop="qy" label="区域" align="center"> </el-table-column>
-        <el-table-column prop="sy" label="收益" align="center"> </el-table-column>
-        <el-table-column prop="chsl" label="出货数量" align="center"> </el-table-column>
-        <el-table-column prop="chje" label="出货金额" align="center"> </el-table-column>
-        <el-table-column prop="wxje" label="微信金额" align="center"> </el-table-column>
-        <el-table-column prop="zfbje" label="支付宝金额" width="100" align="center"> </el-table-column>
-        <el-table-column prop="hykje" label="会员卡金额" width="100" align="center"> </el-table-column>
-        <el-table-column prop="qtskje" label="其他收款金额" width="110" align="center"> </el-table-column>
-        <el-table-column prop="yhje" label="优惠金额" align="center"> </el-table-column>
-        <el-table-column prop="tbje" label="吞币金额" align="center"> </el-table-column>
-        <el-table-column prop="rq" label="日期" width="100" align="center"> </el-table-column>
-        <el-table-column label="明细" width="100" fixed="right" align="center">
-          <template slot-scope="scope">
-            <el-button type="primary" size="mini">明细</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <!-- 分页 -->
-      <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.currentPage" :page-sizes="[10, 30, 50, 100]" :page-size="listQuery.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="listQuery.totalCount">
-      </el-pagination>
+    <!-- 界面类别 -->
+    <div style="padding: 5px">
+      <el-button v-for="item in jmlb" :key="item.lx" style="padding:10px 40px;margin-right:20px;" size="small" type="info" @click="lookerror(item.lx)">{{item.value}}</el-button>
+    </div>
+    <hr>
+    <div>
+      <dwpage v-show="jmlb[0].show"> </dwpage>
+      <xlpage v-show="jmlb[1].show"> </xlpage>
+      <qypage v-show="jmlb[2].show"> </qypage>
     </div>
   </div>
 </template>
 <script>
+import dwpage from './dwgl/dwpage'
+import xlpage from './dwgl/xlpage'
+import qypage from './dwgl/qypage'
 export default {
+  components: { dwpage, xlpage, qypage },
   data() {
     return {
-      formInline: {
-        jqbh: '',
-        jqmc: '',
-        ftime: '',
-      },
-      listQuery: {
-        pageSize: 10, //默认每页的数据量
-        currentPage: 1, //当前页码
-        pageNum: 1, //查询的页码
-        totalCount: 100,
-      },
-      pickerOptions2: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-            picker.$emit('pick', [start, end]);
-          }
-        }]
-      },
-      tableData1: [
-        {}
+      jmlb: [
+        { lx: "dw", value: '点位', show: false },
+        { lx: "xl", value: '线路', show: false },
+        { lx: "qy", value: '区域', show: false },
       ],
-      // loading: true,
     }
   },
+  created: function() {
+    this.jmlb[0].show = true;
+  },
   methods: {
-    sleSubmit() { //查询
-      console.log("查询")
-    },
-    handleSizeChange(val) {
-      this.listQuery.pageSize = val; //修改每页数据量
-      // this.loadTable();
-    },
-    handleCurrentChange(val) { //跳转第几页
-      this.listQuery.pageNum = val;
-      // this.loadTable();
-    },
-    onloadtable() { //订单状态查询
-      var queryDdxxData = {
-        // orderBy: 'jqbh',
-        ddbh: "1",
-        pageNum: this.listQuery.pageNum,
-        pageSize: this.listQuery.pageSize,
-        // xl: this.formInline.xl,
-        // jqbh: this.formInline.jqbh,
-        // shbh: this.formInline.shbh,
-        // lx: this.formInline.lx
+    lookerror(val) {
+      for (var i = 0; i < this.jmlb.length; i++) {
+        this.jmlb[i].show = false;
+        if (this.jmlb[i].lx == val) { this.jmlb[i].show = true; }
       }
-      console.log(queryDdxxData);
-      axios.post('http://192.168.1.9:8092/Ddxx/queryDdxx', queryDdxxData)
-        .then(response => {
-          this.tableData = response.data.data;
-          console.log(response.data);
-        })
-        .catch(error => {
-          Message.error("error：" + "请检查网络是否连接");
-        })
     },
   }
 }
 
 </script>
-<style>
-/*scoped*/
-
+<style scoped>
 .smain {
   padding: 10px;
 }

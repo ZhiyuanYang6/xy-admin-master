@@ -232,8 +232,9 @@ export default {
         shbh: this.formInline.shbh,
         lx: this.formInline.lx
       }
+      debugger;
       console.log(queryShjData);
-      axios.post('http://192.168.1.112:8092/Shjgl/queryShj', queryShjData)
+      axios.post('http://192.168.1.127:8092/Shjgl/queryShj', queryShjData)
         .then(response => {
           this.loading = false;
           this.tableData1 = response.data.data;
@@ -252,7 +253,7 @@ export default {
     dialogtable2(index, row) {
       this.dialogTableVisible2 = true;
       console.log(index);
-      axios.post('http://192.168.1.117:8092/Jqzt/queryMachinesStatus', row)
+      axios.post('http://192.168.1.127:8092/Jqzt/queryMachinesStatus', row)
         .then(response => {
           console.log(response.data);
         })
@@ -268,13 +269,15 @@ export default {
 /**/
 
 .smain {
-  padding: 10px;
+  padding: 1 0px;
 }
 
 .smainFright {
   position: absolute;
   right: 0;
 }
+
+
 
 
 

@@ -3,26 +3,26 @@
     <!-- 左侧表单 -->
     <el-form :inline="true" :model="formInline" size="small" class="demo-form-inline">
       <el-form-item>
-        <el-input size="mini" v-model="formInline.jqbh" style="width: 110px;" placeholder="机器名称/编号"></el-input>
+        <el-input size="mini" v-model="formInline.jqmc" style="width: 110px;" placeholder="机器名称/编号"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input size="mini" v-model="formInline.jqmc" style="width: 110px;" placeholder="点位/区域/线路"></el-input>
+        <el-input size="mini" v-model="formInline.dwmc" style="width: 110px;" placeholder="点位/区域/线路"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input size="mini" v-model="formInline.jqmc" style="width: 150px;" placeholder="交易单号"></el-input>
+        <el-input size="mini" v-model="formInline.jyid" style="width: 150px;" placeholder="交易单号"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input size="mini" v-model="formInline.jqmc" style="width: 150px;" placeholder="商户单号"></el-input>
+        <el-input size="mini" v-model="formInline.ddbh" style="width: 150px;" placeholder="商户单号"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input size="mini" v-model="formInline.jqmc" style="width: 100px;" placeholder="订单状态"></el-input>
+        <el-input size="mini" v-model="formInline.ddzt" style="width: 100px;" placeholder="订单状态"></el-input>
       </el-form-item>
       <el-form-item>
         <el-date-picker size="mini" style="width:310px;" v-model="formInline.ftime" type="datetimerange" start-placeholder="开始日期" end-placeholder="结束日期" :default-time="['12:00:00', '12:00:00']">
         </el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-input size="mini" v-model="formInline.jqmc" style="width: 80px;" placeholder="付款人"></el-input>
+        <el-input size="mini" v-model="formInline.zfzh" style="width: 80px;" placeholder="付款人"></el-input>
       </el-form-item>
       <!-- 右侧按钮 -->
       <el-form-item>
@@ -118,11 +118,11 @@ export default {
         }]
       },
       tableData: [{}],
-      // loading: true,
+      loading: true,
     }
   },
   created: function() {
-    // this.onloadtable();
+    this.onloadtable();
   },
   methods: {
     sleSubmit() { //查询
@@ -133,31 +133,34 @@ export default {
     },
     handleSizeChange(val) {
       this.listQuery.pageSize = val; //修改每页数据量
-      // this.loadTable();
+      this.loadTable();
     },
     handleCurrentChange(val) { //跳转第几页
       this.listQuery.pageNum = val;
-      // this.loadTable();
+      this.loadTable();
     },
     onloadtable() { //订单状态查询
       var queryDdxxData = {
         // orderBy: 'jqbh',
-        ddbh: "1 ",
+        ddbh: 1,
         pageNum: this.listQuery.pageNum,
         pageSize: this.listQuery.pageSize,
-        // xl: this.formInline.xl,
-        // jqbh: this.formInline.jqbh,
-        // shbh: this.formInline.shbh,
-        // lx: this.formInline.lx
+        jqmc: this.formInline.jqmc,
+        dwmc: this.formInline.dwmc,
+        jyid: this.formInline.jyid,
+        ddbh: this.formInline.ddbh,
+        ddzt: this.formInline.ddzt,
+        zfzh: this.formInline.zfzh
       }
       console.log(queryDdxxData);
-      axios.post('http://192.168.1.9:8092/Ddxx/queryDdxx', queryDdxxData)
+      axios.post('http://192.168.1.9:8092/ddxx/queryDdxx', queryDdxxData)
         .then(response => {
-          this.tableData = response.data.data;
-          console.log(response.data);
+          this.tableData = response.data.data.list;
+          this.listQuery.totalCount = response.data.data.total;
+          // console.log(response.data);
         })
         .catch(error => {
-          Message.error("error： " + "请检查网络是否连接 ");
+          // Message.error("error： " + "请检查网络是否连接 ");
         })
     },
   }

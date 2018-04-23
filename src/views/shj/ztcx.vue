@@ -3,19 +3,19 @@
     <!-- 左侧表单 -->
     <el-form :inline="true" :model="formInline" size="small" class="demo-form-inline">
       <el-form-item>
-        <el-input v-model="formInline.jqbh" style="width: 150px;" placeholder="机器名称/编号"></el-input>
+        <el-input v-model="formInline.jqmc" style="width: 150px;" placeholder="机器名称/编号"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="formInline.jqmc" style="width: 120px;" placeholder="机器类型"></el-input>
+        <el-input v-model="formInline.jqlx" style="width: 120px;" placeholder="机器类型"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="formInline.ftime" style="width: 120px;" placeholder="商户名称/编号"></el-input>
+        <el-input v-model="formInline.shmc" style="width: 120px;" placeholder="商户名称/编号"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="formInline.ftime" style="width: 120px;" placeholder="点位/区域/线路"></el-input>
+        <el-input v-model="formInline.dwmc" style="width: 120px;" placeholder="点位/区域/线路"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="formInline.ftime" style="width: 120px;" placeholder="标识"></el-input>
+        <el-input v-model="formInline.bs" style="width: 120px;" placeholder="标识"></el-input>
       </el-form-item>
       <!-- 右侧按钮 -->
       <el-form-item>
@@ -70,7 +70,7 @@ export default {
         totalCount: 100,
       },
       tableData: [],
-      loading: true,
+      loading: false,
     }
   },
   created: function() {

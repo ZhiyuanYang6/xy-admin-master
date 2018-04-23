@@ -3,16 +3,7 @@
     <!-- 左侧表单 -->
     <el-form :inline="true" :model="formInline" size="small" class="demo-form-inline">
       <el-form-item>
-        <el-input v-model="formInline.jqbh" style="width: 150px;" placeholder="机器名称/编号"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-input v-model="formInline.jqmc" style="width: 120px;" placeholder="机器类型"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-input v-model="formInline.jqmc" style="width: 120px;" placeholder="商户名称/编号"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-input v-model="formInline.jqmc" style="width: 120px;" placeholder="点位/区域/线路"></el-input>
+        <el-input v-model="formInline.jqbh" style="width: 250px;" placeholder="机器名称/编号"></el-input>
       </el-form-item>
       <el-form-item>
         <el-date-picker v-model="formInline.ftime" type="daterange" :picker-options="pickerOptions2" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
@@ -20,44 +11,41 @@
       </el-form-item>
       <!-- 右侧按钮 -->
       <el-form-item>
-        <el-button type="warning" @click="sleSubmit">查询</el-button>
+        <el-button type="warning" @click="onloadtable">查询</el-button>
       </el-form-item>
     </el-form>
     <!-- 表格 -->
     <div class="stable">
       <!-- @sort-change="sortChange"v-loading="loading" -->
       <el-table :data="tableData" style="width:100%" border>
-        <el-table-column prop="jqbh" label="机器编号" width="100" align="center"> </el-table-column>
-        <el-table-column prop="jqmc" label="机器名称" width="100" align="center"> </el-table-column>
-        <el-table-column prop="dwmc" label="点位" width="100" align="center"> </el-table-column>
-        <el-table-column prop="xlmc" label="线路" align="center"> </el-table-column>
-        <el-table-column prop="qymc" label="区域" align="center"> </el-table-column>
-        <el-table-column prop="sy" label="收益" align="center"> </el-table-column>
-        <el-table-column prop="chsl" label="出货数量" align="center"> </el-table-column>
-        <el-table-column prop="chje" label="出货金额" align="center"> </el-table-column>
-        <el-table-column prop="wxje" label="微信金额" align="center"> </el-table-column>
-        <el-table-column prop="zfbje" label="支付宝金额" width="100" align="center"> </el-table-column>
-        <el-table-column prop="hykje" label="会员卡金额" width="100" align="center"> </el-table-column>
-        <el-table-column prop="qtje" label="其他收款金额" width="110" align="center"> </el-table-column>
-        <el-table-column prop="yhje" label="优惠金额" align="center"> </el-table-column>
-        <el-table-column prop="tbje" label="吞币金额" align="center"> </el-table-column>
-        <el-table-column prop="rq" label="日期" width="100" align="center"> </el-table-column>
+        <el-table-column prop="jqbh" label="机器编号" align="center"> </el-table-column>
+        <el-table-column prop="jqmc" label="金额" width="100" align="center"> </el-table-column>
+        <el-table-column prop="dwmc" label="结算日期" align="center"> </el-table-column>
+        <el-table-column prop="xlmc" label="交易起始时间" align="center"> </el-table-column>
+        <el-table-column prop="qymc" label="交易结束时间" align="center"> </el-table-column>
+        <el-table-column prop="sy" label="交易记录数" align="center"> </el-table-column>
         <el-table-column label="明细" width="100" fixed="right" align="center">
           <template slot-scope="scope">
-            <el-button type="primary" size="mini">明细</el-button>
+            <el-button type="primary" size="mini" @click="getdetil(scope.row)">明细</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
+    <!-- 分页 -->
     <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.currentPage" :page-sizes="[10, 30, 50, 100]" :page-size="listQuery.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="listQuery.totalCount">
     </el-pagination>
+    <!-- 明细 -->
+    <el-dialog title="交易结算明细" :visible.sync="dialogVisiblemx" width="60%">
+      <jyjsgldetil :dialogVisiblebind="dialogVisiblemx" @dialog1Changed="childchanged($event)"></jyjsgldetil>
+    </el-dialog>
   </div>
 </template>
 <script>
 import request from '@/utils/request'
 import { Message } from 'element-ui'
-// import axios from 'axios'
+import jyjsgldetil from './components/jyjsgldetil'
 export default {
+  components: { jyjsgldetil },
   data() {
     return {
       formInline: {
@@ -98,24 +86,25 @@ export default {
           }
         }]
       },
-      tableData: [],
-      // loading: true,
+      tableData: [{}],
+      loading: false,
+      dialogVisiblemx: false,
     }
   },
   created: function() {
-    this.onloadtable();
+    // this.onloadtable();
   },
   methods: {
     handleSizeChange(val) {
       this.listQuery.pageSize = val; //修改每页数据量
-      this.onloadtable();
+      // this.onloadtable();
     },
     handleCurrentChange(val) { //跳转第几页
       this.listQuery.pageNum = val;
-      this.onloadtable();
+      // this.onloadtable();
     },
-    sleSubmit() { //查询
-      this.onloadtable();
+    getdetil() { //查询
+      this.dialogVisiblemx = true;
     },
     onloadtable() { //机器交易明细查询
       var queryJqjytjData = {
@@ -124,12 +113,8 @@ export default {
         pageSize: this.listQuery.pageSize,
         jqmc: this.formInline.jqmc,
         dwmc: this.formInline.dwmc,
-        jqlx: this.formInline.jqlx,
-        shmc: this.formInline.shmc,
-        chzt: this.formInline.chzt,
         dkh: '8092',
       }
-      // axios.post('http://192.168.1.9:8092/jqjytj/queryJqjytj', queryJqjytjData)
       request({ url: "/jqjytj/queryJqjytj", method: 'post', data: queryJqjytjData })
         .then(response => {
           this.tableData = response.list;

@@ -212,8 +212,16 @@ div.el-dialog__body {
 
 
 
+
+
+
 /*订单管理*/
 
 .ddgl div.el-dialog__body {
   height: 550px;
+}
+
+//商户管理
+div.shglchild .el-card__header {
+  padding: 15px 20px 5px 20px;
 }
