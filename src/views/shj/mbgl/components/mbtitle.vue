@@ -3,7 +3,7 @@
     <i class="iconfont icon-ai-set"></i>
     <div class="tlt" v-if="this.menuData[0].show">
       <span>模板基本信息设置</span>
-      <el-button type="warning" size="mini">保存</el-button>
+      <el-button type="warning" size="mini" @click="saveClick(0)" @jbmbParamChange="jbmbczParam">保存</el-button>
     </div>
     <div class="tlt" v-if="this.menuData[1].show">
       <span>货道模式设置</span>
@@ -21,7 +21,7 @@
     </div>
     <div class="tlt" v-if="this.menuData[3].show">
       <span>货道库存预警设置</span>
-      <el-button type="warning" size="mini">保存</el-button>
+      <el-button type="warning" size="mini" @click="saveClick(1)">保存</el-button>
       <el-button size="mini">批量设置</el-button>
     </div>
     <div class="tlt" v-if="this.menuData[4].show">
@@ -49,7 +49,32 @@ export default {
   props: {
     menuData: {
       type: Array
+    }
+  },
+  methods: {
+    saveClick(index) {
+      var url = "";
+      var mbDeleteData = {};
+      if (index == 0) {
+        console.log(index);
+      } else {
+        console.log("error");
+      }
     },
+    mbcz(url, data) {
+      axios.post(url, data).then(response => {
+          this.loading = false;
+          this.Result = response.data.code;
+          console.log(Result);
+        })
+        .catch(error => {
+          Message.error("error：" + "请检查网络是否连接");
+        })
+    },
+    jbmbczParam(param) {
+      debugger;
+      console.log(param);
+    }
   }
 }
 

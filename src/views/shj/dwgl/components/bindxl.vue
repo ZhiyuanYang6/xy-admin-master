@@ -1,14 +1,8 @@
 <template>
-  <div @mouseover="Moveradd()">
+  <div>
     <el-form :inline="true" ref="formInline" :model="formInline" size="small" class="demo-form-inline">
       <el-form-item>
-        <el-input v-model="formInline.dwid" style="width: 150px;" placeholder="机器编号/名称"></el-input>
-      </el-form-item>
-      <el-form-item v-show="showdw">
-        <el-select v-model="formInline.sfbd" placeholder="是否绑定点位" clearable>
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-          </el-option>
-        </el-select>
+        <el-input v-model="formInline.dwbh" style="width: 300px;" placeholder="点位编号/名称"></el-input>
       </el-form-item>
       <!-- 右侧按钮 -->
       <el-form-item class="rightitem">
@@ -17,16 +11,19 @@
       <div class="stable">
         <el-table :data="tableData" style="width:100%" border @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="100" align="center"> </el-table-column>
-          <el-table-column prop="jqbh" label="机器编号" width="200" align="center"> </el-table-column>
-          <el-table-column prop="jqmc" label="机器名称" align="center"> </el-table-column>
           <el-table-column prop="dwbh" label="点位编号" align="center"> </el-table-column>
           <el-table-column prop="dwmc" label="点位名称" align="center"> </el-table-column>
+          <el-table-column prop="dwdz" label="点位地址" align="center"> </el-table-column>
+          <el-table-column prop="dwlx" label="点位类型" align="center"> </el-table-column>
+          <el-table-column prop="dwbs" label="点位标识" align="center"> </el-table-column>
         </el-table>
         <!-- 分页 -->
         <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.currentPage" :page-sizes="[10, 30, 50, 100]" :page-size="listQuery.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="listQuery.totalCount">
         </el-pagination>
-        <el-button type="primary" @click="submitForm('formInline')">{{listrow.btn}}</el-button>
-        <el-button @click="resetForm('formInline')">取消</el-button>
+        <div class="bombtn">
+          <el-button style="margin-right:50px;" @click="resetForm('formInline')">取消</el-button>
+          <el-button type="primary" @click="submitForm('formInline')">{{listrow.btn}}</el-button>
+        </div>
       </div>
     </el-form>
   </div>
@@ -39,9 +36,7 @@ export default {
   data() {
     return {
       formInline: { //查询表单
-        xlmc: '',
-        qymc: '',
-        dwbs: '',
+        jqbh: '',
       },
       options: [
         { value: 0, label: "已绑定" },
@@ -54,67 +49,20 @@ export default {
         totalCount: 100,
       },
       optrows: [], //选中的行
-      onceover: '', //是否初始化
       tableData: [{}], //表格内容
-      showdw: true, //是否显示点位选择栏
-
     }
   },
   watch: {
     dialogVisiblebind: function(data, olddata) {
-      if (data) {
-        this.onceover = data;
-      }
+      this.onloadtable();
+      this.judgeBind()
     }
   },
+  created: function() {
+    this.onloadtable();
+    this.judgeBind()
+  },
   methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.submitForm();
-        } else {
-          console.log('error submit!!');
-          return false;
-        }
-      });
-    },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-      this.$emit("dialog1Changed", 0); //发送参数到父组件 事件名，参数
-    },
-    validator(val, type) {
-      if (!val) {
-        Message.warning(type + "不能为空");
-        return true
-      }
-    },
-    onloadtable(url, val) { //获取表格内容
-      var bindJqData
-      debugger;
-      if (val == 1) {
-        bindJqData = {
-          dwid: this.formInline.sfbd,
-          pageNum: this.listQuery.pageNum,
-          pageSize: this.listQuery.pageSize,
-          dkh: '8081'
-        }
-      } else {
-        bindJqData = {
-          dwid: this.listrow.dwid,
-          pageNum: this.listQuery.pageNum,
-          pageSize: this.listQuery.pageSize,
-          dkh: '8081'
-        }
-      }
-
-      request({ url: url, method: 'post', data: bindJqData }).then(response => {
-          this.tableData = response.data;
-          this.listQuery.totalCount = response.total;
-        })
-        .catch(error => {
-          Message.error("error：" + "请检查网络是否连接");
-        })
-    },
     handleSizeChange(val) {
       this.listQuery.pageSize = val; //修改每页数据量
       this.onloadtable();
@@ -123,48 +71,74 @@ export default {
       this.listQuery.pageNum = val;
       this.onloadtable();
     },
-    handleSelectionChange(val) {
+    handleSelectionChange(val) { //table选中项
       this.optrows = val;
-      console.log(val);
     },
-    submitForm() { //绑定解绑
-      var url;
-      if (this.listrow.title == "绑定机器") {
-        url = '/dwxx/updateDwJq'
+    onloadtable(url, val) { //获取表格内容
+      var bindXlData
+      if (val == 1) {
+        bindXlData = {
+          pageNum: this.listQuery.pageNum,
+          pageSize: this.listQuery.pageSize,
+          dkh: '8081'
+        }
       } else {
-        url = '/dwxx/updateDwJqUnbind'
+        bindXlData = {
+          xlid: this.listrow.xlid,
+          pageNum: this.listQuery.pageNum,
+          pageSize: this.listQuery.pageSize,
+          dkh: '8081'
+        }
       }
-      var subData = {
-        val: this.optrows,
-        id: this.listrow.dwid,
-        mc: this.listrow.dwmc,
-        dkh: '8081'
-      }
-      request({ url: url, method: 'post', data: subData }).then(response => {
-          console.log(this.listrow);
-          console.log(this.optrows);
-          Message.success(this.listrow.btn + "成功");
-          this.$emit("dialog1Changed", 0); //发送参数到父组件 事件名，参数
+      request({ url: url, method: 'post', data: bindXlData }).then(response => {
+          this.tableData = response.data;
+          this.listQuery.totalCount = response.total;
         })
         .catch(error => {
           Message.error("error：" + "请检查网络是否连接");
         })
     },
-    Moveradd() { ////////////////////////进入初始化
-      if (this.onceover) {
-        if (this.listrow.title == "绑定机器") {
-          debugger;
-          this.onloadtable("/dwxx/queryDwJq", 1); // 查询所有机器
-          this.showdw = true;
-        } else {
-          this.onloadtable("/dwxx/queryDwJq", 0); //查询该点位上的机器
-          this.showdw = false;
+
+    submitForm() { //点位绑定线路绑定解绑
+      var url;
+      var subData;
+      if (this.listrow.title == "绑定点位") {
+        url = '/dwxx/updateDwBind';
+        subData = {
+          val: this.optrows,
+          id: this.listrow.xlid,
+          dkh: '8081'
         }
-        this.onceover = false;
+      } else {
+        url = '/dwxx/updateDwUnbind';
+        subData = {
+          val: this.optrows,
+          dkh: '8081'
+        }
       }
+      request({ url: url, method: 'post', data: subData })
+        .then(response => {
+          Message.success(this.listrow.btn + "成功");
+          this.$emit("dialog1Changed", 0); //发送参数到父组件 事件名，参数
+        })
+        .catch(error => {
+          Message.error("error：" + "请检查网络是否连接");
+        });
+    },
+    resetForm(formName) {
+      this.$emit("dialog1Changed", 0); //发送参数到父组件 事件名，参数
+    },
+    judgeBind() {
+      if (this.listrow.title == "绑定点位") {
+        this.onloadtable("/dwxx/queryDwxx", 1); // 点位绑定查询所有点位
+        this.showdw = true;
+      } else {
+        this.onloadtable("/dwxx/queryDwxx", 0); //点位绑定删除查询该线路下的点位
+        this.showdw = false;
+      }
+      this.onceover = false;
     },
   },
-
 }
 
 </script>
@@ -195,6 +169,12 @@ div.el-form-item {
   font-size: 20px;
   right: -15px;
   top: 3px;
+}
+
+.bombtn {
+  position: relative;
+  top: -60px;
+  float: right;
 }
 
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="smain">
     <!-- 界面类别 -->
-    <div style="padding: 5px">
+    <div style="padding: 5px" class="dwglbtnstly">
       <el-button v-for="item in jmlb" :key="item.lx" style="padding:10px 40px;margin-right:20px;" size="small" type="info" @click="lookerror(item.lx)">{{item.value}}</el-button>
     </div>
     <hr>

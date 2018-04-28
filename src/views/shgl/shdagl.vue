@@ -1,67 +1,87 @@
 <template>
   <div class="dwsmain">
-    <!-- 左侧表单 -->
-    <el-form :inline="true" :model="formInline" size="small" class="demo-form-inline">
-      <el-form-item>
-        <el-input v-model="formInline.dwid" style="width: 150px;" placeholder="区域BH/名称"></el-input>
-      </el-form-item>
-      <!-- 右侧按钮 -->
-      <el-form-item class="rightitem">
-        <el-button type="primary" @click="onloadtable">查询</el-button>
-        <el-button type="primary" @click="addxlsubmit()">新增</el-button>
-      </el-form-item>
-    </el-form>
-    <!-- 表格 -->
-    <div class="stable">
-      <el-table :data="tableData1" style="width:100%" border>
-        <el-table-column prop="jqmc" label="区域编号" width="200" align="center"> </el-table-column>
-        <el-table-column prop="dw" label="区域名称" width="200" align="center"> </el-table-column>
-        <el-table-column prop="xl" label="线路数量" align="center"> </el-table-column>
-        <el-table-column prop="qy" label="机器数量" align="center"> </el-table-column>
-        <el-table-column prop="sy" label="备注" align="center"> </el-table-column>
-        <el-table-column label="操作" align="center">
-          <template slot-scope="scope">
-            <el-button @click="sleSubmit(scope.row)" type="text">删 除</el-button>
-          </template>
-        </el-table-column>
+    <!-- 商户树结构 -->
+    <el-card class="clearfixcard" shadow="hover" :body-style="{ padding: '0' ,'margin-bottom': '-2px'}">
+      <div slot="header" class="clearfix">
+        <span>商户树</span>
+        <el-button style=" padding: 3px 10px 3px 60px; float:right;" type="text" @click="addshclick">添加商户</el-button>
+      </div>
+      <el-input placeholder="输入商户编号或名称" v-model="filterText"></el-input>
+      <el-tree v-if="!filterText" :expand-on-click-node="false" ref="tree2" class="treetenant" :props="props" :load="loadNode" @node-click="treeClick" lazy></el-tree v-show="filterText">
+      <el-table v-show="!!filterText" highlight-current-row @current-change="handleChange" :data="dllist" style="width:100%; cursor:pointer;">
+        <el-table-column prop="fshmc" label="父商户名称"></el-table-column>
+        <el-table-column prop="shmc" label="商户名称"></el-table-column>
       </el-table>
-      <!-- 分页 -->
-      <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.currentPage" :page-sizes="[10, 30, 50, 100]" :page-size="listQuery.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="listQuery.totalCount">
-      </el-pagination>
-    </div>
+    </el-card>
+    <!-- 表格 -->
+    <el-card class="stablecard" shadow="hover" :body-style="{ padding: '0' ,'margin-bottom': '-2px'}">
+      <div class="stable">
+        <el-table :data="tableData" style="width:100%" border>
+          <el-table-column type="index" label="序号" align="center"> </el-table-column>
+          <el-table-column prop="shbh" label="商户编号" align="center"> </el-table-column>
+          <el-table-column prop="shmc" label="商户名称" align="center"> </el-table-column>
+          <el-table-column prop="fshmc" label="上级商户名称" alig n="center"> </el-table-column>
+          <el-table-column prop="gsmc" label="联系人" align="center"> </el-table-column>
+          <el-table-column prop="gsdh" label="联系人电话" align="center"> </el-table-column>
+          <el-table-column prop="showsfksk" label="是否能收款" align="center"> </el-table-column>
+          <el-table-column prop="remark" label="备注" align="center"> </el-table-column>
+          <el-table-column label="操作" align="center">
+            <template slot-scope="scope">
+              <el-button @click="setclick(scope.row)" type="text">修 改</el-button>
+              <el-button @click="delclick(scope.row)" type="text">删 除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <!-- 分页 -->
+        <el-pagination class="pageina" background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.currentPage" :page-sizes="[10, 30, 50, 100]" :page-size="listQuery.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="listQuery.totalCount">
+        </el-pagination>
+      </div>
+      <!-- 添加修改商户 -->
+      <el-dialog :title="row.title" :visible.sync="dialogVisible" width="45%">
+        <shdaglform :listrow="row" :dialogVisible="dialogVisible" @dialog1Changed="childchanged($event)"></shdaglform>
+      </el-dialog>
+    </el-card>
   </div>
 </template>
 <script>
 import request from '@/utils/request'
+import shdaglform from './components/shdaglform'
 import { Message, MessageBox } from 'element-ui'
 export default {
+  components: { shdaglform },
   data() {
     return {
-      formInline: {
-        jqbh: '',
-        jqmc: '',
-        ftime: '',
-      },
-      options: [
-        { value: 0, label: "已绑定" },
-        { value: 1, label: "未绑定" },
-      ],
       listQuery: {
         pageSize: 10, //默认每页的数据量
         currentPage: 1, //当前页码
         pageNum: 1, //查询的页码
         totalCount: 100,
       },
-      tableData1: [
-        {}
-      ],
+      dllist: [],
+      tableData: [],
       loading: false,
       row: {},
       dialogVisible: false,
+      props: {
+        label: 'shmc',
+        children: 'zones',
+        isLeaf: 'leaf'
+      },
+      filterText: '',
+      clickshbh: '0000',
+    }
+  },
+  watch: {
+    filterText(val) {
+      //发起请求，查找指定的
+      request({ url: '/shdagl/shdaglMatchingQuery', method: 'post', data: { fshbh: '0000', shxx: val } }).then(response => {
+        this.dllist = response;
+      })
+      //this.$refs.tree2.filter(val);
     }
   },
   created: function() {
-    this.onloadtable();
+    this.onloadtable("0000");
   },
   methods: {
     addxlsubmit() { //添加区域
@@ -71,35 +91,87 @@ export default {
     },
     handleSizeChange(val) {
       this.listQuery.pageSize = val; //修改每页数据量
-      this.onloadtable();
+      // this.onloadtable();
     },
     handleCurrentChange(val) { //跳转第几页
       this.listQuery.pageNum = val;
-      this.onloadtable();
+      // this.onloadtable();
     },
-    onloadtable() { //订单状态查询
-      var queryDdxxData = {
-        orderBy: 'jqbh',
-        ddbh: "1",
+    onloadtable(shbh) { //商户档案查询
+      var queryData = {
+        orderBy: '',
+        shbh: shbh,
+        fshbh: "0000",
         pageNum: this.listQuery.pageNum,
-        pageSize: this.listQuery.pageSize,
+        pageSize: this.listQuery.pageSize
       }
-      queryDdxxData = {
-        "name": "admin",
-        "age": "30"
-      }
-      request({ url: 'test', method: 'post', data: queryDdxxData }).then(response => {
-          console.log(response.data);
-          //     this.tableData = response.data.data;
-          //     console.log(response.data);
+      request({ url: '/shdagl/shdaglQuery', method: 'post', data: queryData }).then(response => {
+          this.tableData = response.data;
+          this.listQuery.totalCount = response.total;
+          //console.log(response.data);
         })
         .catch(error => {
           Message.error("error：" + "请检查网络是否连接");
         })
     },
+    loadNode(node, resolve) {
+      if (node.level === 0) {
+        return resolve([{ shmc: '超级管理员', shbh: "0000" }]);
+      }
+      request({ url: '/shdagl/shdaglTreeQuery', method: 'post', data: { shbh: node.data.shbh } }).then(response => {
+        resolve(response)
+      })
+    },
+    treeClick(node, resolve) {
+      this.clickshbh = node.shbh;
+      this.onloadtable(node.shbh);
+    },
+    handleChange(val) {
+      this.clickshbh = val.shbh;
+      this.onloadtable(val.shbh);
+    },
+    addshclick() { //添加
+      this.row.title = "添加商户";
+      this.row.btn = "添加";
+      this.dialogVisible = true;
+    },
+    setclick(row) { //修改
+      this.row = row;
+      this.row.title = "修改商户";
+      this.row.btn = "修改";
+      this.dialogVisible = true;
+    },
+    delclick(row) { //删除
+      this.$confirm('确认删除商户?', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        var deleteData = {
+          fshbh: "0000",
+          shbh: row.shbh
+        };
+        request({
+            url: '/shdagl/shdaglDelete',
+            method: 'post',
+            data: deleteData
+          }).then(response => {
+            if (response.msg) {
+              this.$message({ type: 'success', message: response.msg });
+              this.onloadtable('0000');
+            }
+          })
+          .catch(error => {
+            Message.error("error：" + "请检查网络是否连接");
+          })
+
+      }).catch(() => {
+        this.$message({ type: 'info', message: '已取消删除' });
+      });
+    },
     childchanged(childdata) { //接收子组件参数
       this.dialogVisible = false;
-      this.onloadtable();
+      this.onloadtable(this.clickshbh);
     },
   }
 }
@@ -108,11 +180,37 @@ export default {
 <style scoped>
 div.dwsmain {
   padding: 5px;
+  overflow: hidden;
 }
 
-div.rightitem {
-  /*float: right;*/
-  /*padding-right: 100px;*/
+.clearfixcard {
+  /*position: relative;*/
+  float: left;
+  width: 22%;
+}
+
+.stablecard {
+  position: relative;
+  left: 1%;
+  width: 76%;
+  padding: 5px;
+}
+
+.clearfix {
+  margin: -5px;
+}
+
+.treetenant {
+  padding: 5px;
+}
+
+.clearfixcard {
+  /*//清除浮动*/
+  display: inline-block;
+}
+
+div.el-input {
+  padding: 5px 2px;
 }
 
 </style>

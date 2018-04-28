@@ -132,8 +132,8 @@ export default {
       axios.post('http://192.168.1.9:8092/jqjymx/queryJqjymx', queryJqjymxData)
         .then(response => {
           console.log(response);
-          this.tableData = response.data.data.list;
-          this.listQuery.totalCount = response.data.data.total;
+          this.tableData = response.data;
+          this.listQuery.totalCount = response.total;
           console.log(this.tableData);
         })
         .catch(error => {

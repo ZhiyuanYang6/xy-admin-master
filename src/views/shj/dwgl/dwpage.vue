@@ -3,7 +3,7 @@
     <!-- 左侧表单 -->
     <el-form :inline="true" :model="formInline" size="small" class="demo-form-inline">
       <el-form-item>
-        <el-input v-model="formInline.dwid" style="width: 150px;" placeholder="点位ID/名称/类型"></el-input>
+        <el-input v-model="formInline.dwbh" style="width: 200px;" placeholder="点位ID/名称/类型"></el-input>
       </el-form-item>
       <el-form-item>
         <el-select v-model="formInline.sfbd" placeholder="请选择" clearable>
@@ -14,22 +14,26 @@
       <!-- 右侧按钮 -->
       <el-form-item class="rightitem">
         <el-button type="primary" @click="onloadtable">查询</el-button>
-        <el-button type="primary" @click="addxlsubmit()">新增</el-button>
+        <el-button type="primary" @click="addxlsubmit('','add')">新增</el-button>
       </el-form-item>
     </el-form>
     <!-- 表格 -->
     <div class="stable">
       <!-- @sort-change="sortChange"v-loading="loading" -->
       <el-table :data="tableData" style="width:100%" border>
-        <el-table-column prop="dwid" label="点位编号" width="200" align="center"> </el-table-column>
+        <el-table-column prop="dwbh" label="点位编号" width="200" align="center"> </el-table-column>
         <el-table-column prop="dwmc" label="点位名称" width="200" align="center"> </el-table-column>
         <el-table-column prop="showdwlx" label="点位类型" align="center"> </el-table-column>
         <el-table-column prop="dwdz" label="点位地址" align="center"> </el-table-column>
+        <el-table-column prop="dwbs" label="点位标识" align="center"> </el-table-column>
         <el-table-column prop="jqsl" label="机器数量" align="center"> </el-table-column>
-        <el-table-column label="操作" align="center">
+        <el-table-column prop="remark" label="备注" align="center"> </el-table-column>
+        <el-table-column label="操作" align="center" width="200">
           <template slot-scope="scope">
             <el-button @click="bindSubmit(scope.row,'bind')" type="text">绑 定</el-button>
             <el-button @click="bindSubmit(scope.row)" type="text">解 绑</el-button>
+            <el-button @click="addxlsubmit(scope.row)" type="text">修 改</el-button>
+            <el-button @click="delclick(scope.row)" type="text">删 除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -38,7 +42,7 @@
       </el-pagination>
     </div>
     <!-- 新增点位 -->
-    <el-dialog title="新增点位" :visible.sync="dialogVisible" width="30%">
+    <el-dialog :title="row.title" :visible.sync="dialogVisible" width="30%">
       <addolade :listrow="row" :dialogVisible="dialogVisible" @dialog1Changed="childchanged($event)"></addolade>
     </el-dialog>
     <!-- 绑定、解绑机器 -->
@@ -71,9 +75,7 @@ export default {
         pageNum: 1, //查询的页码
         totalCount: 100,
       },
-      tableData1: [
-        {}
-      ],
+      tableData: [{}],
       loading: false,
       row: {},
       listrow: {},
@@ -85,16 +87,25 @@ export default {
     this.onloadtable();
   },
   methods: {
-    addxlsubmit() { //添加点位
-      request({ url: '/dwxx/dwDicQuery', method: 'post', data: { dkh: '8081' } }).then(response => { //请求点位类型
-        this.row.dwlx = [];
-        for (var i = 0; i < response.length; i++) {
-          var data = { value: response[i].value, label: response[i].valuename };
-          this.row.dwlx.push(data);
-        }
-      });
-      this.row.dwbh = true;
-      this.row.dwmc = true;
+    addxlsubmit(row, val) { //查询点位类型
+      if (val) {
+        request({ url: '/dwxx/dwDicQuery', method: 'post', data: { dkh: '8081' } }).then(response => { //请求点位类型
+          this.row.options = [];
+          for (var i = 0; i < response.length; i++) {
+            var data = { value: response[i].value, label: response[i].valuename };
+            this.row.options.push(data);
+          }
+        });
+        this.row.btn = "增加";
+        this.row.title = "增加点位";
+      } else {
+        this.row = row;
+        this.row.btn = "修改";
+        this.row.title = "修改点位";
+      }
+      this.row.dwgl = true;
+      this.row.qygl = false;
+      this.row.xlgl = false;
       this.dialogVisible = true;
     },
     bindSubmit(row, val) { //绑定或解绑机器
@@ -118,22 +129,44 @@ export default {
       this.listQuery.pageNum = val;
       this.onloadtable();
     },
-    onloadtable() { //订单状态查询
+    onloadtable() { //点位信息查询
       var queryDdxxData = {
-        dwid: this.formInline.dwid,
+        dwbh: this.formInline.dwbh,
         sfbd: this.formInline.sfbd,
-        pageNum: this.listQuery.pageNum,
-        pageSize: this.listQuery.pageSize,
+        // pageNum: this.listQuery.pageNum,
+        // pageSize: this.listQuery.pageSize,
         dkh: '8081'
       }
       request({ url: "/dwxx/queryDwxx", method: 'post', data: queryDdxxData })
         .then(response => {
-          this.tableData = response.list;
+          this.tableData = response.data;
           this.listQuery.totalCount = response.total;
         })
         .catch(error => {
           Message.error("error：" + "请检查网络是否连接");
         })
+    },
+    delclick(row) { //删除点位
+      var dwxx = {
+        dwid: row.dwid,
+        dkh: '8081'
+      }
+      this.$confirm('是否删除该条点位信息, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        request({ url: '/dwxx/deleteDwxx', method: 'post', data: dwxx }).then(response => {
+
+            this.$message({ type: 'success', message: '成功!' });
+            this.onloadtable(); //刷新数据
+          })
+          .catch((error) => {
+            Message.error("error：" + "请检查网络是否连接");
+          })
+      }).catch(() => {
+        this.$message({ type: 'info', message: '已取消删除' });
+      });
     },
     childchanged(childdata) { //接收子组件参数
       this.dialogVisible = false;

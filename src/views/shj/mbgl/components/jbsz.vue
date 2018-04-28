@@ -15,12 +15,27 @@ export default {
   data() {
     return {
       formline: {
-        mbmc: "",
+        mbmc: '',
         bz: ''
       }
     }
+  },
+  watch: {
+    // 如果发生改变，这个函数就会运行
+    'formline.mbmc': function(newQuestion, oldQuestion) {
+      this.formline.mbmc = newQuestion;
+      this.setParam();
+    },
+    'formline.bz': function(newQuestion, oldQuestion) {
+      this.formline.bz = newQuestion;
+      this.setParam();
+    }
+  },
+  methods: {
+    setParam() {
+      this.$emit('jbmbParamChange', this.formline);
+    }
   }
-
 }
 
 </script>

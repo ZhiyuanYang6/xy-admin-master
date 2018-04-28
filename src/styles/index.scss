@@ -211,10 +211,6 @@ div.el-dialog__body {
 }
 
 
-
-
-
-
 /*订单管理*/
 
 .ddgl div.el-dialog__body {
@@ -224,4 +220,17 @@ div.el-dialog__body {
 //商户管理
 div.shglchild .el-card__header {
   padding: 15px 20px 5px 20px;
+}
+
+.wdshjspsz .el-tabs__header {
+  margin: 0;
+}
+
+.wdshjspsz .el-tabs__content {
+  padding: 5px;
+}
+
+.dwglbtnstly .el-button--info:focus,
+.el-button--info:hover {
+  background: #575a5d;
 }

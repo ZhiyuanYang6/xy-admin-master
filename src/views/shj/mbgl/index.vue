@@ -17,12 +17,12 @@
         <el-table-column prop="cjsj" label="创建时间" align="center"> </el-table-column>
         <el-table-column prop="cz" label="操作" align="center">
           <template slot-scope="scope">
-            <el-button type="text" size="mini" @click="dialogtable1(scope.$index, scope.row)">删除</el-button>
-            <el-button type="text" size="mini" @click="dialogtable1(scope.$index, scope.row)">修改</el-button>
-            <el-button type="text" size="mini" @click="dialogtable1(scope.$index, scope.row)">指派机器</el-button>
+            <el-button type="text" size="mini" @click="mbDelete(scope.row)">删除</el-button>
+            <el-button type="text" size="mini" @click="mbEdit(scope.$index, scope.row)">修改</el-button>
+            <el-button type="text" size="mini" @click="mbzpjq(scope.$index, scope.row)">指派机器</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="bz" label="备注" align="center"> </el-table-column>
+        <el-table-column prop="remark" label="备注" align="center"> </el-table-column>
       </el-table>
       <!-- 分页 -->
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.currentPage" :page-sizes="[10, 30, 50, 100]" :page-size="listQuery.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="listQuery.totalCount">
@@ -35,6 +35,8 @@
   </div>
 </template>
 <script>
+import request from '@/utils/request'
+import { Message, MessageBox } from 'element-ui'
 import shjMbsz from './components/shjMbsz'
 
 export default {
@@ -50,12 +52,7 @@ export default {
         pageNum: 1, //查询的页码
         totalCount: 100, //总页数
       },
-      tableData1: [{
-        mbmc: '商学院正门',
-        cjsj: '2017-11-25',
-        cz: '保养',
-        bz: '打机油',
-      }],
+      tableData1: [],
       loading: true,
       dialogTableVisible: false
     }
@@ -86,27 +83,59 @@ export default {
       this.onloadtable();
     },
     onloadtable() { //模板查询
-      var queryShjData = {
+      var queryData = {
         orderBy: this.orderBy,
         pageNum: this.listQuery.pageNum,
         pageSize: this.listQuery.pageSize,
         mbmc: this.formInline.mbmc,
+        shbh: "123"
       }
       this.loading = false;
-      // console.log(queryShjData);
-      // axios.post('http://192.168.1.112:8092/Shjgl/queryShj', queryShjData)
-      // .then(response => {
-      // this.loading = false;
-      // this.tableData1 = response.data.data;
-      // console.log(response.data);
-      // })
-      // .catch(error => {
-      // Message.error("error：" + "请检查网络是否连接");
-      // })
+      //console.log(queryShjData);
+      request({ url: '/mbgl/mbglQuery', method: 'post', data: queryData }).then(response => {
+          console.log(response.data);
+          this.loading = false;
+          this.tableData1 = response.data;
+          this.listQuery.totalCount = response.total;
+        })
+        .catch(error => {
+          Message.error("error：" + "请检查网络是否连接");
+        })
     },
-    dialogtable1() {
-      this.dialogTableVisible1 = true;
+    mbDelete(row) {
+      this.$confirm('确认删除模板?', '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        var mbDeleteData = {
+          mbid: row.mbid,
+          shbh: "123"
+        };
+        request({
+            url: '/mbgl/tymbDelete',
+            method: 'post',
+            data: mbDeleteData
+          }).then(response => {
+            if (response.msg) {
+              this.$message({ type: 'success', message: response.msg });
+              this.onloadtable();
+            }
+          })
+          .catch(error => {
+            Message.error("error：" + "请检查网络是否连接");
+          })
+
+      }).catch(() => {
+        this.$message({ type: 'info', message: '已取消删除' });
+      });
     },
+    mbEdit(index, row) {
+      Message.error("error：" + "请检查网络是否连接");
+    },
+    mbzpjq(index, row) {
+
+    }
   }
 }
 

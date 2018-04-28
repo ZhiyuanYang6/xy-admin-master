@@ -15,12 +15,12 @@
         <el-button type="primary" @click="onloadtable">查询</el-button>
       </el-form-item>
       <div class="stable">
-        <el-table :data="tableData" style="width:100%" border @selection-change="handleSelectionChange">
+        <el-table :data="tableData1" style="width:100%" border @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="100" align="center"> </el-table-column>
-          <el-table-column prop="jqbh" label="机器编号" width="200" align="center"> </el-table-column>
-          <el-table-column prop="jqmc" label="机器名称" align="center"> </el-table-column>
-          <el-table-column prop="dwbh" label="点位编号" align="center"> </el-table-column>
-          <el-table-column prop="dwmc" label="点位名称" align="center"> </el-table-column>
+          <el-table-column prop="dw" label="机器编号" width="200" align="center"> </el-table-column>
+          <el-table-column prop="xl" label="机器名称" align="center"> </el-table-column>
+          <el-table-column prop="qy" label="点位编号" align="center"> </el-table-column>
+          <el-table-column prop="sy" label="点位名称" align="center"> </el-table-column>
         </el-table>
         <!-- 分页 -->
         <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.currentPage" :page-sizes="[10, 30, 50, 100]" :page-size="listQuery.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="listQuery.totalCount">
@@ -55,7 +55,7 @@ export default {
       },
       optrows: [], //选中的行
       onceover: '', //是否初始化
-      tableData: [{}], //表格内容
+      tableData1: [{}], //表格内容
       showdw: true, //是否显示点位选择栏
 
     }
@@ -88,28 +88,9 @@ export default {
         return true
       }
     },
-    onloadtable(url, val) { //获取表格内容
-      var bindJqData
-      debugger;
-      if (val == 1) {
-        bindJqData = {
-          dwid: this.formInline.sfbd,
-          pageNum: this.listQuery.pageNum,
-          pageSize: this.listQuery.pageSize,
-          dkh: '8081'
-        }
-      } else {
-        bindJqData = {
-          dwid: this.listrow.dwid,
-          pageNum: this.listQuery.pageNum,
-          pageSize: this.listQuery.pageSize,
-          dkh: '8081'
-        }
-      }
-
-      request({ url: url, method: 'post', data: bindJqData }).then(response => {
-          this.tableData = response.data;
-          this.listQuery.totalCount = response.total;
+    onloadtable(url, data) { //获取表格内容
+      request({ url: 'test', method: 'post', data: data }).then(response => {
+          console.log(response.data);
         })
         .catch(error => {
           Message.error("error：" + "请检查网络是否连接");
@@ -125,39 +106,25 @@ export default {
     },
     handleSelectionChange(val) {
       this.optrows = val;
-      console.log(val);
     },
-    submitForm() { //绑定解绑
-      var url;
-      if (this.listrow.title == "绑定机器") {
-        url = '/dwxx/updateDwJq'
-      } else {
-        url = '/dwxx/updateDwJqUnbind'
-      }
-      var subData = {
-        val: this.optrows,
-        id: this.listrow.dwid,
-        mc: this.listrow.dwmc,
-        dkh: '8081'
-      }
-      request({ url: url, method: 'post', data: subData }).then(response => {
-          console.log(this.listrow);
-          console.log(this.optrows);
-          Message.success(this.listrow.btn + "成功");
-          this.$emit("dialog1Changed", 0); //发送参数到父组件 事件名，参数
-        })
-        .catch(error => {
-          Message.error("error：" + "请检查网络是否连接");
-        })
+    submitForm() { //提交
+      // request({ url: url, method: 'post', data: data }).then(response => {
+      console.log(this.listrow);
+      console.log(this.optrows);
+      Message.success(this.listrow.btn + "成功");
+      this.$emit("dialog1Changed", 0); //发送参数到父组件 事件名，参数
+      // })
+      // .catch(error => {
+      // Message.error("error：" + "请检查网络是否连接");
+      // })
     },
     Moveradd() { ////////////////////////进入初始化
       if (this.onceover) {
         if (this.listrow.title == "绑定机器") {
-          debugger;
-          this.onloadtable("/dwxx/queryDwJq", 1); // 查询所有机器
+          this.onloadtable("url", { data: "001" });
           this.showdw = true;
         } else {
-          this.onloadtable("/dwxx/queryDwJq", 0); //查询该点位上的机器
+          this.onloadtable("url", { data: "001" });
           this.showdw = false;
         }
         this.onceover = false;
