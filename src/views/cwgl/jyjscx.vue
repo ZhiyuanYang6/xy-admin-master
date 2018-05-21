@@ -6,7 +6,7 @@
         <el-input v-model="formInline.jqbh" style="width: 250px;" placeholder="机器名称/编号"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-date-picker v-model="formInline.ftime" type="daterange" :picker-options="pickerOptions2" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+        <el-date-picker v-model="formInline.ftime" type="daterange" value-format="yyyy-MM-dd" :picker-options="pickerOptions2" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
         </el-date-picker>
       </el-form-item>
       <!-- 右侧按钮 -->
@@ -19,11 +19,12 @@
       <!-- @sort-change="sortChange"v-loading="loading" -->
       <el-table :data="tableData" style="width:100%" border>
         <el-table-column prop="jqbh" label="机器编号" align="center"> </el-table-column>
-        <el-table-column prop="jqmc" label="金额" width="100" align="center"> </el-table-column>
-        <el-table-column prop="dwmc" label="结算日期" align="center"> </el-table-column>
-        <el-table-column prop="xlmc" label="交易起始时间" align="center"> </el-table-column>
-        <el-table-column prop="qymc" label="交易结束时间" align="center"> </el-table-column>
-        <el-table-column prop="sy" label="交易记录数" align="center"> </el-table-column>
+        <el-table-column prop="jqmc" label="机器名称" width="100" align="center"> </el-table-column>
+        <el-table-column prop="je" label="金额" width="100" align="center"> </el-table-column>
+        <el-table-column prop="jsrq" label="结算日期" align="center"> </el-table-column>
+        <el-table-column prop="jyqssj" label="交易起始时间" align="center"> </el-table-column>
+        <el-table-column prop="jyjssj" label="交易结束时间" align="center"> </el-table-column>
+        <el-table-column prop="jysy" label="交易记录数" align="center"> </el-table-column>
         <el-table-column label="明细" width="100" fixed="right" align="center">
           <template slot-scope="scope">
             <el-button type="primary" size="mini" @click="getdetil(scope.row)">明细</el-button>
@@ -36,7 +37,7 @@
     </el-pagination>
     <!-- 明细 -->
     <el-dialog title="交易结算明细" :visible.sync="dialogVisiblemx" width="60%">
-      <jyjsgldetil :dialogVisiblebind="dialogVisiblemx" @dialog1Changed="childchanged($event)"></jyjsgldetil>
+      <jyjsgldetil :dialogVisiblebind="dialogVisiblemx" :xqcx="xqcs" @dialog1Changed="childchanged($event)"></jyjsgldetil>
     </el-dialog>
   </div>
 </template>
@@ -48,6 +49,11 @@ export default {
   components: { jyjsgldetil },
   data() {
     return {
+      xqcs: {
+        jqbh: '',
+        jyqssj: '',
+        jyjssj: ''
+      },
       formInline: {
         jqbh: '',
         jqmc: '',
@@ -92,22 +98,24 @@ export default {
     }
   },
   created: function() {
-    // this.onloadtable();
+    this.onloadtable();
   },
   methods: {
     handleSizeChange(val) {
       this.listQuery.pageSize = val; //修改每页数据量
-      // this.onloadtable();
+      this.onloadtable();
     },
     handleCurrentChange(val) { //跳转第几页
       this.listQuery.pageNum = val;
-      // this.onloadtable();
+      this.onloadtable();
     },
-    getdetil() { //查询
+    getdetil(val) { //查询
       this.dialogVisiblemx = true;
+      this.xqcs = val;
+
     },
     onloadtable() { //机器交易明细查询
-      var queryJqjytjData = {
+      /*var queryJqjytjData = {
         // orderBy: 'jqbh',
         pageNum: this.listQuery.pageNum,
         pageSize: this.listQuery.pageSize,
@@ -122,6 +130,23 @@ export default {
         })
         .catch(error => {
           Message.error("error： " + "请检查网络是否连接 ");
+        })*/
+      var queryData = {
+        orderBy: 'jqbh',
+        jqbh: this.formInline.jqbh,
+        time: this.formInline.ftime,
+        pageNum: this.listQuery.pageNum,
+        pageSize: this.listQuery.pageSize,
+        shbh: 0,
+      }
+      request({ url: 'service-order/jqjymx/queryjyjs', method: 'post', data: queryData }).then(response => {
+          console.log(response);
+          this.tableData = response.data;
+          this.listQuery.totalCount = response.total;
+          console.log(response.data);
+        })
+        .catch(error => {
+          Message.error("error：" + "请检查网络是否连接");
         })
     },
 

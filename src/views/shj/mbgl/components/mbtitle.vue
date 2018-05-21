@@ -3,7 +3,6 @@
     <i class="iconfont icon-ai-set"></i>
     <div class="tlt" v-if="this.menuData[0].show">
       <span>模板基本信息设置</span>
-      <el-button type="warning" size="mini" @click="saveClick(0)" @jbmbParamChange="jbmbczParam">保存</el-button>
     </div>
     <div class="tlt" v-if="this.menuData[1].show">
       <span>货道模式设置</span>
@@ -21,25 +20,20 @@
     </div>
     <div class="tlt" v-if="this.menuData[3].show">
       <span>货道库存预警设置</span>
-      <el-button type="warning" size="mini" @click="saveClick(1)">保存</el-button>
       <el-button size="mini">批量设置</el-button>
     </div>
     <div class="tlt" v-if="this.menuData[4].show">
       <span>商品库存预警设置</span>
-      <el-button type="warning" size="mini">保存</el-button>
       <el-button size="mini">批量设置</el-button>
     </div>
     <div class="tlt" v-if="this.menuData[5].show">
       <span>温度设置</span>
-      <el-button type="warning" size="mini">保存</el-button>
     </div>
     <div class="tlt" v-if="this.menuData[6].show">
       <span>流量报警设置</span>
-      <el-button type="warning" size="mini">保存</el-button>
     </div>
     <div class="tlt" v-if="this.menuData[7].show">
       <span>出货规则设置</span>
-      <el-button type="warning" size="mini">保存</el-button>
     </div>
     <hr>
   </div>

@@ -78,12 +78,12 @@ export default {
     this.onloadtable();
   },
   methods: {
-    addxlsubmit(val) { //添加 修改路线
+    addxlsubmit(val) { //添加 修改线路
       if (val == "add") {
         this.row.dwgl = false;
         this.row.qygl = false;
         this.row.xlgl = true;
-        this.row.title = '添加路線';
+        this.row.title = '添加线路';
         this.row.btn = '添加';
         this.dialogVisible = true;
       } else {
@@ -91,7 +91,7 @@ export default {
         this.row.dwgl = false;
         this.row.qygl = false;
         this.row.xlgl = true;
-        this.row.title = '修改路線';
+        this.row.title = '修改线路';
         this.row.btn = '修改';
         this.dialogVisible = true;
       }
@@ -122,9 +122,8 @@ export default {
         xlbh: this.formInline.xlbh,
         pageNum: this.listQuery.pageNum,
         pageSize: this.listQuery.pageSize,
-        dkh: '8081'
       }
-      request({ url: '/dwxx/queryXlxx', method: 'post', data: queryXlxxData }).then(response => {
+      request({ url: 'service-machine/dwxx/queryXlxx', method: 'post', data: queryXlxxData }).then(response => {
           this.tableData = response.data;
           this.listQuery.totalCount = response.total;
         })
@@ -135,14 +134,13 @@ export default {
     delclick(row) { //删除
       var xlxx = {
         xlid: row.xlid,
-        dkh: '8081'
       }
       this.$confirm('是否删除该条线路信息, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        request({ url: '/dwxx/deleteXlxx.do', method: 'post', data: xlxx }).then(response => {
+        request({ url: 'service-machine/dwxx/deleteXlxx.do', method: 'post', data: xlxx }).then(response => {
             this.$message({ type: 'success', message: '成功!' });
             this.onloadtable(); //刷新数据
           })

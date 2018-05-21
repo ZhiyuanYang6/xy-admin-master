@@ -87,7 +87,7 @@
 <script>
 import axios from 'axios'
 import { Message } from 'element-ui'
-
+import request from '@/utils/request'
 export default {
   name: 'index',
   data() {
@@ -161,9 +161,9 @@ export default {
       this.onloadtable1();
     },
     sortChange(column) { //服务器端排序
-      if (column.order == "ascending") {
+      if (column.order === "ascending") {
         this.orderBy = column.prop + " asc";
-      } else if (column.order == "descending") {
+      } else if (column.order === "descending") {
         this.orderBy = column.prop + " desc";
       }
       this.onloadtable1();
@@ -182,15 +182,12 @@ export default {
         ne: this.formInline.ne
       };
       console.log(txmxcxData);
-      axios.post('http://127.0.0.1:8083/pay/api/config/jychannelselect', txmxcxData)
+      // axios.post('http://127.0.0.1:8083/pay/api/config/jychannelselect', txmxcxData)
+      request({ url: 'service-pay/pay/api/config/jychannelselect', method: 'post', data: txmxcxData })
         .then(response => {
           this.loading = false;
-          for (var i = 0; i < response.data.list.length; i++) {
-            response.data.list[i].je = this.moneyData(response.data.list[i].je);
-          }
-          this.tableData = response.data.list;
-          this.listQuery.totalCount = response.data.total;
-          console.log(response.data);
+          this.tableData = response.list;
+          this.listQuery.totalCount = response.total;
         })
         .catch(error => {
           Message.error("error：" + "请检查网络是否连接");
@@ -207,9 +204,11 @@ export default {
         service: this.form.service,
       };
       this.dialogFormVisible = false;
-      axios.post('http://127.0.0.1:8083/pay/api/config/jychanneladd', txmxcxData)
+      // axios.post('http://127.0.0.1:8083/pay/api/config/jychanneladd', txmxcxData)
+      request({ url: 'service-pay/pay/api/config/jychanneladd', method: 'post', data: txmxcxData })
         .then(response => {
-          if (response.data.result == 1) {
+          if (response.result === 1) {
+            this.onloadtable1();
             this.$message({
               message: '添加成功',
               type: 'success'
@@ -228,7 +227,7 @@ export default {
       this.dialogFormVisibleupdate = true;
 
     },
-    xiugai() { //添加
+    xiugai() { //修改
       var txmxcxData = {
         id: this.updateformis.id,
         sn: this.updateformis.sn,
@@ -237,9 +236,11 @@ export default {
         service: this.updateformis.service,
       };
       this.dialogFormVisibleupdate = false;
-      axios.post('http://127.0.0.1:8083/pay/api/config/jychannelupdate', txmxcxData)
+      //  axios.post('http://127.0.0.1:8083/pay/api/config/jychannelupdate', txmxcxData)
+      request({ url: 'service-pay/pay/api/config/jychannelupdate', method: 'post', data: txmxcxData })
         .then(response => {
-          if (response.data.result == 1) {
+          if (response.result === 1) {
+            this.onloadtable1();
             this.$message({
               message: '修改成功',
               type: 'success'

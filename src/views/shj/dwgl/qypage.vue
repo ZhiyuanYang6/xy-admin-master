@@ -99,12 +99,12 @@ export default {
     bindSubmit(row, val) { //绑定或解绑机器
       this.listrow = row;
       if (val == "bind") { //绑定
-        this.listrow.title = "绑定机器";
+        this.listrow.title = "绑定线路";
         this.listrow.btn = "绑定";
         this.listrow.bind = true;
       } else {
         this.listrow.bind = '';
-        this.listrow.title = "解绑机器";
+        this.listrow.title = "解绑线路";
         this.listrow.btn = "解绑";
       }
       this.dialogVisiblebind = true;
@@ -122,9 +122,8 @@ export default {
         qybh: this.formInline.qybh,
         pageNum: this.listQuery.pageNum,
         pageSize: this.listQuery.pageSize,
-        dkh: '8081'
       }
-      request({ url: '/dwxx/queryQyxx', method: 'post', data: queryQyxxData }).then(response => {
+      request({ url: 'service-machine/dwxx/queryQyxx', method: 'post', data: queryQyxxData }).then(response => {
           this.tableData = response.data;
           this.listQuery.totalCount = response.total;
         })
@@ -135,14 +134,13 @@ export default {
     delclick(row) { //删除
       var qyxx = {
         qyid: row.qyid,
-        dkh: '8081'
       }
       this.$confirm('是否删除该条区域信息, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        request({ url: '/dwxx/deleteQyxx', method: 'post', data: qyxx }).then(response => {
+        request({ url: 'service-machine/dwxx/deleteQyxx', method: 'post', data: qyxx }).then(response => {
             this.$message({ type: 'success', message: '成功!' });
             this.onloadtable(); //刷新数据
           })

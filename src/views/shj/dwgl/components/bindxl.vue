@@ -6,7 +6,7 @@
       </el-form-item>
       <!-- 右侧按钮 -->
       <el-form-item class="rightitem">
-        <el-button type="primary" @click="onloadtable">查询</el-button>
+        <el-button type="primary" @click="judgeBind">查询</el-button>
       </el-form-item>
       <div class="stable">
         <el-table :data="tableData" style="width:100%" border @selection-change="handleSelectionChange">
@@ -16,6 +16,7 @@
           <el-table-column prop="dwdz" label="点位地址" align="center"> </el-table-column>
           <el-table-column prop="dwlx" label="点位类型" align="center"> </el-table-column>
           <el-table-column prop="dwbs" label="点位标识" align="center"> </el-table-column>
+          <el-table-column prop="xlmc" label="已绑定的线路" align="center"> </el-table-column>
         </el-table>
         <!-- 分页 -->
         <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.currentPage" :page-sizes="[10, 30, 50, 100]" :page-size="listQuery.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="listQuery.totalCount">
@@ -54,22 +55,34 @@ export default {
   },
   watch: {
     dialogVisiblebind: function(data, olddata) {
-      this.onloadtable();
-      this.judgeBind()
+      // this.onloadtable();
+      this.judgeBind();
     }
   },
   created: function() {
-    this.onloadtable();
-    this.judgeBind()
+    //this.onloadtable();
+    this.judgeBind();
   },
   methods: {
     handleSizeChange(val) {
       this.listQuery.pageSize = val; //修改每页数据量
-      this.onloadtable();
+      if (this.listrow.title == "绑定点位") {
+        this.onloadtable("service-machine/dwxx/queryDwxx", 1); // 点位绑定查询所有点位
+        this.showdw = true;
+      } else {
+        this.onloadtable("service-machine/dwxx/queryDwxx", 0); //点位绑定删除查询该线路下的点位
+        this.showdw = false;
+      }
     },
     handleCurrentChange(val) { //跳转第几页
       this.listQuery.pageNum = val;
-      this.onloadtable();
+      if (this.listrow.title == "绑定点位") {
+        this.onloadtable("service-machine/dwxx/queryDwxx", 1); // 点位绑定查询所有点位
+        this.showdw = true;
+      } else {
+        this.onloadtable("service-machine/dwxx/queryDwxx", 0); //点位绑定删除查询该线路下的点位
+        this.showdw = false;
+      }
     },
     handleSelectionChange(val) { //table选中项
       this.optrows = val;
@@ -78,16 +91,16 @@ export default {
       var bindXlData
       if (val == 1) {
         bindXlData = {
+          dwbh: this.formInline.dwbh,
           pageNum: this.listQuery.pageNum,
           pageSize: this.listQuery.pageSize,
-          dkh: '8081'
         }
       } else {
         bindXlData = {
+          // dwbh: this.ormInline.dwbh,
           xlid: this.listrow.xlid,
           pageNum: this.listQuery.pageNum,
           pageSize: this.listQuery.pageSize,
-          dkh: '8081'
         }
       }
       request({ url: url, method: 'post', data: bindXlData }).then(response => {
@@ -103,19 +116,18 @@ export default {
       var url;
       var subData;
       if (this.listrow.title == "绑定点位") {
-        url = '/dwxx/updateDwBind';
+        url = 'service-machine/dwxx/updateDwBind';
         subData = {
           val: this.optrows,
           id: this.listrow.xlid,
-          dkh: '8081'
         }
       } else {
-        url = '/dwxx/updateDwUnbind';
+        url = 'service-machine/dwxx/updateDwUnbind';
         subData = {
           val: this.optrows,
-          dkh: '8081'
         }
       }
+      if (subData.val.length == 0) { return Message.error("error：" + "请选择要操作的数据") };
       request({ url: url, method: 'post', data: subData })
         .then(response => {
           Message.success(this.listrow.btn + "成功");
@@ -130,10 +142,10 @@ export default {
     },
     judgeBind() {
       if (this.listrow.title == "绑定点位") {
-        this.onloadtable("/dwxx/queryDwxx", 1); // 点位绑定查询所有点位
+        this.onloadtable("service-machine/dwxx/queryDwxx", 1); // 点位绑定查询所有点位
         this.showdw = true;
       } else {
-        this.onloadtable("/dwxx/queryDwxx", 0); //点位绑定删除查询该线路下的点位
+        this.onloadtable("service-machine/dwxx/queryDwxx", 0); //点位绑定删除查询该线路下的点位
         this.showdw = false;
       }
       this.onceover = false;

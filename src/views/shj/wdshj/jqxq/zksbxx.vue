@@ -11,9 +11,6 @@
       <el-form-item label="上位机型号">
         <el-input v-model="formInline.swxh" class="inpxq"></el-input>
       </el-form-item>
-      <el-form-item label="下位机版本">
-        <el-input v-model="formInline.jqmc" class="inpxq"></el-input>
-      </el-form-item>
       <el-form-item label="下位机型号">
         <el-input v-model="formInline.xwxh" class="inpxq"></el-input>
       </el-form-item>
@@ -39,7 +36,7 @@
         <el-input v-model="formInline.sccj" class="inpxq"></el-input>
       </el-form-item>
       <el-form-item label="生产日期">
-        <el-input v-model="formInline.scrq" class="inpxq"></el-input>
+        <el-input v-model="formInline.scrq1" class="inpxq"></el-input>
       </el-form-item>
       <el-form-item label="保质日期">
         <el-input v-model="formInline.zbrq" class="inpxq"></el-input>
@@ -55,7 +52,7 @@
       </el-form-item>
       <el-form-item label="记录更新时间">
         <el-input v-model="formInline.jlsj" class="inpxq"></el-input>
-      </el-form-item> 
+      </el-form-item>
     </el-form>
   </div>
 </template>

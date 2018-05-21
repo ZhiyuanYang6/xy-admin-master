@@ -51,8 +51,11 @@
           <el-form-item label="支付商户号" :label-width="formLabelWidth">
             <el-input v-model="form.mchid" style="width: 240px;" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="支付服务编号" :label-width="formLabelWidth">
-            <el-input v-model="form.channelId" style="width: 240px;" auto-complete="off"></el-input>
+          <el-form-item label="支付服务" :label-width="formLabelWidth">
+            <el-select v-model="form.channelId" clearable placeholder="请选择">
+              <el-option v-for="item in jychannel" :key="item.id" :label="item.channelName" :value="item.id">
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="API密钥" :label-width="formLabelWidth">
             <el-input v-model="form.mchkey" style="width: 240px;" auto-complete="off"></el-input>
@@ -72,11 +75,18 @@
           <el-form-item label="异步调用地址" :label-width="formLabelWidth">
             <el-input v-model="form.jsApiCallUrl" style="width: 240px;" auto-complete="off"></el-input>
           </el-form-item>
+          <el-form-item label="证书" :label-width="formLabelWidth">
+            <el-upload class="upload-demo" id="files" drag action="123" :limit="1" :on-change="beforeUpload" multiple ref="newupload" :auto-upload="false">
+              <i class="el-icon-upload"></i>
+              <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em> </div>
+            </el-upload>
+          </el-form-item>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="addform()">添加</el-button>
+          <el-button style="margin-left: 10px;" size="small" type="success" @click="newSubmitForm()">添加</el-button>
+          <!-- <el-button type="primary" @click="addform()">添加</el-button> -->
         </div>
       </el-dialog>
       <el-dialog title="修改" style="margin-left:170px" :visible.sync="dialogFormVisibleupdate">
@@ -93,8 +103,11 @@
           <el-form-item label="支付商户号" :label-width="formLabelWidth">
             <el-input v-model="updateformis.mchid" style="width: 240px;" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="支付服务编号" :label-width="formLabelWidth">
-            <el-input v-model="updateformis.channelId" style="width: 240px;" auto-complete="off"></el-input>
+          <el-form-item label="支付服务" :label-width="formLabelWidth">
+            <el-select v-model="updateformis.channelId" clearable placeholder="请选择">
+              <el-option v-for="item in jychannel" :key="item.id" :label="item.channelName" :value="item.id">
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="API密钥" :label-width="formLabelWidth">
             <el-input v-model="updateformis.mchkey" style="width: 240px;" auto-complete="off"></el-input>
@@ -114,6 +127,12 @@
           <el-form-item label="异步调用地址" :label-width="formLabelWidth">
             <el-input v-model="updateformis.jsApiCallUrl" style="width: 240px;" auto-complete="off"></el-input>
           </el-form-item>
+          <el-form-item label="证书" :label-width="formLabelWidth">
+            <el-upload class="upload-demo" drag action="123" :limit="1" :on-change="xgUpload" ref="xgupload" :auto-upload="false">
+              <i class="el-icon-upload"></i>
+              <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em> </div>
+            </el-upload>
+          </el-form-item>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -130,7 +149,7 @@
 <script>
 import axios from 'axios'
 import { Message } from 'element-ui'
-
+import request from '@/utils/request'
 export default {
   name: 'index',
   data() {
@@ -152,21 +171,19 @@ export default {
         ne: ''
       },
       updateformis: {
-        jsApiCallUrl: '',
+        name: '',
         notifyUrl: '',
+        jsApiCallUrl: '',
         sslkeyPath: '',
         sslcertPath: '',
         appsecret: '',
         mchkey: '',
-        mchid: '',
         appid: '',
-        channelId: '',
-        name: '',
-        sn: '',
-        channelName: '',
-        sj: '',
-        ne: ''
+        mchid: '',
+        channelId: ''
+
       },
+
       listQuery: {
         pageSize: 10, //默认每页的数据量
         currentPage: 1, //当前页码
@@ -180,21 +197,20 @@ export default {
       dialogFormVisible: false,
       form: {
         name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
+        notifyUrl: '',
+        jsApiCallUrl: '',
+        sslkeyPath: '',
+        sslcertPath: '',
+        appsecret: '',
+        mchkey: '',
+        appid: '',
+        mchid: '',
+        channelId: ''
       },
       formLabelWidth: '120px',
       orderBy: '',
       loading: false,
       options: [{
-        value: 'cl.sn',
-        label: '支付服务编号'
-      }, {
         value: 'ser.mchid',
         label: '支付商户号'
       }, {
@@ -204,7 +220,8 @@ export default {
         value: 'ser.name',
         label: '支付服务商'
       }],
-      value4: ''
+      value4: '',
+      jychannel: ''
     };
   },
   created: function() {
@@ -220,58 +237,34 @@ export default {
       this.onloadtable1();
     },
     sortChange(column) { //服务器端排序
-      if (column.order == "ascending") {
+      if (column.order === "ascending") {
         this.orderBy = column.prop + " asc";
-      } else if (column.order == "descending") {
+      } else if (column.order === "descending") {
         this.orderBy = column.prop + " desc";
       }
       this.onloadtable1();
     },
-    onloadtable1() { //查询
-      var txmxcxData
-
-      = {
-        orderBy: this.orderBy,
-        pageNum: this.listQuery.pageNum,
-        pageSize: this.listQuery.pageSize,
-        sn: this.formInline.sn,
-        ne: this.formInline.ne
-      };
-      console.log(txmxcxData);
-      axios.post('http://127.0.0.1:8083/pay/api/config/jyserverselect', txmxcxData)
-        .then(response => {
-          this.loading = false;
-          for (var i = 0; i < response.data.list.length; i++) {
-            response.data.list[i].je = this.moneyData(response.data.list[i].je);
-          }
-          this.tableData = response.data.list;
-          this.listQuery.totalCount = response.data.total;
-          console.log(response.data);
-        })
-        .catch(error => {
-          Message.error("error：" + "请检查网络是否连接");
-        });
+    beforeUpload(file, fileList) {
+      this.file = fileList[0].raw;
     },
-    moneyData(money) { //不能用过滤器，很难受 金额
-      return (money / 100).toFixed(2);
-    },
-    addform() { //添加
-      var txmxcxData = {
-        jsApiCallUrl: this.form.jsApiCallUrl,
-        notifyUrl: this.form.notifyUrl,
-        sslkeyPath: this.form.sslkeyPath,
-        sslcertPath: this.form.sslcertPath,
-        appsecret: this.form.appsecret,
-        mchkey: this.form.mchkey,
-        mchid: this.form.mchid,
-        appid: this.form.appid,
-        name: this.form.name,
-        channelId: this.form.channelId
-      };
+    newSubmitForm() {
+      let fd = new FormData();
+      fd.append('file', this.file); //传文件 
+      fd.append('notifyUrl', this.form.notifyUrl); //传其他参数
+      fd.append('jsApiCallUrl', this.form.jsApiCallUrl);
+      fd.append('sslkeyPath', this.form.sslkeyPath);
+      fd.append('sslcertPath', this.form.sslcertPath);
+      fd.append('appsecret', this.form.appsecret);
+      fd.append('mchkey', this.form.mchkey);
+      fd.append('mchid', this.form.mchid);
+      fd.append('appid', this.form.appid);
+      fd.append('name', this.form.name);
+      fd.append('channelId', this.form.channelId);
       this.dialogFormVisible = false;
-      axios.post('http://127.0.0.1:8083/pay/api/config/jyserveradd', txmxcxData)
+      request({ url: 'service-pay/pay/api/config/jyserveradd', method: 'post', data: fd })
         .then(response => {
-          if (response.data.result == 1) {
+          if (response.result === 1) {
+            this.onloadtable1();
             this.$message({
               message: '添加成功',
               type: 'success'
@@ -279,35 +272,31 @@ export default {
           } else {
             alert("失败啦");
           }
-
         })
         .catch(error => {
-          Message.error("添加失败：" + "请检查内容是否正确");
+          Message.error("error：" + "请检查网络是否连接");
         });
     },
-    updateform(index, rows) { //修改
-      this.updateformis = rows;
-      this.dialogFormVisibleupdate = true;
-
-    },
-    xiugai() { //修改
-      var txmxcxData = {
-        id: this.updateformis.id,
-        jsApiCallUrl: this.updateformis.jsApiCallUrl,
-        notifyUrl: this.updateformis.notifyUrl,
-        sslkeyPath: this.updateformis.sslkeyPath,
-        sslcertPath: this.updateformis.sslcertPath,
-        appsecret: this.updateformis.appsecret,
-        mchkey: this.updateformis.mchkey,
-        mchid: this.updateformis.mchid,
-        appid: this.updateformis.appid,
-        name: this.updateformis.name,
-        channelId: this.updateformis.channelId
-      };
+    xiugai() {
+      let fd = new FormData();
+      fd.append('file', this.file); //传文件 
+      fd.append('id', this.updateformis.id);
+      fd.append('notifyUrl', this.updateformis.notifyUrl); //传其他参数
+      fd.append('jsApiCallUrl', this.updateformis.jsApiCallUrl);
+      fd.append('sslkeyPath', this.updateformis.sslkeyPath);
+      fd.append('sslcertPath', this.updateformis.sslcertPath);
+      fd.append('appsecret', this.updateformis.appsecret);
+      fd.append('mchkey', this.updateformis.mchkey);
+      fd.append('mchid', this.updateformis.mchid);
+      fd.append('appid', this.updateformis.appid);
+      fd.append('name', this.updateformis.name);
+      fd.append('channelId', this.updateformis.channelId);
       this.dialogFormVisibleupdate = false;
-      axios.post('http://127.0.0.1:8083/pay/api/config/jyserverupdate', txmxcxData)
+      //axios.post('http://127.0.0.1:8083/pay/api/config/jyserverupdate', txmxcxData)
+      request({ url: 'service-pay/pay/api/config/jyserverupdate', method: 'post', data: fd })
         .then(response => {
-          if (response.data.result == 1) {
+          if (response.result === 1) {
+            this.onloadtable1();
             this.$message({
               message: '修改成功',
               type: 'success'
@@ -320,9 +309,52 @@ export default {
         .catch(error => {
           Message.error("添加失败：" + "请检查内容是否正确");
         });
+
+    },
+    xgUpload(file, fileList) { //修改
+      this.file = fileList[0].raw;
+    },
+    onloadtable1() { //查询
+      var txmxcxData
+
+      = {
+        orderBy: this.orderBy,
+        pageNum: this.listQuery.pageNum,
+        pageSize: this.listQuery.pageSize,
+        sn: this.formInline.sn,
+        ne: this.formInline.ne
+      };
+      console.log(txmxcxData);
+      // axios.post('http://127.0.0.1:8083/pay/api/config/jyserverselect', txmxcxData)
+      request({ url: 'service-pay/pay/api/config/jyserverselect', method: 'post', data: txmxcxData })
+        .then(response => {
+          this.loading = false;
+          this.tableData = response.list;
+          this.listQuery.totalCount = response.total;
+          this.jychannel = response.jychannel;
+        })
+        .catch(error => {
+          Message.error("error：" + "请检查网络是否连接");
+        });
+    },
+    moneyData(money) { //不能用过滤器，很难受 金额
+      return (money / 100).toFixed(2);
     },
 
+    updateform(index, rows) { //修改
+      this.updateformis = rows;
+      this.dialogFormVisibleupdate = true;
+      this.$refs.xgupload.clearFiles();
+    }
   }
+};
+export function newVideo(data) {
+  return axios({
+    method: 'post',
+    url: 'http://192.168.1.253:8899/service-pay/pay/api/config/jyserveradd',
+    timeout: 20000,
+    data: data
+  });
 }
 
 </script>

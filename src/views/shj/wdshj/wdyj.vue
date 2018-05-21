@@ -8,7 +8,7 @@
 </template>
 <script>
 import request from '@/utils/request'
-import wdyj from '@/views/shj/mbgl/components/wdyj'
+import wdyj from '@/views/shj/components/wdyj'
 export default {
   components: { wdyj },
   data() {

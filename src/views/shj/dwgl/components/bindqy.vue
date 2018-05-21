@@ -2,19 +2,19 @@
   <div>
     <el-form :inline="true" ref="formInline" :model="formInline" size="small" class="demo-form-inline">
       <el-form-item>
-        <el-input v-model="formInline.jqbh" style="width: 300px;" placeholder="机器编号/名称"></el-input>
+        <el-input v-model="formInline.xlbh" style="width: 300px;" placeholder="线路编号/名称"></el-input>
       </el-form-item>
       <!-- 右侧按钮 -->
       <el-form-item class="rightitem">
-        <el-button type="primary" @click="onloadtable">查询</el-button>
+        <el-button type="primary" @click="judgeBind">查询</el-button>
       </el-form-item>
       <div class="stable">
         <el-table :data="tableData" style="width:100%" border @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="100" align="center"> </el-table-column>
-          <el-table-column prop="jqbh" label="机器编号" width="200" align="center"> </el-table-column>
-          <el-table-column prop="jqmc" label="机器名称" align="center"> </el-table-column>
-          <el-table-column prop="dwbh" label="点位编号" align="center"> </el-table-column>
-          <el-table-column prop="dwmc" label="点位名称" align="center"> </el-table-column>
+          <el-table-column prop="xlbh" label="线路编号" width="200" align="center"> </el-table-column>
+          <el-table-column prop="xlmc" label="线路名称" align="center"> </el-table-column>
+          <el-table-column prop="remark" label="备注" align="center"> </el-table-column>
+          <el-table-column prop="qymc" label="绑定的区域名称" align="center"> </el-table-column>
         </el-table>
         <!-- 分页 -->
         <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.currentPage" :page-sizes="[10, 30, 50, 100]" :page-size="listQuery.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="listQuery.totalCount">
@@ -53,32 +53,55 @@ export default {
   },
   watch: {
     dialogVisiblebind: function(data, olddata) {
-      this.onloadtable();
+      //this.onloadtable();
+      this.judgeBind();
     }
   },
   created: function() {
-    this.onloadtable();
+    //this.onloadtable();
+    this.judgeBind();
   },
   methods: {
     handleSizeChange(val) {
       this.listQuery.pageSize = val; //修改每页数据量
-      this.onloadtable();
+      if (this.listrow.title == "绑定线路") {
+        this.onloadtable("service-machine/dwxx/queryXlxx", 1); // 点位绑定查询所有点位
+        this.showdw = true;
+      } else {
+        this.onloadtable("service-machine/dwxx/queryXlxx", 0); //点位绑定删除查询该线路下的点位
+        this.showdw = false;
+      }
     },
     handleCurrentChange(val) { //跳转第几页
       this.listQuery.pageNum = val;
-      this.onloadtable();
+      if (this.listrow.title == "绑定线路") {
+        this.onloadtable("service-machine/dwxx/queryXlxx", 1); // 点位绑定查询所有点位
+        this.showdw = true;
+      } else {
+        this.onloadtable("service-machine/dwxx/queryXlxx", 0); //点位绑定删除查询该线路下的点位
+        this.showdw = false;
+      }
     },
     handleSelectionChange(val) { //table选中项
       this.optrows = val;
     },
-    onloadtable() { //获取表格内容
-      var bindJqData = {
-        dwid: this.listrow.dwid,
-        pageNum: this.listQuery.pageNum,
-        pageSize: this.listQuery.pageSize,
-        dkh: '8081'
-      };
-      request({ url: '/dwxx/queryDwJq', method: 'post', data: bindJqData }).then(response => {
+    onloadtable(url, val) {
+      var bindQyData;
+      if (val == 1) {
+        bindQyData = {
+          xlbh: this.formInline.xlbh,
+          pageNum: this.listQuery.pageNum,
+          pageSize: this.listQuery.pageSize
+        }
+      } else {
+        bindQyData = {
+          qyid: this.listrow.qyid,
+          xlbh: this.formInline.xlbh,
+          pageNum: this.listQuery.pageNum,
+          pageSize: this.listQuery.pageSize
+        }
+      }
+      request({ url: url, method: 'post', data: bindQyData }).then(response => {
           this.tableData = response.data;
           this.listQuery.totalCount = response.total;
         })
@@ -89,12 +112,21 @@ export default {
 
     submitForm() { //绑定解绑
       var url;
-      if (this.listrow.title == "绑定机器") {
-        url = '/dwxx/updateDwJq';
+      var subData;
+      if (this.listrow.title == "绑定线路") {
+        url = 'service-machine/dwxx/updateXlBind';
+        subData = {
+          val: this.optrows,
+          id: this.listrow.qyid
+        }
       } else {
-        url = '/dwxx/updateDwJqUnbind';
+        url = 'service-machine/dwxx/updateXlUnbind';
+        subData = {
+          val: this.optrows
+        }
       }
-      request({ url: url, method: 'post', data: { val: this.optrows, id: this.listrow.dwid, mc: this.listrow.dwmc, dkh: '8081' } })
+      if (subData.val.length == 0) { return Message.error("error：" + "请选择要操作的数据") };
+      request({ url: url, method: 'post', data: subData })
         .then(response => {
           Message.success(this.listrow.btn + "成功");
           this.$emit("dialog1Changed", 0); //发送参数到父组件 事件名，参数
@@ -105,6 +137,16 @@ export default {
     },
     resetForm(formName) {
       this.$emit("dialog1Changed", 0); //发送参数到父组件 事件名，参数
+    },
+    judgeBind() {
+      if (this.listrow.title == "绑定线路") {
+        this.onloadtable("service-machine/dwxx/queryXlxx", 1); // 点位绑定查询所有点位
+        this.showdw = true;
+      } else {
+        this.onloadtable("service-machine/dwxx/queryXlxx", 0); //点位绑定删除查询该线路下的点位
+        this.showdw = false;
+      }
+      this.onceover = false;
     },
   },
 }

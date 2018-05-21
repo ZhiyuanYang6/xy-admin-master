@@ -1,11 +1,11 @@
-const TokenKey = 'Admin-Token'
+const TokenKey = 'Authorization'
 
 export function setSession(token) {
-  return sessionStorage.setItem(TokenKey, token)
+  return sessionStorage.setItem(TokenKey, token);
 }
 
 export function removeSession() {
-  return sessionStorage.setItem(TokenKey, '')
+  return sessionStorage.removeItem(TokenKey);
 }
 
 export function getSession() {

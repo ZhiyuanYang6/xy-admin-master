@@ -24,7 +24,7 @@
       </el-form-item>
       <el-form-item label="点位类型" v-show="listrow.dwgl">
         <el-select v-model="form.dwlx" placeholder="请选择" clearable>
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+          <el-option v-for="item in dwoptions" :key="item.value" :label="item.valuename" :value="item.value">
           </el-option>
         </el-select>
       </el-form-item>
@@ -74,6 +74,7 @@ export default {
         mc: "",
       },
       onceover: true,
+      dwoptions: [],
     }
   },
   watch: {
@@ -81,16 +82,23 @@ export default {
       if (data) {
         this.onceover = data;
       }
-    }
+    },
+    qyoptions: function(data, olddata) {
+      this.dictSelect("1017", 'dwoptions');
+    },
+  },
+  created: function() {
+    this.dictSelect("1017", 'dwoptions');
   },
   methods: {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          if (this.listrow.xlmc) {
+          console.log(this.listrow)
+          if (this.listrow.title == "添加线路" || this.listrow.title == "修改线路") {
             this.addxl();
             return;
-          } else if (this.listrow.qymc) {
+          } else if ((this.listrow.title == "添加区域" || this.listrow.title == "修改区域")) {
             this.addqy();
             return
           } else {
@@ -110,23 +118,50 @@ export default {
     addxl() {
       if (this.validator(this.form.xlmc, "线路名称")) { return }
       if (this.validator(this.form.xlbh, "线路编号")) { return }
-      this.onload("/dwxx/addXlxx", { xlmc: this.form.xlmc, xlbh: this.form.xlbh, remark: this.form.remark, dkh: "8081" })
+      if (this.listrow.title == "添加线路") {
+        this.onload("service-machine/dwxx/addXlxx", {
+          xlmc: this.form.xlmc,
+          xlbh: this.form.xlbh,
+          remark: this.form.remark
+        })
+      } else {
+        this.onload("service-machine/dwxx/updateXlxx", {
+          xlmc: this.form.xlmc,
+          xlbh: this.form.xlbh,
+          remark: this.form.remark,
+          xlid: this.listrow.xlid
+        })
+      }
+
     },
     addqy() {
+      debugger;
       if (this.validator(this.form.qymc, "区域名称")) { return }
       if (this.validator(this.form.qybh, "区域编号")) { return }
-      this.form.dkh = "8081"
-      this.onload("/dwxx/addQyxx", { qymc: this.form.qymc, qybh: this.form.qybh, dkh: "8081", remark: this.form.remark, })
+      if (this.listrow.title == "添加区域") {
+        this.onload("service-machine/dwxx/addQyxx", {
+          qymc: this.form.qymc,
+          qybh: this.form.qybh,
+          remark: this.form.remark,
+        })
+      } else {
+        this.onload("service-machine/dwxx/updateQyxx", {
+          qymc: this.form.qymc,
+          qybh: this.form.qybh,
+          remark: this.form.remark,
+          qyid: this.listrow.qyid
+        })
+      }
     },
     adddw() {
-      this.form.dkh = "8081"
       if (this.validator(this.form.dwmc, "点位名称")) { return }
       if (this.validator(this.form.dwbh, "点位编号")) { return }
-      if (this.listrow == "增加") {
-        this.onload("/dwxx/addDwxx", this.form)
+      if (this.listrow.title == "增加点位") {
+        this.onload("service-machine/dwxx/addDwxx", this.form)
       } else {
-        this.form.dwid = this.listrow.dwid
-        this.onload("/dwxx/updateDwxx", this.form)
+        this.form.dwid = this.listrow.dwid;
+        console.log(this.form);
+        this.onload("service-machine/dwxx/updateDwxx", this.form)
       }
     },
     validator(val, type) {
@@ -146,7 +181,7 @@ export default {
           })
       } else {
         request({ url: url, method: 'post', data: data }).then(response => {
-            Message.success("修改+" + this.listrow.title + "成功");
+            Message.success(this.listrow.title + "成功");
             this.$emit("dialog1Changed", 0); //发送参数到父组件 事件名，参数
           })
           .catch(error => {
@@ -165,7 +200,7 @@ export default {
           this.form.qybh = this.listrow.qybh;
           this.form.dwbh = this.listrow.dwbh;
           this.form.remark = this.listrow.remark;
-          this.form.dwlx = this.listrow.showdwlx;
+          this.form.dwlx = this.listrow.dwlx;
           this.form.dwdz = this.listrow.dwdz;
           this.form.dwjd = this.listrow.dwjd;
           this.form.dwwd = this.listrow.dwwd;
@@ -173,10 +208,25 @@ export default {
         } else {
           this.form = { xlmc: '', qymc: '', dwmc: '', xlbh: '', qybh: '', dwbh: '', remark: '', dwlx: '', dwdz: '', dwjd: '', dwwd: '', dwbs: '' }
         }
+        this.whether();
         if (!this.options.length) this.options = this.listrow.options ? this.listrow.options : "";
         this.onceover = false;
       }
-    }
+    },
+    whether() {
+      if (this.listrow.title == "添加线路") {
+        this.form = { qymc: '1', dwmc: '1', qybh: '1', dwbh: '1' }
+      } else {}
+    },
+    dictSelect(type, valuename) {
+      var queryType = { type: type };
+      request({ url: 'service-machine/shjgl/queryDict', method: 'post', data: queryType }).then(response => {
+        if (valuename == 'dwoptions') { this.dwoptions = response; }
+      }).catch(error => {
+        Message.error("error：" + "请检查网络是否连接");
+      });
+    },
+
   },
 
 }

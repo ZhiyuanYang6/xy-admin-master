@@ -15,11 +15,12 @@ service.interceptors.request.use(config => { // 在发送请求之前做些什�
   if (store.getters.token) {
     config.headers['Authorization'] = getSession(); // 让每个请求携带自定义token
   }
-  if (config.data.dkh) {
-    config.baseURL = config.baseURL + config.data.dkh; //配置端口号
-  }
+  // if (config.data.dkh) {
+  //   config.baseURL = config.baseURL + config.data.dkh; //配置端口号
+  // }
   // console.log(config)
-  // console.log(config.data)
+  console.log(config.data)
+  // console.log(config)
   return config
 }, error => { // 对请求错误做些什么
   console.log(error) // for debug
@@ -31,21 +32,22 @@ service.interceptors.response.use( // 对响应数据做点什么
   response => {
     const res = response.data;
     if (res.code !== "H0000") {
-      //       if (res.code === 50014) {
-      //         MessageBox.confirm('你已被登出，可以取消继续留在该页面，或者重新登录', '确定登出', {
-      //           confirmButtonText: '重新登录',
-      //           cancelButtonText: '取消',
-      //           type: 'warning'
-      //         }).then(() => {
-      //           store.dispatch('FedLogOut').then(() => {
-      //             location.reload();// 为了重新实例化vue-router对象 避免bug
-      //           });
-      //         })
-      //       }
-      return Message({ message: res.data.msg, type: 'error', duration: 5 * 1000 });
+      if (res.code === "B1000") {
+        MessageBox.confirm('你已被登出，可以取消继续留在该页面，或者重新登录', '确定登出', {
+          confirmButtonText: '重新登录',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          store.dispatch('FedLogOut').then(() => {
+            location.reload(); // 为了重新实例化vue-router对象 避免bug
+          });
+        });
+      }
+      Message({ message: res.data.msg, type: 'error', duration: 5 * 1000 });
+      return response.data;
       // response.data.data;
     } else {
-      // console.log(res.data);
+      console.log(res.data);
       // console.log(res);
       return response.data.data;
     }

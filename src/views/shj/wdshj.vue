@@ -6,8 +6,12 @@
         <el-input v-model="formInline.jqbh" style="width: 150px;" placeholder="机器名称/编号"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="formInline.lb" style="width: 120px;" placeholder="机器类型"></el-input>
-      </el-form-item>
+        <el-select v-model="formInline.jqlb" placeholder="机器类型" clearable>
+          <el-option v-for="item in lboption" :key="item.value" :label="item.valuename" :value="item.value">
+          </el-option>
+        </el-select>
+        <!--         <el-input v-model="formInline.lb" style="width: 120px;" placeholder="机器类型"></el-input>
+       --></el-form-item>
       <el-form-item>
         <el-input v-model="formInline.shbh" style="width: 120px;" placeholder="商户名称/编号"></el-input>
       </el-form-item>
@@ -19,7 +23,7 @@
       </el-form-item>
       <!-- 右侧按钮 -->
       <el-form-item>
-        <el-button type="warning" @click="onloadtable()">查询</el-button>
+        <el-button type="warning" :loading="loading" @click="onloadtable()">查询</el-button>
       </el-form-item>
       <el-form-item class="smainFright">
         <el-button type="success" @click="dialogtable()">>Excel</el-button>
@@ -45,11 +49,11 @@
     <!-- 表格 -->
     <div class="stable">
       <!-- @sort-change="sortChange" -->
-      <el-table :data="tableData" @sort-change="sortChange" v-loading="loading" style="width:100%" border>
+      <el-table :data="tableData" @sort-change="sortChange" v-loading="loading" style="width:100%" border header-cell-class-name="shjHeader">
         <el-table-column type="selection" align="center"></el-table-column>
-        <el-table-column prop="shmc" sortable='custom' width="110" label="商户名称" align="center"> </el-table-column>
-        <el-table-column prop="shbh" label="商户编号" align="center"> </el-table-column>
-        <el-table-column label="机器编号" width="100" align="center">
+        <el-table-column prop="shmc" width="120" sortable='custom' label="商户名称" show-overflow-tooltip align="center"> </el-table-column>
+        <el-table-column prop="shbh" show-overflow-tooltip label="商户编号" align="center"> </el-table-column>
+        <el-table-column label="机器编号" align="center" show-overflow-tooltip>
           <template slot-scope="scope">
             <el-button type="text" size="mini" @click="dialogshow('jqxq',scope.row)">{{scope.row.jqbh}}</el-button>
           </template>
@@ -70,25 +74,19 @@
             <el-button type="text" size="mini" @click="dialogshow('hdxq',scope.row)">{{scope.row.hdsl}}</el-button>
           </template>
         </el-table-column>
-        <el-table-column label="状态" width="50" align="center">
-          <template slot-scope="scope">
-            <el-button type="text" size="mini">查看</el-button>
-          </template>
-        </el-table-column>
-        <el-table-column prop="yyry" label="运营人员" align="center"> </el-table-column>
-        <el-table-column prop="swrjbb" label="上位机软件版本" align="center"> </el-table-column>
-        <el-table-column prop="xwrjbb" label="下位机软件版本" align="center"> </el-table-column>
-        <el-table-column prop="swyjbb" label="上位机硬件版本" align="center"> </el-table-column>
-        <el-table-column prop="xwyjbb" label="下位机硬件版本" align="center"> </el-table-column>
-        <el-table-column prop="fx" label="分享" width="50" align="center"> </el-table-column>
-        <el-table-column prop="dwmc" label="点位" width="65" align="center"> </el-table-column>
-        <el-table-column prop="qymc" label="区域" width="50" align="center"> </el-table-column>
-        <el-table-column prop="xlmc" label="线路" width="50" align="center"> </el-table-column>
-        <el-table-column prop="szgj" label="国家" width="50" align="center"> </el-table-column>
-        <el-table-column prop="szsq" label="时区" width="65" align="center"> </el-table-column>
+        <el-table-column prop="swrjbb" label="上位机软件版本" width="120" align="center"> </el-table-column>
+        <el-table-column prop="xwrjbb" label="下位机软件版本" width="120" align="center"> </el-table-column>
+        <el-table-column prop="swyjbb" label="上位机硬件版本" width="120" align="center"> </el-table-column>
+        <el-table-column prop="xwyjbb" label="下位机硬件版本" width="120" align="center"> </el-table-column>
+        <el-table-column prop="fx" label="分享" align="center"> </el-table-column>
+        <el-table-column prop="dwmc" label="点位" align="center"> </el-table-column>
+        <el-table-column prop="qymc" label="区域" align="center"> </el-table-column>
+        <el-table-column prop="xlmc" label="线路" align="center"> </el-table-column>
+        <el-table-column prop="szgj" label="国家" align="center"> </el-table-column>
+        <el-table-column prop="szsq" label="时区" align="center"> </el-table-column>
         <el-table-column prop="scrq" label="生产日期" align="center"> </el-table-column>
         <el-table-column prop="ccrq" label="出厂日期" align="center"> </el-table-column>
-        <el-table-column label="操作" fixed="right" width="110" align="center">
+        <el-table-column label="操作" fixed="right" align="center" width="110">
           <template slot-scope="scope">
             <el-dropdown trigger="click">
               <el-button type="primary" size="mini">
@@ -102,16 +100,16 @@
                   <el-button type="text" @click="dialogshow('bjsz',scope.row)">报警设置</el-button>
                 </el-dropdown-item>
                 <el-dropdown-item>
-                  <el-button type="text" @click="dialogshow('wdsz')">温度设置</el-button>
+                  <el-button type="text" @click="dialogshow('wdsz',scope.row)">温度设置</el-button>
                 </el-dropdown-item>
                 <el-dropdown-item>
-                  <el-button type="text" @click="dialogshow('qchd')">清除货道</el-button>
+                  <el-button type="text" @click="dialogshow('qchd',scope.row)">清除货道</el-button>
                 </el-dropdown-item>
                 <el-dropdown-item>
                   <el-button type="text" @click="dialogshow('hdcsh')">货道初始化</el-button>
                 </el-dropdown-item>
                 <el-dropdown-item>
-                  <el-button type="text" @click="dialogshow('llbjsz')">流量报警设置</el-button>
+                  <el-button type="text" @click="dialogshow('llbjsz',scope.row)">流量报警设置</el-button>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -132,11 +130,11 @@
     </el-dialog>
     <!--  温度设置 -->
     <el-dialog title="温度设置" :visible.sync="dialogwdsz" width="40%">
-      <wdyj></wdyj>
+      <wdyj :listrow="listrow" :dialogwdyj="dialogwdsz"></wdyj>
     </el-dialog>
     <!--  清除货道 -->
     <el-dialog title="清除货道" :visible.sync="dialogqchd" width="40%">
-      <qchd></qchd>
+      <qchd :listrow="listrow" :dialogqchd="dialogqchd"></qchd>
     </el-dialog>
     <!--  货道初始化  -->
     <el-dialog title="货道初始化" :visible.sync="dialoghdcsh" width="40%">
@@ -144,7 +142,7 @@
     </el-dialog>
     <!-- 流量报警设置  -->
     <el-dialog title="流量报警设置" :visible.sync="dialogllbjsz" width="40%">
-      <llbjsz :dialogVisible="dialogllbjsz"></llbjsz>
+      <llbjsz :listrow="listrow" :dialogllbjsz="dialogllbjsz"></llbjsz>
     </el-dialog>
     <!-- 货道详情  -->
     <el-dialog title="货道详情" :visible.sync="dialoghdxq" width="60%">
@@ -157,15 +155,14 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
 import { Message } from 'element-ui'
 import request from '@/utils/request'
 import spsz from './wdshj/spsz'
 import bjsz from './wdshj/bjsz'
-import wdyj from './wdshj/wdyj'
+import wdyj from './components/wdyj'
 import qchd from './wdshj/qchd'
 import hdcsh from './wdshj/hdcsh'
-import llbjsz from './wdshj/llbjsz'
+import llbjsz from './components/llyj'
 import hdxq from './wdshj/hdxq'
 import jqxq from './wdshj/jqxq'
 
@@ -180,6 +177,8 @@ export default {
         shbh: '',
         lx: '',
       },
+      // custom: '',
+      lboption: [],
       listrow: "",
       dialogspsz: false, //商品设置
       dialogbjsz: false, //报警设置
@@ -196,18 +195,20 @@ export default {
         totalCount: 100,
       },
       tableData: [
-        // { xh: '00001', shbh: '160560001', shmc: '涉外北门', jqbh: '0001', jqmc: "涉外北门", jgsl: '12', hdsl: '42' }
+        /*{ xh: '00001', shbh: '160560001', shmc: '涉外北门涉外北门涉外北门外北门', jqbh: '000011113310000001', jqmc: "涉外北门", jgsl: '12', hdsl: '42' }*/
       ],
       orderBy: '',
-      loading: false,
+      loading: true,
       data2: {}
     }
 
   },
   created: function() {
     this.onloadtable();
+    this.dictSelect('1000', 'lboption');
   },
   methods: {
+
     handleSizeChange(val) {
       this.listQuery.pageSize = val; //修改每页数据量
       this.onloadtable();
@@ -223,6 +224,7 @@ export default {
         this.orderBy1 = column.prop + " desc";
       }
       this.onloadtable();
+      this.dictSelect('1000', 'lboption');
     },
     onloadtable() { //售货机查询
       var queryShjData = {
@@ -232,44 +234,52 @@ export default {
         xlmc: this.formInline.xl,
         jqbh: this.formInline.jqbh,
         shbh: this.formInline.shbh,
-        jqlb: this.formInline.lb
-      }
-      request({ url: '/shjgl/queryShj', method: 'post', data: queryShjData })
+        jqlb: this.formInline.jqlb
+      };
+      this.loading = true;
+      request({ url: 'service-machine/shjgl/queryShj', method: 'post', data: queryShjData })
         .then(response => {
           // alert(response.data.total)
           this.loading = false;
           this.tableData = response.list;
-        })
-        .catch(error => {
+          this.listQuery.totalCount = response.total;
+        }).catch(error => {
           Message.error("error：" + "请检查网络是否连接");
         })
     },
+    dictSelect(type, valuename) {
+      var queryType = { type: type };
+      request({ url: 'service-machine/shjgl/queryDict', method: 'post', data: queryType }).then(response => {
+        if (valuename == 'lboption') { this.lboption = response; }
+      }).catch(error => {
+        Message.error("error：" + "请检查网络是否连接");
+      });
+    },
     dialogshow(type, row) {
-      if (type == "spsz") {
+      this.listrow = row;
+      if (type == "hdxq") {
+        this.dialoghdxq = true;
+      } else if (type == "jqxq") {
+        this.dialogjqxq = true;
+      } else if(type=="llbjsz"){
+        this.dialogllbjsz = true;
+      }else if(row.jgsl==null){
+        Message.error("error：" + "机柜数为空,不能进行该操作!");
+        return;
+      }else if (type == "spsz") {
         this.dialogspsz = true;
-        this.listrow = row;
       } else if (type == "bjsz") {
         this.dialogbjsz = true;
-        this.listrow = row;
       } else if (type == "wdsz") {
         this.dialogwdsz = true;
       } else if (type == "qchd") {
         this.dialogqchd = true;
       } else if (type == "hdcsh") {
         this.dialoghdcsh = true;
-      } else if (type == "hdxq") {
-        this.listrow = row;
-        this.dialoghdxq = true;
-        // console.log(row, "货道详情");
-        // debugger;
-      } else if (type == "jqxq") {
-        this.listrow = row;
-        this.dialogjqxq = true;
-        // console.log(row, "机器详情");
-        // debugger;
-      } else {
-        this.dialogllbjsz = true;
-      }
+      }  
+    },
+    celsty({ row, column, rowIndex, columnIndex }) {
+      console.log(row, column, rowIndex, columnIndex);
     },
   }
 }
@@ -288,6 +298,16 @@ export default {
 div.el-dialog--center div.el-dialog__body {
   padding-top: 5px;
   padding-bottom: 5px;
+}
+
+
+.shjHeader {
+  /*white-space: nowrap;*/
+  /*background: #f0f9eb;*/
+  width: 50px;
+  /*width: 130px;*/
+  /*overflow: hidden;*/
+  /*text-overflow: ellipsis;*/
 }
 
 </style>

@@ -23,74 +23,74 @@ export default {
   props: ['listrow', "dialogVisible"],
   data() {
     return {
-      tabeldates:[],
+      tabeldates: [],
       activeName: "second",
       tableData: [],
       tabslx: [],
       tableData: [],
-      oldtab:"主机"
+      oldtab: "主机"
     };
-  }, 
+  },
   created: function() {
     //alert(this.listrow)
-    var tabname=new Array(); 
-    tabname[0]= { value: '0', label: "主机" }
-    for (var i =1; i<this.listrow.jgsl;i++) {
-      tabname[i]={ value: '0', label: "副机"+i }
+    var tabname = new Array();
+    tabname[0] = { value: '0', label: "主机" }
+    for (var i = 1; i < this.listrow.jgsl; i++) {
+      tabname[i] = { value: '0', label: "副机" + i }
     }
-    this.tabslx=tabname;
+    this.tabslx = tabname;
     console.log(this.tabname);
-   this.onloadtable(this.listrow.jqbh);  
- },
-   watch: {
-     dialogVisible: function(data, olddata) {
-    if(data){
-      this.onloadtable(this.listrow.jqbh);
-     }
+    this.onloadtable(this.listrow.jqbh);
+  },
+  watch: {
+    dialogVisible: function(data, olddata) {
+      if (data) {
+        this.onloadtable(this.listrow.jqbh);
+      }
     }
   },
   methods: {
     update() {
       this.options = this.listrow.dwlx ? this.listrow.dwlx : "";
     },
-     handleClick(tab, event) { //选中的 机器 类型 （主副机）
-     for (var i =1; i<this.listrow.jgsl;i++) {
-        if (tab.label == "副机"+i) {
-           this.tableData=this.tabeldates[i];
-           this.oldtab="副机"+i;
-           break;
-        }else if(tab.label == "主机"){
-           this.tableData=this.tabeldates[0];
-           this.oldtab="主机";
-           break;
+    handleClick(tab, event) { //选中的 机器 类型 （主副机）
+      for (var i = 1; i < this.listrow.jgsl; i++) {
+        if (tab.label == "副机" + i) {
+          this.tableData = this.tabeldates[i];
+          this.oldtab = "副机" + i;
+          break;
+        } else if (tab.label == "主机") {
+          this.tableData = this.tabeldates[0];
+          this.oldtab = "主机";
+          break;
         }
-     }
+      }
 
     },
-   onloadtable(val) {
+    onloadtable(val) {
       var queryXlxxData = {
         jqbh: val
       };
-      var url= '/shjgl/queryHdxq';
-       request({ url: url, method: 'post', data: queryXlxxData}).then(response => {
-       this.tabeldates = response;
-        for (var i =1; i<this.listrow.jgsl;i++) {
-        if ( this.oldtab == "副机"+i) {
-           this.tableData=this.tabeldates[i];
-           this.oldtab="副机"+i;
-           break;
-        }else if(this.oldtab == "主机"){
-           this.tableData=this.tabeldates[0];
-           this.oldtab="主机";
-           break;
-        }
-     }
-       //this.tableData=response[0];
-       console.log(this.tabeldates);
-       })
-       .catch(error => {
-       Message.error("error：" + "请检查网络是否连接1");
-       })
+      var url = 'service-machine/shjgl/queryHdxq';
+      request({ url: url, method: 'post', data: queryXlxxData }).then(response => {
+          this.tabeldates = response;
+          for (var i = 1; i < this.listrow.jgsl; i++) {
+            if (this.oldtab == "副机" + i) {
+              this.tableData = this.tabeldates[i];
+              this.oldtab = "副机" + i;
+              break;
+            } else if (this.oldtab == "主机") {
+              this.tableData = this.tabeldates[0];
+              this.oldtab = "主机";
+              break;
+            }
+          }
+          //this.tableData=response[0];
+          console.log(this.tabeldates);
+        })
+        .catch(error => {
+          Message.error("error：" + "请检查网络是否连接");
+        })
     },
   },
 

@@ -2,7 +2,7 @@
   <div class="header">
     <el-row :gutter="10">
       <!--Logo area-->
-      <el-col :xs="10" :sm="10" :md="{span:19,offset:1}">
+      <el-col :xs="10" :sm="10" :md="{span:18,offset:1}">
         <div class="logo">
           <span class="logo_prefix">{{$t('navbar.logu')}}</span>
           <span class="logo_suffix">{{$t('navbar.logd')}}</span>
@@ -12,7 +12,7 @@
         <lang-select class="international right-menu-item"></lang-select>
         <i class="el-icon-caret-bottom" style="color:#64D9D6"></i>
       </el-col>
-      <el-col :xs="8" :sm="8" :md="2">
+      <el-col :xs="8" :sm="8" :md="3">
         <div class="header-right">
           <el-dropdown @command="handleCommand">
             <span>
@@ -43,10 +43,11 @@
         </div>
       </el-col>
       <el-col :xs="8" :sm="8" :md="1">
+        <div class="userName">{{userInfo.username}}</div>
         <div class="user-header">
           <el-dropdown trigger="click">
             <div class="avatar-wrapper">
-              <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'">
+              <img class="user-avatar" src="https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif?imageView2/1/w/80/h/80">
               <i class="el-icon-caret-bottom"></i>
             </div>
             <el-dropdown-menu slot="dropdown">
@@ -81,10 +82,16 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import { removeSession } from '@/utils/auth'
 import LangSelect from '@/components/LangSelect'
 export default {
   components: {
     LangSelect
+  },
+  computed: {
+    ...mapGetters([
+      'userInfo'
+    ]),
   },
   data() {
     return {
@@ -93,8 +100,8 @@ export default {
         { id: 1, rank: 1, content: '完成JSPangAdmin头部头部组件的编写。', overTime: '2017/3/9' },
         { id: 2, rank: 2, content: '完成GitHub仓库的初始化工作。', overTime: '2017/3/15' },
         { id: 3, rank: 3, content: '在阿里云进行网站备案，完成后通知组长。', overTime: '2017/3/20' }
-      ]
-    }
+      ],
+    };
   },
   methods: {
     handleCommand(command) {
@@ -102,16 +109,21 @@ export default {
       this.$message('click on item ' + command);
     },
     logout() {
+      this.$confirm('确定退出当前账号?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // this.$globalApi.removeSessionStorage('session_key')   
+        removeSession(); // 将token清空
+        this.$globalApi.removeLocalStorage('AccountPassword'); // 将密码清空
+        // this.$router.replace({ path: '/login' });
+        this.$message({ type: 'success', message: '退出成功!' });
+        location.reload(); // 为了重新实例化vue-router对象 避免bug
+      }).catch(() => {});
       // this.$store.dispatch('LogOut').then(() => {
-      this.$router.push({ path: '/login' })
-      // location.reload() // 为了重新实例化vue-router对象 避免bug
-      // })
+      // });
     }
-  },
-  computed: {
-    ...mapGetters([
-      'avatar'
-    ])
   },
 }
 
@@ -133,7 +145,7 @@ export default {
   .header-right {
     span {
       display: inline-block;
-      margin-left: 14px;
+      margin-left: 30px;
       font-size: 18px;
       color: #fff;
       line-height: 1px;
@@ -223,6 +235,15 @@ export default {
 //国际化
 .international {
   cursor: pointer;
+}
+
+.userName {
+  width: 100px;
+  height: 1px;
+  position: absolute;
+  z-index: 2;
+  color: #fff;
+  right: 30px;
 }
 
 </style>

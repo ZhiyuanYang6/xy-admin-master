@@ -3,10 +3,10 @@
     <!-- 左侧表单 -->
     <el-form :inline="true" :model="formInline" size="small" class="demo-form-inline">
       <el-form-item>
-        <el-input v-model="formInline.dwid" style="width: 150px;" placeholder="商户编号/名称"></el-input>
+        <el-input v-model="formInline.jqbh" style="width: 150px;" placeholder="机器编号/名称"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-date-picker v-model="formInline.ftime" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+        <el-date-picker v-model="formInline.ftime" type="daterange" value-format="HH:mm:ss" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
         </el-date-picker>
       </el-form-item>
       <!-- 右侧按钮 -->
@@ -17,10 +17,10 @@
     <!-- 表格 -->
     <div class="stable">
       <el-table :data="tableData1" style="width:100%" border>
-        <el-table-column prop="jqmc" label="商户名称" width="200" align="center"> </el-table-column>
-        <el-table-column prop="dw" label="商户编号" width="200" align="center"> </el-table-column>
-        <el-table-column prop="xl" label="日期" align="center"> </el-table-column>
-        <el-table-column prop="qy" label="金额" align="center"> </el-table-column>
+        <el-table-column prop="jqbh" label="机器编号" width="200" align="center"> </el-table-column>
+        <el-table-column prop="jqmc" label="机器名称" width="200" align="center"> </el-table-column>
+        <el-table-column prop="jsrq" label="日期" align="center"> </el-table-column>
+        <el-table-column prop="je" label="金额" align="center"> </el-table-column>
         <el-table-column prop="sy" label="结算状态" align="center"> </el-table-column>
         <el-table-column label="详情" align="center">
           <template slot-scope="scope">
@@ -64,7 +64,7 @@ export default {
     }
   },
   created: function() {
-    // this.onloadtable();
+    this.onloadtable();
   },
   methods: {
     handleSizeChange(val) {
@@ -75,17 +75,20 @@ export default {
       this.listQuery.pageNum = val;
       // this.onloadtable();
     },
-    onloadtable() { //订单状态查询
-      var queryDdxxData = {
+    onloadtable() { //
+      var queryData = {
         orderBy: 'jqbh',
-        ddbh: "1",
+        jqbh: this.formInline.jqbh,
+        time: this.formInline.ftime,
         pageNum: this.listQuery.pageNum,
         pageSize: this.listQuery.pageSize,
+        shbh: 0,
       }
-      request({ url: 'test', method: 'post', data: queryDdxxData }).then(response => {
+      request({ url: 'service-order/jqjymx/queryjyjs', method: 'post', data: queryData }).then(response => {
+          console.log(response);
+          this.tableData1 = response.data;
+          this.listQuery.totalCount = response.total;
           console.log(response.data);
-          //     this.tableData = response.data.data;
-          //     console.log(response.data);
         })
         .catch(error => {
           Message.error("error：" + "请检查网络是否连接");

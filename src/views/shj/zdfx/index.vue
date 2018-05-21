@@ -22,6 +22,7 @@ import spszls from './components/spszls'
 import hdkcls from './components/hdkcls'
 import dingdfx from './components/dingdfx'
 export default {
+  name: "zdfx",
   components: { jqtj, spszls, hdkcls, dingdfx },
   data() {
     return {

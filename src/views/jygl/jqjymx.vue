@@ -3,19 +3,25 @@
     <!-- 左侧表单 -->
     <el-form :inline="true" :model="formInline" size="small" class="demo-form-inline">
       <el-form-item>
-        <el-input v-model="formInline.jqmc" style="width: 150px;" placeholder="机器名称/编号"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-input v-model="formInline.jqlx" style="width: 120px;" placeholder="机器类型"></el-input>
-      </el-form-item>
-      <el-form-item>
         <el-input v-model="formInline.shmc" style="width: 120px;" placeholder="商户名称/编号"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="formInline.dwmc" style="width: 120px;" placeholder="点位/区域/线路"></el-input>
+        <el-input v-model="formInline.jqmc" style="width: 150px;" placeholder="机器名称/编号"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="formInline.chzt" style="width: 120px;" placeholder="出货状态"></el-input>
+        <el-input v-model="formInline.ddbh" style="width: 120px;" placeholder="订单编号"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-select v-model="formInline.jqlx" style="width: 150px;" placeholder="机器类型" clearable @change="onloadtable">
+          <el-option v-for="item in jqlxoptions" :key="item.value" :label="item.valuename" :value="item.value">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-select v-model="formInline.chzt" style="width: 150px;" placeholder="出货状态" clearable @change="onloadtable">
+          <el-option v-for="item in chztoptions" :key="item.value" :label="item.valuename" :value="item.value">
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-date-picker v-model="formInline.ftime" type="daterange" :picker-options="pickerOptions2" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
@@ -28,25 +34,22 @@
     </el-form>
     <!-- 表格 -->
     <div class="stable">
-      <!-- @sort-change="sortChange"v-loading="loading" -->
-      <el-table :data="tableData" style="width:100%" border>
-        <el-table-column prop="jyid" label="交易编号" width="80" align="center"> </el-table-column>
-        <el-table-column prop="jqbh" label="机器编号" align="center"> </el-table-column>
+      <el-table :data="tableData" @sort-change="sortChange" v-loading="loading" style="width:100%" border>
+        <el-table-column prop="shbh" label="商户编号" width="100" align="center"> </el-table-column>
+        <el-table-column prop="shmc" label="商户名称" width="100" align="center"> </el-table-column>
+        <el-table-column prop="jqbh" sortable='custom' label="机器编号" align="center"> </el-table-column>
         <el-table-column prop="jqmc" label="机器名称" width="100" align="center"> </el-table-column>
-        <el-table-column prop="jqlx" label="机器类型" align="center"> </el-table-column>
-        <el-table-column prop="dwmc" label="点位" width="100" align="center"> </el-table-column>
-        <el-table-column prop="xsje" label="销售额" align="center"> </el-table-column>
-        <el-table-column prop="ddbh" label="订单号" align="center"> </el-table-column>
+        <el-table-column prop="showjqlx" label="机器类型" align="center"> </el-table-column>
+        <el-table-column prop="jyid" label="交易编号" width="80" align="center"> </el-table-column>
+        <el-table-column prop="bddzj" label="销售额" align="center"> </el-table-column>
+        <el-table-column prop="ddbh" label="订单编号" align="center"> </el-table-column>
         <el-table-column prop="spmc" label="商品" width="90" align="center"> </el-table-column>
-        <el-table-column prop="spsl" label="数量" width="50" align="center"> </el-table-column>
-        <el-table-column prop="zffs" label="支付方式" width="80" align="center"> </el-table-column>
-        <el-table-column prop="zfje" label="支付金额" width="80" align="center"> </el-table-column>
-        <el-table-column prop="yhje" label="优惠金额" width="80" align="center"> </el-table-column>
-        <el-table-column prop="chzt" label="出货" width="50" align="center"> </el-table-column>
-        <el-table-column prop="zt" label="状态" width="50" align="center"> </el-table-column>
-        <el-table-column prop="zl" label="找零" width="50" align="center"> </el-table-column>
-        <el-table-column prop="tkje" label="退款" width="50" align="center"> </el-table-column>
-        <el-table-column prop="jysj" label="时间" width="100" align="center"> </el-table-column>
+        <el-table-column prop="showzffs" label="支付方式" width="80" align="center"> </el-table-column>
+        <el-table-column prop="bzfje" label="支付金额" width="80" align="center"> </el-table-column>
+        <el-table-column prop="byhje" label="优惠金额" width="80" align="center"> </el-table-column>
+        <el-table-column prop="showchzt" label="出货状态" width="80" align="center"> </el-table-column>
+        <el-table-column prop="btkje" label="退款" width="50" align="center"> </el-table-column>
+        <el-table-column prop="jysj" sortable='custom' label="时间" width="100" align="center"> </el-table-column>
         <!-- <el-table-column prop="operation" label="操作" fixed="right"></el-table-column> -->
       </el-table>
     </div>
@@ -56,7 +59,9 @@
   </div>
 </template>
 <script>
+import request from '@/utils/request'
 import axios from 'axios'
+import { Message } from 'element-ui'
 export default {
   data() {
     return {
@@ -99,11 +104,16 @@ export default {
         }]
       },
       tableData: [],
-      // loading: true,
-    }
+      loading: false,
+      orderBy: 'jysj desc',
+      jqlxoptions: [],
+      chztoptions: [],
+    };
   },
   created: function() {
     this.onloadtable();
+    this.dictSelect("1023", 'jqlxoptions');
+    this.dictSelect("exportStatus", 'chztoptions');
   },
   methods: {
     handleSizeChange(val) {
@@ -117,28 +127,47 @@ export default {
     sleSubmit() { //查询
       this.onloadtable();
     },
+    sortChange(column) { //服务器端排序
+      if (column.order == "ascending") {
+        this.orderBy = column.prop + " asc";
+      } else if (column.order == "descending") {
+        this.orderBy = column.prop + " desc";
+      }
+      this.onloadtable();
+    },
     onloadtable() { //机器交易明细查询
       var queryJqjymxData = {
-        // orderBy: 'jqbh',
+        orderBy: this.orderBy,
         pageNum: this.listQuery.pageNum,
         pageSize: this.listQuery.pageSize,
         jqmc: this.formInline.jqmc,
-        dwmc: this.formInline.dwmc,
         jqlx: this.formInline.jqlx,
         shmc: this.formInline.shmc,
-        chzt: this.formInline.chzt
-      }
-      console.log(queryJqjymxData);
-      axios.post('http://192.168.1.9:8092/jqjymx/queryJqjymx', queryJqjymxData)
+        ddbh: this.formInline.ddbh,
+        chzt: this.formInline.chzt,
+        starttime: this.formInline.ftime[0],
+        endtime: this.formInline.ftime[1],
+      };
+      this.loading = true;
+      request({ url: 'service-order/jqjymx/queryJqjymx', method: 'post', data: queryJqjymxData })
         .then(response => {
-          console.log(response);
+          this.loading = false;
           this.tableData = response.data;
           this.listQuery.totalCount = response.total;
           console.log(this.tableData);
         })
         .catch(error => {
           // Message.error("error： " + "请检查网络是否连接 ");
-        })
+        });
+    },
+    dictSelect(type, valuename) {
+      var queryType = { type: type };
+      request({ url: 'service-machine/shjgl/queryDict', method: 'post', data: queryType }).then(response => {
+        if (valuename === 'jqlxoptions') { this.jqlxoptions = response; }
+        if (valuename === 'chztoptions') { this.chztoptions = response; }
+      }).catch(error => {
+        Message.error("error：" + "请检查网络是否连接");
+      });
     },
   }
 }

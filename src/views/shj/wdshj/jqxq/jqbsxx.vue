@@ -58,7 +58,14 @@
         <el-input v-model="formInline.bsryxm" class="inpxq"></el-input>
       </el-form-item>
       <el-form-item label="部署时间">
-        <el-input v-model="formInline.bssj" class="inpxq"></el-input>
+        <div class="block">
+      <el-date-picker
+      v-model="formInline.bssj" value-format="yyyy-MM-dd"
+      type="date"
+      placeholder="选择日期">
+    </el-date-picker>
+  </div>
+       <!--  <el-input v-model="formInline.bssj" class="inpxq"></el-input> -->
       </el-form-item>
       <el-form-item label="部署地址">
         <el-input v-model="formInline.bsdz" class="inpxq"></el-input>
@@ -87,25 +94,30 @@ export default {
   },
   watch: {
     qyoptions: function(data, olddata) {
-      this.dictSelect("1012", 'ztoptions6');
+      this.dictSelect("1003", 'ztoptions6');
       this.dictSelect('1006', 'sqoptions5');
       this.dictSelect('1007', 'gjoptions4');
       this.dictSelect('1000', 'lboption');
     },
     jqbsxxdata: function(data, olddata) {
       this.formInline = this.jqbsxxdata;
-      // this.selelx('xl', this.jqbsxxdata.qyid);
       console.log(this.formInline.qyid);
-      // console.log(this.qyoption);
-      // debugger;
+      if (this.jqbsxxdata.qyid != null) this.selelx('xl', this.jqbsxxdata.qyid);
+    },
+    xloption: function(data, olddata) {
+      debugger;
+      if (data) this.selelx('dw', this.jqbsxxdata.xlid);
+      this.form.xlid = this.form.xlid ? this.form.xlid : '';
+      console.log(this.form.xlid);
     }
   },
   methods: {
     submitsetdetil: function() {
-      request({ url: '/shjgl/EditJqbsxx', method: 'post', data: this.formInline })
+      request({ url: 'service-machine/shjgl/EditJqbsxx', method: 'post', data: this.formInline })
         .then(response => {
           this.loading = false;
-          this.tableData = response.list;
+          //this.tableData = response.list;
+          this.$message({ type: 'success', message: response.Msg });
         })
         .catch(error => {
           Message.error("error：" + "请检查网络是否连接");
@@ -114,10 +126,10 @@ export default {
     selelx(val, id) {
       if (val == "xl") { //请求线路opt
         var queryQyxx = { qyid: id };
-        var url = '/shjgl/queryXlxxbyqyid';
+        var url = 'service-machine/shjgl/queryXlxxbyqyid';
       } else if (val == 'dw') { //请求点位opt
         var queryQyxx = { xlid: id };
-        var url = '/shjgl/queryXlxxbyxlid';
+        var url = 'service-machine/shjgl/queryXlxxbyxlid';
       }
       request({ url: url, method: 'post', data: queryQyxx }).then(response => {
         if (val == "xl") { //请求线路opt
@@ -133,7 +145,7 @@ export default {
     },
     dictSelect(type, valuename) {
       var queryType = { type: type };
-      request({ url: '/shjgl/queryDict', method: 'post', data: queryType }).then(response => {
+      request({ url: 'service-machine/shjgl/queryDict', method: 'post', data: queryType }).then(response => {
         if (valuename == 'ztoptions6') { this.ztoptions6 = response; }
         if (valuename == 'sqoptions5') { this.sqoptions5 = response; }
         if (valuename == 'gjoptions4') { this.gjoptions4 = response; }

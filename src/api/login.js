@@ -1,14 +1,16 @@
 import request from '@/utils/request'
 
-export function login(username, password) {
-  console.log(username);
+export function login(data) {
   return request({
-    url: '/user/login',
+    url: '/sram/comm/login/onLogin',
     method: 'post',
-    data: {
-      username,
-      password,
-    }
+    data
+  })
+}
+export function getReplaceCode() {
+  return request({
+    url: '/sram/comm/login/getCheckCode',
+    method: 'get'
   })
 }
 
@@ -19,6 +21,7 @@ export function GetUserInfo(token) {
     params: { token }
   })
 }
+
 
 export function logout() {
   return request({

@@ -3,94 +3,70 @@
     <el-card class="box-card img" :body-style="{padding:'5px'}">
       <img src="http://pic.qiantucdn.com/58pic/28/40/34/96758PIC9y6_1024.jpg!/fw/780/watermark/url/L3dhdGVybWFyay12MS4zLnBuZw==/align/center/crop/0x1009a0a0"></img>
     </el-card>
-    <el-card class="box-card sp" :body-style="{padding:'5px'}">
-      <span class="title">商品</span>
-      <el-table size="mini" :data="tableData1" class="table1" border>
-        <el-table-column prop="name" label="名称" align="center"> </el-table-column>
-        <el-table-column prop="dj" sortable='custom' label="单价" align="center"> </el-table-column>
-        <el-table-column prop="sl" label="数量" align="center"> </el-table-column>
-        <el-table-column prop="je" label="金额" align="center"> </el-table-column>
-        <el-table-column prop="yh" label="优惠" align="center"> </el-table-column>
-        <el-table-column prop="je" label="金额" align="center"></el-table-column>
-        <el-table-column prop="xq" label="详情" align="center"></el-table-column>
-        <el-table-column prop="bz" label="备注" align="center"></el-table-column>
-      </el-table>
-    </el-card>
-    <el-card class="box-card kh" :body-style="{padding:'5px'}">
-      <span class="title">客户</span>
-      <p><span>会员</span><span class="fr">{{khlist.hy}}</span></p>
-      <p>
-        <span>评价</span>
-        <span class="fr">{{khlist.pj}}</span>
-      </p>
-      <p>
-        <span>投诉</span>
-        <span class="fr">{{khlist.ts}}</span>
-        <el-button type="text" class="fr">查看此客户交易记录</el-button>
-      </p>
-    </el-card>
-    <el-card class="box-card sh" :body-style="{padding:'5px'}">
-      <span class="title">商户</span>
-      <p>
-        <span>商户名称</span>
-        <span class="fr">{{shlist.shmc}}</span>
-        <el-button type="text" class="fr">查看此商户详情</el-button>
-      </p>
-    </el-card>
     <el-card class="box-card md" :body-style="{padding:'5px'}">
       <span class="title">门店</span>
       <div class="mdList mdLeft">
-        <p><span>机器类型</span><span class="fr">{{mdlist.lx}}</span></p>
-        <p><span>机器编码</span><span class="fr">{{mdlist.jqbm}}</span></p>
-        <p><span>交易号</span><span class="fr">{{mdlist.jyh}}</span></p>
-        <p><span>货道</span><span class="fr">{{mdlist.hd}}</span></p>
-        <p><span>出货数量</span><span class="fr">{{mdlist.chsl}}</span></p>
-        <p><span>出货状态</span><span class="fr">{{mdlist.chzt}}</span></p>
-        <p><span>出货时间</span><span class="fr">{{mdlist.chsj}}</span></p>
+        <p><span>机器类型:</span><span>{{mdlist.showjqlx}}</span></p>
+        <p><span>机器编号:</span><span>{{mdlist.jqbh}}</span></p>
+        <p><span>交易号:</span><span>{{mdlist.jyid}}</span></p>
+        <p><span>会员:</span><span>{{mdlist.hdbh}}</span></p>
+        <p><span>评价:</span><span>{{mdlist2.pjxq}}</span></p>
+        <p><span>投诉:</span><span>{{mdlist.showchzt}}</span></p>
       </div>
       <div class="mdList">
-        <p><span>收款方式</span><span class="fr">{{mdlist.skfs}}</span></p>
-        <p><span>收款金额</span><span class="fr">{{mdlist.skje}}</span></p>
-        <p><span>找零</span><span class="fr">{{mdlist.zl}}</span></p>
+        <p><span>收款方式:</span><span>{{mdlist.showzffs}}</span></p>
+        <p><span>收款金额:</span><span>{{mdlist.bzfje}}</span></p>
+        <p><span>找零:</span><span class="fr">{{mdlist.zl}}</span></p>
         <p>
-          <span>交易前机器库存</span>
-          <el-button type="text" class="fr">查看出货详情</el-button>
-          <span class="fr">{{mdlist.jyqjqkc}}</span>
+          <span>交易前机器库存:</span>
+          <el-button class="fr" type="text">查看出货详情:</el-button>
+          <span class="fr">{{mdlist2.chqkc}}</span>
         </p>
         <p>
-          <span>软件版本</span>
-          <el-button type="text" class="fr">查看该版本详情</el-button>
+          <span>软件版本:</span>
+          <el-button type="text" class="fr">查看该版本详情:</el-button>
           <span class="fr" style="color: #E7262C" v-if="mdlist.uphas">（需更新）</span>
           <span class="fr">{{mdlist.rjbb}}</span>
         </p>
-        <p><span>订单创建时间</span><span class="fr">{{mdlist.ddcjsj}}</span></p>
+        <p><span>订单创建时间:</span><span class="fr">{{mdlist.cjsj}}</span></p>
       </div>
+    </el-card>
+    <el-card class="box-card sp" :body-style="{padding:'5px'}">
+      <span class="title">商品</span>
+      <el-table size="mini" :data="tableData" class="table1" border>
+        <el-table-column prop="spmc" label="商品名称" align="center"> </el-table-column>
+        <el-table-column prop="bspdj" label="商品单价" align="center"> </el-table-column>
+        <el-table-column prop="bspsj" label="商品售价" align="center"> </el-table-column>
+        <el-table-column prop="yhje" label="优惠金额" align="center"> </el-table-column>
+        <el-table-column prop="spsl" label="商品数量" align="center"> </el-table-column>
+        <el-table-column prop="bddzj" label="订单总价" align="center"></el-table-column>
+        <el-table-column prop="yhzje" label="优惠总金额" align="center"></el-table-column>
+        <el-table-column prop="hdbh" label="货道编号" align="center"> </el-table-column>
+        <el-table-column prop="chsl" label="出货数量" align="center"> </el-table-column>
+        <el-table-column prop="showchzt" label="出货状态" align="center"></el-table-column>
+        <el-table-column prop="chsbsj" label="出货时间" align="center"></el-table-column>
+        <el-table-column prop="remark" label="备注" align="center"></el-table-column>
+      </el-table>
     </el-card>
   </div>
 </template>
 <script>
+import request from '@/utils/request'
+import { Message } from 'element-ui'
 export default {
+  props: ['listrow', "dialogVisible"],
   data() {
     return {
-      tableData1: [{
-        name: "Galaxy S9",
-        dj: "9999",
-        sl: "1",
-        je: "9999",
-        yh: "200",
-        xq: "暂无",
-        bz: "暂无",
-        img: "http://pic.qiantucdn.com/58pic/28/40/34/96758PIC9y6_1024.jpg!/fw/780/watermark/url/L3dhdGVybWFyay12MS4zLnBuZw==/align/center/crop/0x1009a0a0"
-      }],
+      tableData: [],
       sfklist: {
-        fkje: "2元",
-        tkjl: "已退款2元",
-        tksj: "2017-11-7 11:14:11",
-        dqzt: "已全额退款",
-        zfsj: "2017-11-7 11:14:11",
-        zffs: "微信的扫码",
-        jydh: "421000004987546513213213",
-        shdh: "AA42100000498754651321321"
+        /* fkje: "2元",
+         tkjl: "已退款2元",
+         tksj: "2017-11-7 11:14:11",
+         dqzt: "已全额退款",
+         zfsj: "2017-11-7 11:14:11",
+         zffs: "微信的扫码",
+         jydh: "421000004987546513213213",
+         shdh: "AA42100000498754651321321"*/
       },
       khlist: {
         hy: "VIP2",
@@ -98,25 +74,45 @@ export default {
         ts: "未投诉",
       },
       shlist: {
-        shmc: "喵星人",
+        // shmc: "喵星人",
       },
-      mdlist: {
-        lx: "无人售货机",
-        jqbm: "1605600001",
-        jyh: "6214",
-        hd: "001",
-        chsl: "0",
-        chzt: "卡货",
-        chsj: "2017-11-14 12:11:11",
-        skfs: "微信扫码",
-        skje: "2元",
-        zl: "0",
-        jyqjqkc: "255",
-        rjbb: "2.43",
-        ddcjsj: "2017-11-14 12:11:11",
-        uphas: "false"
-      },
+      mdlist: '',
+      mdlist2: '',
+    };
+  },
+  created: function() {
+    this.initialize();
+  },
+  watch: {
+    dialogVisible: function(data, olddata) {
+      if (data) {
+        this.initialize();
+
+      }
     }
+  },
+  methods: {
+    initialize() {
+      this.details();
+      var queryDdmxData = {
+        ddbh: this.listrow.strddbh,
+      };
+      request({ url: 'service-order/ddxx/queryDdmx', method: 'post', data: queryDdmxData }).then(response => {
+        this.tableData = response.data;
+        this.mdlist2 = this.tableData[0];
+      }).catch(error => {
+        Message.error("error： " + "请检查网络是否连接 ");
+      });
+    },
+    details() {
+      var detailsData = { ddbh: this.listrow.strddbh };
+      // var detailsData = { ddbh: this.listrow.strddbh };
+      request({ url: 'service-order/ddxx/ddxxDetails', method: 'post', data: detailsData }).then(response => {
+        this.mdlist = response.data;
+      }).catch(error => {
+        Message.error("error： " + "请检查网络是否连接 ");
+      });
+    },
   }
 }
 
@@ -139,11 +135,12 @@ p {
 }
 
 div.img {
-  position: relative;
-  top: 0px;
-  left: 74%;
-  width: 312px;
-  height: 253px;
+  /*position: relative;*/
+  /*top: 0px;*/
+  /*left: 74%;*/
+  float: right;
+  /*width: 312px;*/
+  height: 295px;
 }
 
 div.el-card__body {
@@ -151,54 +148,44 @@ div.el-card__body {
 }
 
 img {
-  width: 300px;
-}
-
-div.sp {
-  width: 55%;
-  position: relative;
-  top: -250px;
-  left: 220px
-}
-
-div.kh {
-  width: 17%;
-  position: absolute;
-  top: 155px;
-  left: 11px;
-}
-
-div.kh .el-button--medium,
-div.sh .el-button--medium {
-  padding: 0 0 5px 40px;
+  width: 350px;
 }
 
 div.md .el-button--medium {
+  padding: 0 0 5px 40px;
+}
+
+div.sh .el-button--medium {
   padding: 4px 5px;
 }
 
-div.sh {
-  width: 17%;
-  position: absolute;
-  top: 63px;
-  left: 11px;
+div.md {
+  width: 70%;
+  position: relative;
+  top: 0;
+  left: -10px;
 }
 
-div.md {
-  width: 96%;
-  position: absolute;
-  top: 330px;
-  left: 11px;
+div.sp {
+  width: 101%;
+  position: relative;
+  left: -10px;
+  top: 10px;
+  margin-bottom: 40px;
 }
 
 div.md .mdList {
-  width: 30%;
+  width: 35%;
   float: left;
-  margin-left: 20%
+  margin-left: 10%
+}
+
+div.md p {
+  margin-top: 13px;
 }
 
 div.md div.mdLeft {
-  margin-left: 5%;
+  margin: 10px 5%;
 }
 
 </style>

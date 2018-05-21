@@ -18,6 +18,15 @@ html {
   box-sizing: border-box;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
 *,
 *:before,
 *:after {
@@ -39,6 +48,11 @@ a:hover {
   cursor: pointer;
   color: inherit;
   text-decoration: none;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #D1DBE5;
 }
 
 .clearfix {
@@ -132,6 +146,10 @@ a:hover {
 
 
 //组件自定义
+.stable .el-table td {
+  height: 50px;
+}
+
 div .el-badge__content {
   border: 0;
 }
@@ -165,8 +183,8 @@ div.el-dialog__body {
   width: 400px;
 }
 
-.mbgl .el-tabs__content {
-  height: 600px;
+.mbgl .el-tabs--border-card {
+  height: 500px;
 }
 
 
@@ -210,13 +228,6 @@ div.el-dialog__body {
   overflow-y: scroll;
 }
 
-
-/*订单管理*/
-
-.ddgl div.el-dialog__body {
-  height: 550px;
-}
-
 //商户管理
 div.shglchild .el-card__header {
   padding: 15px 20px 5px 20px;
@@ -230,7 +241,8 @@ div.shglchild .el-card__header {
   padding: 5px;
 }
 
-.dwglbtnstly .el-button--info:focus,
-.el-button--info:hover {
-  background: #575a5d;
+div.wdshjspsz div.el-dialog__body {
+  padding: 20px;
+  height: 300px;
+  overflow-y: scroll;
 }

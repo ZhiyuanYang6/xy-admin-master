@@ -7,7 +7,7 @@
       <!-- 右侧按钮 -->
       <el-form-item>
         <el-button type="warning" @click="onloadtable()">查询</el-button>
-        <el-button type="warning" @click="addSubmit" style="padding:9px 25px;"> + </el-button>
+        <el-button type="warning" @click="szmb('xz')" style="padding:9px 25px;"> + </el-button>
       </el-form-item>
     </el-form>
     <div class="stable">
@@ -18,8 +18,8 @@
         <el-table-column prop="cz" label="操作" align="center">
           <template slot-scope="scope">
             <el-button type="text" size="mini" @click="mbDelete(scope.row)">删除</el-button>
-            <el-button type="text" size="mini" @click="mbEdit(scope.$index, scope.row)">修改</el-button>
-            <el-button type="text" size="mini" @click="mbzpjq(scope.$index, scope.row)">指派机器</el-button>
+            <el-button type="text" size="mini" @click="szmb('xg', scope.row)">修改</el-button>
+            <el-button type="text" size="mini" @click="mbzpjqShow(scope.$index, scope.row)">指派机器</el-button>
           </template>
         </el-table-column>
         <el-table-column prop="remark" label="备注" align="center"> </el-table-column>
@@ -30,7 +30,29 @@
     </div>
     <!-- el-dialog -->
     <el-dialog title="机器模板设置" :visible.sync="dialogTableVisible" width="90%">
-      <shj-mbsz></shj-mbsz>
+      <shj-mbsz :mbxx="mbxx" :mbszdialogVisible="dialogTableVisible"></shj-mbsz>
+    </el-dialog>
+    <!-- 模板指派机器 -->
+    <el-dialog title="指派机器" append-to-body :visible.sync="dialogVisible" width="50%">
+      <div class="smain">
+        <el-form :inline="true" :model="forjqcc" size="small" class="demo-form-inline">
+          <el-form-item>
+            <el-input v-model="forjqcc.jqxx" style="width: 150px;" placeholder="机器名称/编号"></el-input>
+          </el-form-item>
+          <el-button type="warning" @click="jqxxQuery()">查询</el-button>
+        </el-form>
+        <el-table :data="jqData" highlight-current-row @selection-change="jqhandleSelectionChange" style="width: 100%; cursor: pointer;" border>
+          <el-table-column type="selection" align="center"> </el-table-column>
+          <el-table-column prop="jqbh" label="机器编号" align="center"> </el-table-column>
+          <el-table-column prop="jqmc" label="机器名称" align="center"> </el-table-column>
+        </el-table>
+        <!-- 分页 -->
+        <el-pagination background @size-change="jqhandleSizeChange" @current-change="jqhandleCurrentChange" :current-page="listjqQuery.currentPage" :page-sizes="[10, 30, 50, 100]" :page-size="listjqQuery.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="listjqQuery.totalCount">
+        </el-pagination>
+        <div class="mbbtn">
+          <el-button type="primary" @click="mbzpjq">指派</el-button>
+        </div>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -40,6 +62,7 @@ import { Message, MessageBox } from 'element-ui'
 import shjMbsz from './components/shjMbsz'
 
 export default {
+  name: 'mbgl',
   components: { shjMbsz },
   data() {
     return {
@@ -54,17 +77,41 @@ export default {
       },
       tableData1: [],
       loading: true,
-      dialogTableVisible: false
+      dialogTableVisible: false,
+      jqData: [],
+      listjqQuery: { //模板分页
+        pageSize: 10, //默认每页的数据量
+        currentPage: 1, //当前页码
+        pageNum: 1, //查询的页码
+        totalCount: 50,
+      },
+      forjqcc: { // 机器信息查询表单
+        jqxx: '',
+      },
+      dialogVisible: false, //指派机器窗口
+      jqrows: [],
+      zpmbid: '',
+      mbxx: {},
     }
   },
   created: function() {
     this.onloadtable();
   },
+  watch: {
+    dialogTableVisible: function(newQuestion, oldQuestion) {
+      if (!newQuestion) {
+        this.onloadtable(); //每次关闭设置界面 刷新table
+      }
+    }
+  },
   methods: {
-    addSubmit() { //添加模板界面
+    szmb(lx, row) { //设置模板界面
+      this.mbxx = {};
+      if (lx == 'xg') {
+        this.mbxx.mbid = row.mbid;
+      }
+      console.log(this.mbxx);
       this.dialogTableVisible = true;
-      // var a = docuemnt.getElementByClass('el-dialog__header')
-      // console.log(a)
     },
     handleSizeChange(val) {
       this.listQuery.pageSize = val; //修改每页数据量
@@ -74,6 +121,14 @@ export default {
       this.listQuery.pageNum = val;
       this.onloadtable();
     },
+    jqhandleSizeChange(val) {
+      this.listjqQuery.pageSize = val; //修改每页数据量
+      this.jqxxQuery();
+    },
+    jqhandleCurrentChange(val) { //跳转第几页
+      this.listjqQuery.pageNum = val;
+      this.jqxxQuery();
+    },
     sortChange(column) { //服务器端排序
       if (column.order == "ascending") {
         this.orderBy = column.prop + " asc";
@@ -82,18 +137,19 @@ export default {
       }
       this.onloadtable();
     },
+    jqhandleSelectionChange(val) {
+      this.jqrows = val;
+    },
     onloadtable() { //模板查询
       var queryData = {
         orderBy: this.orderBy,
         pageNum: this.listQuery.pageNum,
         pageSize: this.listQuery.pageSize,
         mbmc: this.formInline.mbmc,
-        shbh: "123"
       }
       this.loading = false;
       //console.log(queryShjData);
-      request({ url: '/mbgl/mbglQuery', method: 'post', data: queryData }).then(response => {
-          console.log(response.data);
+      request({ url: 'service-machine/mbgl/mbglQuery', method: 'post', data: queryData }).then(response => {
           this.loading = false;
           this.tableData1 = response.data;
           this.listQuery.totalCount = response.total;
@@ -110,10 +166,9 @@ export default {
       }).then(() => {
         var mbDeleteData = {
           mbid: row.mbid,
-          shbh: "123"
         };
         request({
-            url: '/mbgl/tymbDelete',
+            url: 'service-machine/mbgl/tymbDelete',
             method: 'post',
             data: mbDeleteData
           }).then(response => {
@@ -130,11 +185,49 @@ export default {
         this.$message({ type: 'info', message: '已取消删除' });
       });
     },
-    mbEdit(index, row) {
-      Message.error("error：" + "请检查网络是否连接");
+    mbzpjqShow(index, row) {
+      this.zpmbid = row.mbid;
+      this.forjqcc.jqxx = '';
+      this.dialogVisible = true;
+      this.jqxxQuery();
     },
-    mbzpjq(index, row) {
-
+    jqxxQuery() {
+      var queryjqxx = {
+        pageNum: this.listjqQuery.pageNum,
+        pageSize: this.listjqQuery.pageSize,
+        jqxx: this.forjqcc.jqxx,
+      }
+      request({ url: 'service-machine/mbgl/jqxxQueryByJqSh', method: 'post', data: queryjqxx }).then(response => {
+        this.jqData = response.data;
+        this.listjqQuery.totalCount = response.total;
+        this.loading = false;
+      }).catch(error => {
+        Message.error("error：" + "请检查网络是否连接");
+      });
+    },
+    mbzpjq() {
+      if (this.jqrows.length > 0) {
+        let jqbhs = [];
+        for (var index in this.jqrows) {　　
+          jqbhs.push(this.jqrows[index].jqbh);
+        }
+        var zpjqdata = {
+          mbid: this.zpmbid,
+          jqbhs: jqbhs,
+        }
+        request({ url: 'service-machine/mbgl/mbzpjq', method: 'post', data: zpjqdata }).then(response => {
+          //成功时 消息不为空
+          if (response.msg) {
+            this.$message({ type: 'success', message: response.msg });
+            this.dialogVisible = false;
+          }
+          this.loading = false;
+        }).catch(error => {
+          Message.error("error：" + "请检查网络是否连接");
+        });
+      } else {
+        this.$message({ message: '请选择需要指派的机器', type: 'warning' });
+      }
     }
   }
 }

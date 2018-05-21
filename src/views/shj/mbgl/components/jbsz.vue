@@ -5,35 +5,55 @@
         <el-input v-model="formline.mbmc" placeholder="请输入模板名称"></el-input>
       </el-form-item>
       <el-form-item class="jbsztarea" label="备 注">
-        <el-input type="textarea" v-model="formline.bz"></el-input>
+        <el-input type="textarea" v-model="formline.remark"></el-input>
+      </el-form-item>
+      <!-- 右侧按钮 -->
+      <el-form-item>
+        <el-button class="subbtn" type="warning" @click="save">保存</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 <script>
+import request from '@/utils/request'
 export default {
+  props: ['mbxx', 'jbszshow', 'showNum'],
   data() {
     return {
       formline: {
         mbmc: '',
-        bz: ''
+        remark: ''
       }
     }
   },
+  created: function() {},
   watch: {
-    // 如果发生改变，这个函数就会运行
-    'formline.mbmc': function(newQuestion, oldQuestion) {
-      this.formline.mbmc = newQuestion;
-      this.setParam();
+    jbszshow: function(newQuestion, oldQuestion) {
+      this.formline.mbid = this.mbxx.mbid;
+      this.formline.mbmc = this.mbxx.mbmc;
+      this.formline.remark = this.mbxx.remark;
     },
-    'formline.bz': function(newQuestion, oldQuestion) {
-      this.formline.bz = newQuestion;
-      this.setParam();
+    showNum: function(newQuestion, oldQuestion) {
+      this.formline.mbid = this.mbxx.mbid;
+      this.formline.mbmc = this.mbxx.mbmc;
+      this.formline.remark = this.mbxx.remark;
     }
   },
   methods: {
-    setParam() {
-      this.$emit('jbmbParamChange', this.formline);
+    save() {
+      request({ url: 'service-machine/mbgl/tymbcz', method: 'post', data: this.formline }).then(response => {
+        if (response.msg) {
+          this.$message({ type: 'success', message: response.msg });
+          if (!this.mbxx.mbid) {
+            this.mbxx.mbid = response.mbid;
+            this.formline.mbid = response.mbid;
+          }
+          this.mbxx.mbmc = this.formline.mbmc;
+          this.mbxx.remark = this.formline.remark;
+        }
+      }).catch(error => {
+        Message.error("error：" + "请检查网络是否连接");
+      });
     }
   }
 }

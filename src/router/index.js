@@ -47,12 +47,10 @@ export const constantRouterMap = [
   {
     path: '/yxch',
     component: Layout,
-    children: [{
-      path: 'index',
-      name: 'yxch',
-      component: _import('yxch/index'),
-      meta: { noCache: false, title: 'yxch', icon: 'icon-yingxiao' }
-    }]
+    meta: { noCache: false, title: 'yxch', icon: 'icon-huowujilu' },
+    children: [
+      { path: 'cyxch', name: 'cyxch', component: _import('yxch/index'), meta: { noCache: false, title: 'yxch', icon: 'icon-yingxiao' } }
+    ]
   },
   //进销存管理
   {
@@ -79,23 +77,23 @@ export const constantRouterMap = [
   {
     path: '/gggl',
     component: Layout,
-    children: [{ path: 'index', name: 'gggl', component: _import('gggl/index'), meta: { noCache: false, title: 'gggl', icon: 'icon-guanggaoguanli' } }]
+    children: [{ path: 'cgggl', name: 'cgggl', component: _import('gggl/index'), meta: { noCache: false, title: 'gggl', icon: 'icon-guanggaoguanli' } }]
   },
   //会员管理
   {
     path: '/hygl',
     component: Layout,
-    children: [{ path: 'index', name: 'hygl', component: _import('hygl/index'), meta: { noCache: false, title: 'hygl', icon: 'icon-huiyuan1' } }]
+    children: [{ path: 'chygl', name: 'chygl', component: _import('hygl/index'), meta: { noCache: false, title: 'hygl', icon: 'icon-huiyuan1' } }]
   },
   //财务管理
   {
     path: '/cwgl',
     component: Layout,
     name: "cwgl",
-    redirect: '/cwgl/index',
+    redirect: '/cwgl/cwjsgl',
     meta: { noCache: false, title: 'cwgl', icon: 'icon-caiwuzhutifenxi' },
     children: [
-      { path: 'index', name: 'index', component: _import('cwgl/index'), meta: { noCache: false, title: 'cwgl', icon: 'icon-caiwuzhutifenxi' } },
+      { path: 'cwjsgl', name: 'cwjsgl', component: _import('cwgl/index'), meta: { noCache: false, title: 'cwgl', icon: 'icon-caiwuzhutifenxi' } },
       { path: 'jyjscx', name: 'jyjscx', component: _import('cwgl/jyjscx'), meta: { noCache: false, title: 'jyjscx', icon: 'icon-caiwuzhutifenxi' } }
     ]
   },
@@ -104,16 +102,65 @@ export const constantRouterMap = [
     path: '/shgl',
     component: Layout,
     name: "shgl",
-    redirect: '/shgl/index',
+    redirect: '/shgl/cwjsgl',
     meta: { noCache: false, title: 'shgl', icon: 'icon-yonghuguanli' },
     children: [
       { path: 'cwjsgl', name: 'cwjsgl', component: _import('shgl/cwjsgl'), meta: { noCache: false, title: 'cwjsgl', icon: 'icon-yonghuguanli' } },
       { path: 'shdagl', name: 'shdagl', component: _import('shgl/shdagl'), meta: { noCache: false, title: 'shdagl', icon: 'icon-yonghuguanli' } },
       { path: 'shjqgl', name: 'shjqgl', component: _import('shgl/shjqgl'), meta: { noCache: false, title: 'shjqgl', icon: 'icon-yonghuguanli' } },
-      { path: 'index', name: 'shglchild', component: _import('shgl/index'), meta: { noCache: false, title: 'shgl', icon: 'icon-yonghuguanli' } },
+      { path: 'shspgl', name: 'shspgl', component: _import('shgl/shspgl'), meta: { noCache: false, title: 'shspgl', icon: 'icon-yonghuguanli' } },
+      { path: 'jqsq', name: 'jqsq', component: _import('shgl/jqsq'), meta: { noCache: false, title: 'jqsq', icon: 'icon-yonghuguanli' } },
     ]
   },
-
+  //权限管理 
+  {
+    path: 'qxgl',
+    component: Layout,
+    redirect: '/qxgl/dagl/yhgl',
+    name: 'qxgl',
+    meta: { title: 'qxgl', icon: 'example' },
+    children: [{
+        path: '/qxgl/dagl',
+        component: _import('qxgl/index'),
+        redirect: '/qxgl/dagl/yhgl',
+        name: 'dagl',
+        meta: { title: 'dagl', icon: 'example' },
+        children: [
+          { path: 'yhgl', component: _import('qxgl/dagl/yhgl'), name: 'yhgl', meta: { noCache: false, title: 'yhgl', icon: 'example' } },
+          { path: 'zzgl', component: _import('qxgl/dagl/zzgl'), name: 'zzgl', meta: { noCache: false, title: 'zzgl', icon: 'example' } },
+          { path: 'bjyh', component: _import('qxgl/dagl/component/edit'), name: 'bjyh', meta: { title: 'bjyh', isEdit: true, noCache: false, } },
+          { path: 'xzyh', component: _import('qxgl/dagl/component/edit'), name: 'xzyh', meta: { title: 'xzyh', isEdit: false, noCache: false, } },
+          { path: 'management', component: _import('qxgl/dagl/component/management'), name: 'management', meta: { noCache: false, title: 'gljs' } },
+        ]
+      },
+      {
+        path: '/qxgl/zygl',
+        component: _import('qxgl/index'),
+        redirect: '/qxgl/zygl/ptzygl',
+        name: 'zygl',
+        meta: { title: 'zygl', icon: 'example' },
+        children: [
+          { path: 'ptzygl', component: _import('qxgl/zygl/ptzygl'), name: 'ptzygl', meta: { noCache: false, title: 'ptzygl', icon: 'example' } },
+          { path: 'sxzygl', component: _import('qxgl/zygl/sxzygl'), name: 'sxzygl', meta: { noCache: false, title: 'sxzygl', icon: 'example' } },
+          { path: 'xzptzy', component: _import('qxgl/zygl/component/edit'), name: 'xzptzy', meta: { noCache: false, isEdit: false, title: 'xzptzy', icon: 'example' } },
+          { path: 'bjptzy', component: _import('qxgl/zygl/component/edit'), name: 'bjptzy', meta: { noCache: false, isEdit: true, title: 'bjptzy', icon: 'example' } },
+        ]
+      },
+      {
+        path: '/qxgl/cqxgl',
+        component: _import('qxgl/index'),
+        redirect: '/qxgl/cqxgl/cqxgl/jsgl',
+        name: 'cqxgl',
+        meta: { title: 'qxgl', icon: 'example' },
+        children: [
+          { path: 'jsgl', component: _import('qxgl/cqxgl/jsgl'), name: 'jsgl', meta: { noCache: false, title: 'jsgl', icon: 'example' } },
+          { path: 'xzjs', component: _import('qxgl/cqxgl/component/edit'), name: 'xzjs', meta: { noCache: false, isEdit: false, title: 'xzjs', icon: 'example' } },
+          { path: 'bjjs', component: _import('qxgl/cqxgl/component/edit'), name: 'bjjs', meta: { noCache: false, isEdit: true, title: 'bjjs', icon: 'example' } },
+          { path: 'jszyqx', component: _import('qxgl/cqxgl/component/resource'), name: 'jszyqx', meta: { noCache: false, isEdit: false, title: 'jszyqx', icon: 'example' } },
+        ]
+      },
+    ]
+  },
   //系统管理 
   {
     path: '/xtgl',
@@ -133,7 +180,7 @@ export const constantRouterMap = [
           { path: 'zshcssz', component: _import('xtgl/zfsz/zshcssz'), name: 'zshcssz', meta: { noCache: false, title: 'zshcssz', icon: 'example' } },
         ]
       },
-      { path: 'tab/index', icon: 'example', component: _import('xtgl/index'), name: 'tab', meta: { title: 'xtgl' } }
+      { path: '/xtgl/index', icon: 'example', component: _import('xtgl/index'), name: 'tab', meta: { title: 'xtgl' } }
     ]
   },
 

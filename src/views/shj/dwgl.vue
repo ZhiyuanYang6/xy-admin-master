@@ -2,7 +2,7 @@
   <div class="smain">
     <!-- 界面类别 -->
     <div style="padding: 5px" class="dwglbtnstly">
-      <el-button v-for="item in jmlb" :key="item.lx" style="padding:10px 40px;margin-right:20px;" size="small" type="info" @click="lookerror(item.lx)">{{item.value}}</el-button>
+      <el-button v-for="item in jmlb" :class="{'checkbtn':item.show}" :key="item.lx" style="padding:10px 40px;margin-right:20px;" size="small" type="info" @click="lookerror(item.lx)">{{item.value}}</el-button>
     </div>
     <hr>
     <div>
@@ -17,6 +17,7 @@ import dwpage from './dwgl/dwpage'
 import xlpage from './dwgl/xlpage'
 import qypage from './dwgl/qypage'
 export default {
+  name: "dwgl",
   components: { dwpage, xlpage, qypage },
   data() {
     return {
@@ -44,6 +45,10 @@ export default {
 <style scoped>
 .smain {
   padding: 10px;
+}
+
+.checkbtn {
+  background: #575a5d;
 }
 
 </style>

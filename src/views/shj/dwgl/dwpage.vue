@@ -3,14 +3,14 @@
     <!-- 左侧表单 -->
     <el-form :inline="true" :model="formInline" size="small" class="demo-form-inline">
       <el-form-item>
-        <el-input v-model="formInline.dwbh" style="width: 200px;" placeholder="点位ID/名称/类型"></el-input>
+        <el-input v-model="formInline.dwbh" style="width: 200px;" placeholder="点位ID/名称"></el-input>
       </el-form-item>
-      <el-form-item>
+      <!-- <el-form-item>
         <el-select v-model="formInline.sfbd" placeholder="请选择" clearable>
           <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <!-- 右侧按钮 -->
       <el-form-item class="rightitem">
         <el-button type="primary" @click="onloadtable">查询</el-button>
@@ -27,6 +27,8 @@
         <el-table-column prop="dwdz" label="点位地址" align="center"> </el-table-column>
         <el-table-column prop="dwbs" label="点位标识" align="center"> </el-table-column>
         <el-table-column prop="jqsl" label="机器数量" align="center"> </el-table-column>
+        <el-table-column prop="dwjd" label="点位经度" align="center"> </el-table-column>
+        <el-table-column prop="dwwd" label="点位纬度" align="center"> </el-table-column>
         <el-table-column prop="remark" label="备注" align="center"> </el-table-column>
         <el-table-column label="操作" align="center" width="200">
           <template slot-scope="scope">
@@ -89,7 +91,7 @@ export default {
   methods: {
     addxlsubmit(row, val) { //查询点位类型
       if (val) {
-        request({ url: '/dwxx/dwDicQuery', method: 'post', data: { dkh: '8081' } }).then(response => { //请求点位类型
+        request({ url: 'service-machine/dwxx/dwDicQuery', method: 'post' }).then(response => { //请求点位类型
           this.row.options = [];
           for (var i = 0; i < response.length; i++) {
             var data = { value: response[i].value, label: response[i].valuename };
@@ -133,11 +135,10 @@ export default {
       var queryDdxxData = {
         dwbh: this.formInline.dwbh,
         sfbd: this.formInline.sfbd,
-        // pageNum: this.listQuery.pageNum,
-        // pageSize: this.listQuery.pageSize,
-        dkh: '8081'
+        pageNum: this.listQuery.pageNum,
+        pageSize: this.listQuery.pageSize,
       }
-      request({ url: "/dwxx/queryDwxx", method: 'post', data: queryDdxxData })
+      request({ url: "service-machine/dwxx/queryDwxx", method: 'post', data: queryDdxxData })
         .then(response => {
           this.tableData = response.data;
           this.listQuery.totalCount = response.total;
@@ -149,16 +150,15 @@ export default {
     delclick(row) { //删除点位
       var dwxx = {
         dwid: row.dwid,
-        dkh: '8081'
       }
       this.$confirm('是否删除该条点位信息, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        request({ url: '/dwxx/deleteDwxx', method: 'post', data: dwxx }).then(response => {
-
-            this.$message({ type: 'success', message: '成功!' });
+        request({ url: 'service-machine/dwxx/deleteDwxx', method: 'post', data: dwxx }).then(response => {
+            debugger;
+            // this.$message({ type: 'success', message: '成功!' });
             this.onloadtable(); //刷新数据
           })
           .catch((error) => {
