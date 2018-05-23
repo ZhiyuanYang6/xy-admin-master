@@ -6,7 +6,7 @@
         <el-input v-model="formInline.jqbh" style="width: 150px;" placeholder="机器名称/编号"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-select v-model="formInline.jqlb" placeholder="机器类型" clearable>
+        <el-select v-model="formInline.jqlb" style="width: 150px;" placeholder="机器类型" clearable>
           <el-option v-for="item in lboption" :key="item.value" :label="item.valuename" :value="item.value">
           </el-option>
         </el-select>
@@ -44,6 +44,22 @@
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
+        <el-dropdown trigger="click" :hide-on-click="false">
+          <el-button type="primary">
+            视图<i class="el-icon-arrow-down el-icon--right"></i>
+          </el-button>
+          <el-dropdown-menu slot="dropdown" class="viedrop">
+            <el-dropdown-item>
+              <el-checkbox-group v-model="checkedCities1" @change="vieshow">
+                <!-- <el-checkbox v-for='vitem in viewstable' :key="index" :label="vitem" :key="vitem">{{vitem}}</el-checkbox> -->
+                <el-checkbox border v-for="vitem in viewstable" :label="vitem" :key="vitem.label" style="float: left;margin:5px 10px; min-width: 100px">{{vitem.label}}</el-checkbox>
+              </el-checkbox-group>
+              <!-- <el-button type="text" style="width:100%;" @click="dialogtable()">{{vitem}}</el-button> -->
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </el-form-item>
+      <el-form-item>
       </el-form-item>
     </el-form>
     <!-- 表格 -->
@@ -51,41 +67,41 @@
       <!-- @sort-change="sortChange" -->
       <el-table :data="tableData" @sort-change="sortChange" v-loading="loading" style="width:100%" border header-cell-class-name="shjHeader">
         <el-table-column type="selection" align="center"></el-table-column>
-        <el-table-column prop="shmc" width="120" sortable='custom' label="商户名称" show-overflow-tooltip align="center"> </el-table-column>
-        <el-table-column prop="shbh" show-overflow-tooltip label="商户编号" align="center"> </el-table-column>
-        <el-table-column label="机器编号" align="center" show-overflow-tooltip>
+        <el-table-column prop="shmc" width="120" sortable='custom' v-if="viewstable[0].value" label="商户名称" show-overflow-tooltip align="center"> </el-table-column>
+        <el-table-column prop="shbh" v-if="viewstable[1].value" show-overflow-tooltip label="商户编号" align="center"> </el-table-column>
+        <el-table-column label="机器编号" v-if="viewstable[2].value" align="center" show-overflow-tooltip>
           <template slot-scope="scope">
             <el-button type="text" size="mini" @click="dialogshow('jqxq',scope.row)">{{scope.row.jqbh}}</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="jqmc" label="机器名称" align="center">
+        <el-table-column v-if="viewstable[3].value" prop="jqmc" label="机器名称" align="center">
           <template slot-scope="scope">
             <el-button type="text" size="mini" @click="dialogshow('jqxq',scope.row)">{{scope.row.jqmc}}</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="jqlb" label="机器类型" align="center"> </el-table-column>
-        <el-table-column prop="jgsl" label="机柜数" align="center">
+        <el-table-column v-if="viewstable[4].value" prop="jqlb" label="机器类型" align="center"> </el-table-column>
+        <el-table-column prop="jgsl" label="机柜数" align="center" v-if="viewstable[5].value">
           <template slot-scope="scope">
             <el-button type="text" size="mini" @click="dialogshow('hdxq',scope.row)">{{scope.row.jgsl}}</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="hdsl" label="货道数" align="center">
+        <el-table-column v-if="viewstable[6].value" prop="hdsl" label="货道数" align="center">
           <template slot-scope="scope">
             <el-button type="text" size="mini" @click="dialogshow('hdxq',scope.row)">{{scope.row.hdsl}}</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="swrjbb" label="上位机软件版本" width="120" align="center"> </el-table-column>
-        <el-table-column prop="xwrjbb" label="下位机软件版本" width="120" align="center"> </el-table-column>
-        <el-table-column prop="swyjbb" label="上位机硬件版本" width="120" align="center"> </el-table-column>
-        <el-table-column prop="xwyjbb" label="下位机硬件版本" width="120" align="center"> </el-table-column>
-        <el-table-column prop="fx" label="分享" align="center"> </el-table-column>
-        <el-table-column prop="dwmc" label="点位" align="center"> </el-table-column>
-        <el-table-column prop="qymc" label="区域" align="center"> </el-table-column>
-        <el-table-column prop="xlmc" label="线路" align="center"> </el-table-column>
-        <el-table-column prop="szgj" label="国家" align="center"> </el-table-column>
-        <el-table-column prop="szsq" label="时区" align="center"> </el-table-column>
-        <el-table-column prop="scrq" label="生产日期" align="center"> </el-table-column>
-        <el-table-column prop="ccrq" label="出厂日期" align="center"> </el-table-column>
+        <el-table-column v-if="viewstable[7].value" prop="swrjbb" label="上位机软件版本" width="120" align="center"> </el-table-column>
+        <el-table-column v-if="viewstable[8].value" prop="xwrjbb" label="下位机软件版本" width="120" align="center"> </el-table-column>
+        <el-table-column v-if="viewstable[9].value" prop="swyjbb" label="上位机硬件版本" width="120" align="center"> </el-table-column>
+        <el-table-column v-if="viewstable[10].value" prop="xwyjbb" label="下位机硬件版本" width="120" align="center"> </el-table-column>
+        <el-table-column v-if="viewstable[11].value" prop="fx" label="分享" align="center"> </el-table-column>
+        <el-table-column v-if="viewstable[12].value" prop="dwmc" label="点位" align="center"> </el-table-column>
+        <el-table-column v-if="viewstable[13].value" prop="qymc" label="区域" align="center"> </el-table-column>
+        <el-table-column v-if="viewstable[14].value" prop="xlmc" show-overflow-tooltip label="线路" align="center"> </el-table-column>
+        <el-table-column v-if="viewstable[15].value" prop="szgj" label="国家" align="center"> </el-table-column>
+        <el-table-column v-if="viewstable[16].value" prop="szsq" label="时区" align="center"> </el-table-column>
+        <el-table-column v-if="viewstable[17].value" prop="scrq" show-overflow-tooltip label="生产日期" align="center"> </el-table-column>
+        <el-table-column v-if="viewstable[18].value" prop="ccrq" show-overflow-tooltip label="出厂日期" align="center"> </el-table-column>
         <el-table-column label="操作" fixed="right" align="center" width="110">
           <template slot-scope="scope">
             <el-dropdown trigger="click">
@@ -165,12 +181,35 @@ import hdcsh from './wdshj/hdcsh'
 import llbjsz from './components/llyj'
 import hdxq from './wdshj/hdxq'
 import jqxq from './wdshj/jqxq'
-
+const cityOptions = ['上海', '北京', '广州', '深圳'];
 export default {
   name: 'wdshj',
   components: { spsz, bjsz, wdyj, qchd, hdcsh, llbjsz, hdxq, jqxq },
   data() {
     return {
+      cities: cityOptions,
+      viewstable: [
+        { value: true, label: '商户名称' },
+        { value: true, label: '商户编号' },
+        { value: true, label: '机器编号' },
+        { value: true, label: '机器名称' },
+        { value: true, label: '机器类型' },
+        { value: true, label: '机柜数' },
+        { value: true, label: '货道数' },
+        { value: true, label: '上位机软件版本' },
+        { value: true, label: '下位机软件版本' },
+        { value: true, label: '上位机硬件版本' },
+        { value: true, label: '下位机硬件版本' },
+        { value: true, label: '分享' },
+        { value: true, label: '点位' },
+        { value: true, label: '区域' },
+        { value: true, label: '线路' },
+        { value: true, label: '国家' },
+        { value: true, label: '时区' },
+        { value: true, label: '生产日期' },
+        { value: true, label: '出厂日期' },
+      ],
+      checkedCities1: [], //默认展示的列
       formInline: {
         xl: '',
         jqbh: '',
@@ -194,21 +233,31 @@ export default {
         pageNum: 1, //查询的页码
         totalCount: 100,
       },
-      tableData: [
-        /*{ xh: '00001', shbh: '160560001', shmc: '涉外北门涉外北门涉外北门外北门', jqbh: '000011113310000001', jqmc: "涉外北门", jgsl: '12', hdsl: '42' }*/
-      ],
+      tableData: [],
       orderBy: '',
-      loading: true,
+      loading: false,
       data2: {}
-    }
-
+    };
   },
   created: function() {
+    this.checkedCities1 = this.viewstable; //配置默认展现的table列
     this.onloadtable();
     this.dictSelect('1000', 'lboption');
   },
   methods: {
-
+    vieshow(val) {
+      this.viewstable.forEach(item => {
+        item.value = false;
+      });
+      this.viewstable.forEach(item => {
+        val.forEach(row => {
+          if (row.label === item.label) {
+            item.value = true;
+          }
+        });
+      });
+      // console.log(val);
+    },
     handleSizeChange(val) {
       this.listQuery.pageSize = val; //修改每页数据量
       this.onloadtable();
@@ -261,12 +310,12 @@ export default {
         this.dialoghdxq = true;
       } else if (type == "jqxq") {
         this.dialogjqxq = true;
-      } else if(type=="llbjsz"){
+      } else if (type == "llbjsz") {
         this.dialogllbjsz = true;
-      }else if(row.jgsl==null){
+      } else if (row.jgsl == null) {
         Message.error("error：" + "机柜数为空,不能进行该操作!");
         return;
-      }else if (type == "spsz") {
+      } else if (type == "spsz") {
         this.dialogspsz = true;
       } else if (type == "bjsz") {
         this.dialogbjsz = true;
@@ -276,7 +325,7 @@ export default {
         this.dialogqchd = true;
       } else if (type == "hdcsh") {
         this.dialoghdcsh = true;
-      }  
+      }
     },
     celsty({ row, column, rowIndex, columnIndex }) {
       console.log(row, column, rowIndex, columnIndex);
@@ -308,6 +357,10 @@ div.el-dialog--center div.el-dialog__body {
   /*width: 130px;*/
   /*overflow: hidden;*/
   /*text-overflow: ellipsis;*/
+}
+
+.viedrop {
+  width: 280px;
 }
 
 </style>

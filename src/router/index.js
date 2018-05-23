@@ -22,6 +22,8 @@ export const constantRouterMap = [
       { path: 'ztcx', component: _import('shj/ztcx'), name: 'ztcx', meta: { noCache: false, title: 'ztcx', icon: 'example' } },
       { path: 'jqbj', component: _import('shj/jqbj'), name: 'jqbj', meta: { noCache: false, title: 'jqbj', icon: 'example' } },
       { path: 'mbgl', component: _import('shj/mbgl/index'), name: 'mbgl', meta: { noCache: false, title: 'mbgl', icon: 'example' } },
+      { path: 'shjMbadd', component: _import('shj/mbgl/components/shjMbsz'), name: 'shjMbadd', meta: { noCache: false, title: 'shjMbadd', icon: 'example' } },
+      { path: 'shjMbset', component: _import('shj/mbgl/components/shjMbsz'), name: 'shjMbset', meta: { noCache: false, title: 'shjMbset', icon: 'example' } },
       { path: 'bywx', component: _import('shj/bywx'), name: 'bywx', meta: { noCache: false, title: 'bywx', icon: 'example' } },
       { path: 'zdfx', component: _import('shj/zdfx/index'), name: 'zdfx', meta: { noCache: false, title: 'zdfx', icon: 'example' } },
       { path: 'dwgl', component: _import('shj/dwgl'), name: 'dwgl', meta: { noCache: false, title: 'dwgl', icon: 'example' } },
@@ -140,8 +142,8 @@ export const constantRouterMap = [
         name: 'zygl',
         meta: { title: 'zygl', icon: 'example' },
         children: [
-          { path: 'ptzygl', component: _import('qxgl/zygl/ptzygl'), name: 'ptzygl', meta: { noCache: false, title: 'ptzygl', icon: 'example' } },
-          { path: 'sxzygl', component: _import('qxgl/zygl/sxzygl'), name: 'sxzygl', meta: { noCache: false, title: 'sxzygl', icon: 'example' } },
+          { path: 'gngl', component: _import('qxgl/zygl/ptzygl'), name: 'ptzygl', meta: { noCache: false, title: 'ptzygl', icon: 'example' } },
+          { path: 'cdgl', component: _import('qxgl/zygl/sxzygl'), name: 'sxzygl', meta: { noCache: false, title: 'sxzygl', icon: 'example' } },
           { path: 'xzptzy', component: _import('qxgl/zygl/component/edit'), name: 'xzptzy', meta: { noCache: false, isEdit: false, title: 'xzptzy', icon: 'example' } },
           { path: 'bjptzy', component: _import('qxgl/zygl/component/edit'), name: 'bjptzy', meta: { noCache: false, isEdit: true, title: 'bjptzy', icon: 'example' } },
         ]
@@ -176,8 +178,8 @@ export const constantRouterMap = [
         meta: { title: 'zfsz', icon: 'example' },
         children: [
           { path: 'zffwgl', component: _import('xtgl/zfsz/zffwgl'), name: 'zffwgl', meta: { noCache: false, title: 'zffwgl', icon: 'example' } },
-          { path: 'shzffwcssz', component: _import('xtgl/zfsz/shzffwcssz'), name: 'shzffwcssz', meta: { noCache: false, title: 'shzffwcssz', icon: 'example' } },
-          { path: 'zshcssz', component: _import('xtgl/zfsz/zshcssz'), name: 'zshcssz', meta: { noCache: false, title: 'zshcssz', icon: 'example' } },
+          { path: 'fwscssz', component: _import('xtgl/zfsz/shzffwcssz'), name: 'shzffwcssz', meta: { noCache: false, title: 'shzffwcssz', icon: 'example' } },
+          { path: 'shzhsz', component: _import('xtgl/zfsz/zshcssz'), name: 'zshcssz', meta: { noCache: false, title: 'zshcssz', icon: 'example' } },
         ]
       },
       { path: '/xtgl/index', icon: 'example', component: _import('xtgl/index'), name: 'tab', meta: { title: 'xtgl' } }

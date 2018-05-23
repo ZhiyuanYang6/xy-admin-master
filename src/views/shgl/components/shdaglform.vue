@@ -1,18 +1,21 @@
 <template>
   <div class="smain">
     <!-- 左侧表单 -->
-    <el-form :inline="true" label-position="left" :model="formInline" :rules="rules2" ref="form" size="small" class="demo-form-inline">
+    <el-form :inline="true" label-width="80px" label-position="left" :model="formInline" :rules="rules2" ref="form" size="small" class="demo-form-inline">
+      <el-form-item label="登录账号" prop="accountname" v-show="accountnameVisible">
+        <el-input v-model="formInline.accountname" maxlength="30"></el-input>
+      </el-form-item>
       <el-form-item label="商户名称" prop="shmc">
-        <el-input v-model="formInline.shmc" maxlength="30"></el-input>
+        <el-input v-model="formInline.shmc" :disabled='!accountnameVisible' maxlength="30"></el-input>
       </el-form-item>
       <el-form-item label="公司名称">
         <el-input v-model="formInline.gsmc" maxlength="50"></el-input>
       </el-form-item>
-      <el-form-item label="联系人">
+      <el-form-item label=" 联 系 人">
         <el-input v-model="formInline.lxr" maxlength="30"></el-input>
       </el-form-item>
       <el-form-item label="联系电话">
-        <el-input v-model="formInline.lxdh" maxlength="30"></el-input>
+        <el-input v-model="formInline.lxdh" :disabled='!accountnameVisible' maxlength="30"></el-input>
       </el-form-item>
       <!--       <el-form-item label="开户账号">
   <el-input v-model="formInline.khzh" maxlength="30"></el-input>
@@ -57,15 +60,30 @@ export default {
         callback();
       }, 400);
     };
+    var validaccountname = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('登录账号不能为空'));
+      } else {
+        value = value.replace(/(^\s*)|(\s*$)/g, ''); //去首尾空格
+        if (!value) {
+          return callback(new Error('登录账号不能为空'));
+        }
+      }
+      setTimeout(() => {
+        callback();
+      }, 400);
+    };
     return {
       formInline: {},
       rules2: {
         shmc: [{ validator: validshmc, trigger: 'blur' }],
+        accountname: [{ validator: validaccountname, trigger: 'blur' }],
       },
       options: [
         { value: '1', label: "可收款" },
         { value: '0', label: "不可收款" },
       ],
+      accountnameVisible: '',
     }
   },
   created: function() {
@@ -114,6 +132,7 @@ export default {
     initialize() { ////////////////////////进入初始化
       if (this.listrow.btn == "修改") {
         //this.formInline = this.listrow;
+        this.accountnameVisible = false;
         this.formInline = {
           shbh: this.listrow.shbh,
           shmc: this.listrow.shmc,
@@ -125,11 +144,13 @@ export default {
           khzh: this.listrow.khzh,
           khyh: this.listrow.khyh,
           sfksk: this.listrow.sfksk,
-          remark: this.listrow.remark
+          remark: this.listrow.remark,
+          userid: this.listrow.userid
         }
         //console.log(this.listrow);
         // this.listrow = this.form;
       } else {
+        this.accountnameVisible = true;
         this.formInline = {
           shmc: '',
           shdz: '',
@@ -161,15 +182,17 @@ div.el-input {
 }
 
 div.el-textarea {
-  margin-left: 24px;
-  margin-bottom: 35px;
-  width: 238%;
+  /*margin-left: 24px;*/
+  /*margin-bottom: 35px;*/
+  width: 520px;
 }
 
 .subbtn {
-  position: relative;
-  top: 100px;
-  right: -230px;
+  margin-left: 520px;
+  /*float: right;*/
+  /*position: relative;*/
+  /*top: 100px;*/
+  /*right: -230px;*/
 }
 
 </style>

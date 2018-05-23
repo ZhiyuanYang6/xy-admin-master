@@ -24,10 +24,13 @@
       <el-button type="primary" @click="mbxx()">导入模板</el-button>
       <el-button type="primary" @click="submitsetdetil">保存</el-button>
     </div>
-    <el-dialog title="选择商品" :visible.sync="dialogspxx" width="60%" append-to-body class="wdshjspsz">
+    <el-dialog title="选择商品" :visible.sync="dialogspxx" width="60%"  append-to-body class="wdshjspsz">
       <el-form :inline="true" :model="formInline" size="small" class="demo-form-inline">
         <el-form-item>
           <el-input v-model="formInline.spmc" style="width: 150px;" placeholder="商品名称"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-input v-model="formInline.spbh" style="width: 150px;" placeholder="商品编号"></el-input>
         </el-form-item>
         <el-button type="warning" @click="spxx()">查询</el-button>
       </el-form>
@@ -59,8 +62,7 @@
         <!-- <el-table-column prop="lmmc" label="商品品牌" align="center"> </el-table-column>
           <el-table-column prop="spdj" label="进货价格" align="center"> </el-table-column>        <el-table-column prop="spjg" label="商品售价" align="center"> </el-table-column> -->
       </el-table>
-      分页
-      <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listmbQuery.currentPage" :page-sizes="[10, 30, 50, 100]" :page-size="listmbQuery.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="listmbQuery.totalCount">
+      <el-pagination background @size-change="handleSizeChangemb" @current-change="handleCurrentChangemb" :current-page="listmbQuery.currentPage" :page-sizes="[10, 30, 50, 100]" :page-size="listmbQuery.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="listmbQuery.totalCount">
       </el-pagination>
       <div class="mbbtn">
         <el-button type="primary" @click="dialogxzmb=false">确定</el-button>
@@ -77,6 +79,7 @@ export default {
     return {
       formInline: {
         spmc: '',
+        spbh:'',
       },
       formbcc: {
         mbmc: '',
@@ -134,15 +137,25 @@ export default {
   methods: {
     handleSizeChange(val) {
       this.listQuery.pageSize = val; //修改每页数据量
-      this.onloadmbtable();
+      this.spxx();
     },
     handleCurrentChange(val) { //跳转第几页
       this.listQuery.pageNum = val;
-      this.onloadmbtable();
+      this.spxx();
+    },
+     handleSizeChangemb(val) {
+      this.listmbQuery.pageSize = val; //修改每页数据量
+      this.mbxx();
+    },
+    handleCurrentChangemb(val) { //跳转第几页
+      this.listmbQuery.pageNum = val;
+      this.mbxx();
     },
     handleCurrentspChange(val) {
-    ; //选择的商品
-    var hdbh= this.oldsp.hdbh;
+     this.formInline.spmc='';
+       this.formInline.spbh='';
+    //选择的商品
+       var hdbh= this.oldsp.hdbh;
       this.oldsp.spmc = val.spmc;
       this.oldsp.szspbh1 = val.spbh;
       this.oldsp.spjg = val.spjg;
@@ -220,14 +233,15 @@ export default {
       });
     },
     spxx: function(val) {
-      //ale
-      this.oldsp = val;
+
+     this.oldsp = val;
       this.dialogspxx = true
       var editspxx = {
         jqbh: this.listrow.jqbh,
         pageNum: this.listQuery.pageNum,
         pageSize: this.listQuery.pageSize,
         spmc: this.formInline.spmc,
+        spbh: this.formInline.spbh
 
       }
       request({ url: 'service-machine/shjgl/queryshspxx', method: 'post', data: editspxx }).then(response => {
@@ -311,6 +325,9 @@ export default {
 .mbbtn {
   float: right;
   margin-top: -60px;
+}
+.el-dialog_body{
+      height: 100%;
 }
 
 </style>

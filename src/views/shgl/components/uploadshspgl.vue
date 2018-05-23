@@ -19,8 +19,8 @@
           <el-option v-for="item in ejfloptions" :key="item.value" :label="item.lmmc" :value="item.ejfl">
           </el-option>
         </el-select>
-        <el-select v-model="formline.pplmbm" style="width:190px;"  filterable=true
-    allow-create=true placeholder="品牌" clearable>
+        <el-select v-model="formline.pplmbm" style="width:190px;"  filterable
+    allow-create placeholder="品牌" clearable>
           <el-option v-for="item in ppoptions4" :key="item.value" :label="item.lmmc" :value="item.pplmbm">
           </el-option>
         </el-select>

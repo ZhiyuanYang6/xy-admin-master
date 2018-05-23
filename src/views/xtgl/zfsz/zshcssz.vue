@@ -251,7 +251,7 @@ export default {
       var txmxcxData = {
         id: rows.id,
         merchantCode: rows.merchantCode,
-        serverId: rows.serverId
+        channelId: rows.channelId
       };
       this.dialogFormVisible = false;
       // axios.post('http://127.0.0.1:8083/pay/api/config/jyclientadd', txmxcxData)
@@ -411,6 +411,7 @@ export default {
     },
     xiugai() { //修改
       var txmxcxData = {
+        id: this.updateformis.id,
         merchantCode: this.updateformis.merchantCode,
         subMchName: this.updateformis.subMchName,
         channelId: this.updateformis.channelId,
@@ -442,6 +443,9 @@ export default {
         });
     },
     fws() {
+      if (this.form.serverId !== undefined) {
+        this.form.serverId = "";
+      }
       //this.form.serverId = '';
       var txmxcxData = {
         channelId: this.form.channelId

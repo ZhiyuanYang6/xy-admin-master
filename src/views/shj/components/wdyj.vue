@@ -76,16 +76,16 @@ export default {
 
       activeName2: 'first',
       wformline: {
-        /*dw: "2",
-        gw: "10"*/
+        zdwd: "0",
+        zgwd: "100"
       },
       wformline2: {
-        /* dw: "2",
-         gw: "10",
+         gzms: "1",
+         mbwd: "0",
          typeOptions: ['制冷'],
-         time1: [new Date(2016, 9, 10, 8, 40), new Date(2016, 9, 10, 9, 40)],
-         time2: [new Date(2016, 9, 10, 8, 40), new Date(2016, 9, 10, 9, 40)],
-         time3: [new Date(2016, 9, 10, 8, 40), new Date(2016, 9, 10, 9, 40)]*/
+         time1: ['00:00:00', '23:59:59'],
+         time2: ['00:00:00', '23:59:59'],
+         time3: ['00:00:00', '23:59:59']
       }
     };
   },
@@ -95,6 +95,18 @@ export default {
     for (var i = 1; i < this.listrow.jgsl; i++) {
       tabname[i] = { value: 'i', label: "副机" + i }
     }
+    this.wformline2={
+         gzms: "1",
+         mbwd: "0",
+         typeOptions: ['制冷'],
+         time1: ['00:00:00', '23:59:59'],
+         time2: ['00:00:00', '23:59:59'],
+         time3: ['00:00:00', '23:59:59']
+      };
+      this.wformline={
+         zdwd: "0",
+        zgwd: "100"
+      }
     this.tabslx = tabname;
     console.log(this.listrow)
     this.onloadtable()
@@ -103,6 +115,18 @@ export default {
   watch: {
     dialogwdyj: function(data, olddata) {
       if (data) {
+             this.wformline2={
+         gzms: "1",
+         mbwd: "0",
+         typeOptions: ['制冷'],
+          time1: ['00:00:00', '23:59:59'],
+         time2: ['00:00:00', '23:59:59'],
+         time3: ['00:00:00', '23:59:59']
+      };
+      this.wformline={
+         zdwd: "0",
+        zgwd: "100"
+      }
         this.onloadtable();
          var tabname = new Array();
     tabname[0] = { key: "0", label: "主机" }

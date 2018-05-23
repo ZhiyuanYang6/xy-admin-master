@@ -7,7 +7,10 @@
       <!-- 右侧按钮 -->
       <el-form-item>
         <el-button type="warning" @click="onloadtable()">查询</el-button>
-        <el-button type="warning" @click="szmb('xz')" style="padding:9px 25px;"> + </el-button>
+        <router-link :to="{ path:'shjMbadd'}">
+          <!-- <el-button type="success" icon="el-icon-edit-outline">新增用户</el-button> -->
+          <el-button type="warning" icon="el-icon-edit-outline" style="padding:9px 25px;">新增模板</el-button>
+        </router-link>
       </el-form-item>
     </el-form>
     <div class="stable">
@@ -15,14 +18,14 @@
         <el-table-column type="index" label="序号" width="50" align="center"> </el-table-column>
         <el-table-column prop="mbmc" sortable='custom' label="模板名称" align="center"> </el-table-column>
         <el-table-column prop="cjsj" label="创建时间" align="center"> </el-table-column>
+        <el-table-column prop="remark" label="备注" align="center"> </el-table-column>
         <el-table-column prop="cz" label="操作" align="center">
           <template slot-scope="scope">
             <el-button type="text" size="mini" @click="mbDelete(scope.row)">删除</el-button>
-            <el-button type="text" size="mini" @click="szmb('xg', scope.row)">修改</el-button>
+            <el-button type="text" size="mini" @click="szmb(scope.row)">修改</el-button>
             <el-button type="text" size="mini" @click="mbzpjqShow(scope.$index, scope.row)">指派机器</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="remark" label="备注" align="center"> </el-table-column>
       </el-table>
       <!-- 分页 -->
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.currentPage" :page-sizes="[10, 30, 50, 100]" :page-size="listQuery.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="listQuery.totalCount">
@@ -94,6 +97,9 @@ export default {
       mbxx: {},
     }
   },
+  activated() {
+    if (this.listQuery.totalCount !== 100) this.onloadtable();
+  },
   created: function() {
     this.onloadtable();
   },
@@ -105,13 +111,8 @@ export default {
     }
   },
   methods: {
-    szmb(lx, row) { //设置模板界面
-      this.mbxx = {};
-      if (lx == 'xg') {
-        this.mbxx.mbid = row.mbid;
-      }
-      console.log(this.mbxx);
-      this.dialogTableVisible = true;
+    szmb(row) { //设置模板界面
+      this.$router.push({ path: 'shjMbset', query: { mbid: row.mbid } });
     },
     handleSizeChange(val) {
       this.listQuery.pageSize = val; //修改每页数据量
@@ -146,7 +147,7 @@ export default {
         pageNum: this.listQuery.pageNum,
         pageSize: this.listQuery.pageSize,
         mbmc: this.formInline.mbmc,
-      }
+      };
       this.loading = false;
       //console.log(queryShjData);
       request({ url: 'service-machine/mbgl/mbglQuery', method: 'post', data: queryData }).then(response => {
@@ -156,7 +157,7 @@ export default {
         })
         .catch(error => {
           Message.error("error：" + "请检查网络是否连接");
-        })
+        });
     },
     mbDelete(row) {
       this.$confirm('确认删除模板?', '提示', {
@@ -179,8 +180,7 @@ export default {
           })
           .catch(error => {
             Message.error("error：" + "请检查网络是否连接");
-          })
-
+          });
       }).catch(() => {
         this.$message({ type: 'info', message: '已取消删除' });
       });

@@ -60,8 +60,8 @@ export default {
   name: 'login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!isvalidUsername(value)) {
-        callback(new Error('请输入正确的用户名'))
+      if (!value) {
+        callback(new Error('用户名不能为空'))
       } else {
         callback()
       }
@@ -125,7 +125,7 @@ export default {
           }).catch((error) => {
             this.loading = false;
             this.replaceCode();
-            // this.$message({ message: error.data, type: 'error' });
+            this.$message({ message: error, type: 'error' });
             console.log('登录失败');
           });
         } else {

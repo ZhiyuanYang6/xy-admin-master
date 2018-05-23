@@ -1,15 +1,15 @@
 <template>
   <div class="smain">
+    <div :class="{'showzz':!editableTabs2.length}"></div>
     <div class="titlebtn">
       <el-button size="mini" type="primary" @click="dialogaddVisible=true">添加机柜</el-button>
       <el-button size="mini" type="primary" @click="dialogVisible=true">导入机器货道</el-button>
-      <el-button size="mini" :disabled="!editableTabs2[0].name" type="primary" @click="dialogaddhdVisible=true">添加货道</el-button>
-      <el-button size="mini" :disabled="!editableTabs2[0].name" type="primary" @click="sethdyzsubmit()">批量设置阈值</el-button>
+      <el-button size="mini" :disabled="!editableTabs2.length" type="primary" @click="dialogaddhdVisible=true">添加货道</el-button>
+      <el-button size="mini" :disabled="!editableTabs2.length" type="primary" @click="sethdyzsubmit()">批量设置阈值</el-button>
     </div>
     <el-tabs v-model="editableTabsValue2" type="border-card" closable @tab-remove="removedata" @tab-click="tabclickfun">
       <el-tab-pane v-for="(item, index) in editableTabs2" :key="item.name" :label="item.title" :name="item.name">
-        <el-table :data="tableData[item.name]" ref="multipleTable" border max-height="398" @selection-change="handleSelectionChange">
-          <!-- @sort-change="sortChange" -->
+        <el-table style="margin-left: 1px;" :data="tableData[item.name]" ref="multipleTable" border max-height="398" @selection-change="handleSelectionChange">
           <el-table-column type="selection" align="center"></el-table-column>
           <el-table-column prop="hdbh" sortable label="货道编号" align="center"> </el-table-column>
           <el-table-column label="货道模式" align="center">
@@ -42,20 +42,20 @@
           </el-table-column>
         </el-table>
       </el-tab-pane>
-      <div class="submitboton" v-show="tableData.length">
+      <div class="submitboton" v-show="!!editableTabs2.length">
         <el-button size="smain" type="success" @click="hdxxSave">保存设置</el-button>
       </div>
     </el-tabs>
     <!-- 机器模板 -->
-    <el-dialog title="导入机器货道" append-to-body :visible.sync="dialogVisible" width="50%">
-      <div class="smain">
+    <el-dialog title="导入机器货道" append-to-body class="jqsztk" :visible.sync="dialogVisible" width="70%">
+      <div class="addjg ">
         <el-form :inline="true" :model="forjqcc" size="small" class="demo-form-inline">
           <el-form-item>
-            <el-input v-model="forjqcc.jqxx" style="width: 150px;" placeholder="机器名称/编号"></el-input>
+            <el-input v-model="forjqcc.jqxx" style="width: 350px;" placeholder="机器名称/编号"></el-input>
           </el-form-item>
-          <el-button type="warning" @click="jqxxfind()">查询</el-button>
+          <el-button type="warning" :loading="loading" @click="jqxxfind()">查询</el-button>
         </el-form>
-        <el-table :data="jqData" highlight-current-row @current-change="handleCurrentmbChange" style="width: 100%; cursor: pointer;" border>
+        <el-table v-loading="loading" :data="jqData" highlight-current-row @current-change="handleCurrentmbChange" style="width: 100%; cursor: pointer;" border>
           <el-table-column prop="jqbh" label="机器编号" align="center"> </el-table-column>
           <el-table-column prop="jqmc" label="机器名称" align="center"> </el-table-column>
         </el-table>
@@ -63,12 +63,12 @@
         <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listmbQuery.currentPage" :page-sizes="[10, 30, 50, 100]" :page-size="listmbQuery.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="listmbQuery.totalCount">
         </el-pagination>
         <div class="mbbtn">
-          <el-button type="primary" @click="reporthd">导入</el-button>
+          <el-button type="primary" :loading="loading" @click="reporthd">导入</el-button>
         </div>
       </div>
     </el-dialog>
     <!-- 添加机柜 -->
-    <el-dialog title="添加机柜" append-to-body :visible.sync="dialogaddVisible" width="30%">
+    <el-dialog title="添加机柜" append-to-body :visible.sync="dialogaddVisible" width="35%">
       <div class="smain addjg">
         <el-form status-icon :model="formaddjg" size="small" ref="formaddjg" :rules="rules1" class="demo-form-inline" label-width="100px" label-position="left">
           <el-form-item label="添加机柜" prop="addjg">
@@ -111,15 +111,15 @@
       </el-form>
     </el-dialog>
     <!-- 设置商品 -->
-    <el-dialog title="选择商品" :visible.sync="dialogspxxVisible" width="60%" append-to-body>
-      <div class="smain">
+    <el-dialog title="选择商品" class="jqsztk" :visible.sync="dialogspxxVisible" width="70%" append-to-body>
+      <div class="smain addjg">
         <el-form :inline="true" :model="spcc" size="small" class="demo-form-inline">
           <el-form-item>
-            <el-input v-model="spcc.spxx" style="width: 150px;" placeholder="商品名称/编号"></el-input>
+            <el-input v-model="spcc.spxx" style="width: 350px;" placeholder="商品名称/编号"></el-input>
           </el-form-item>
-          <el-button type="warning" @click="spxxQuery()">查询</el-button>
+          <el-button type="warning" :loading="loading" @click="spxxQuery()">查询</el-button>
         </el-form>
-        <el-table :data="spData" highlight-current-row @current-change="handleCurrentspChange" style="width: 100%; cursor: pointer;" border>
+        <el-table v-loading="loading" :data="spData" highlight-current-row @current-change="handleCurrentspChange" style="width: 100%; cursor: pointer;" border>
           <el-table-column prop="spbh" label="商品编号" align="center"> </el-table-column>
           <el-table-column prop="spmc" label="商品名称" align="center"> </el-table-column>
           <el-table-column prop="spdj" label="商品价格" align="center"> </el-table-column>
@@ -128,7 +128,7 @@
         <el-pagination background @size-change="sphandleSizeChange" @current-change="sphandleCurrentChange" :current-page="listspQuery.currentPage" :page-sizes="[10, 30, 50, 100]" :page-size="listspQuery.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="listspQuery.totalCount">
         </el-pagination>
         <div class="mbbtn">
-          <el-button type="primary" @click="selectsp">确定</el-button>
+          <el-button type="primary" :loading="loading" @click="selectsp">确定</el-button>
         </div>
       </div>
     </el-dialog>
@@ -236,7 +236,7 @@ export default {
     return {
       tableData: [],
       editableTabsValue2: '1',
-      editableTabs2: [{}], //已添加的tabs
+      editableTabs2: [], //已添加的tabs
       tabIndex: 1,
       dialogVisible: false,
       dialogspxxVisible: false,
@@ -288,6 +288,7 @@ export default {
       spcc: {
         spxx: '',
       },
+      loading: false,
       spData: [],
       listspQuery: { //商品分页
         pageSize: 10, //默认每页的数据量
@@ -301,7 +302,7 @@ export default {
     }
   },
   created: function() {
-    this.initialize();
+    // this.initialize();
   },
   watch: {
     dialogspxxVisible: function(data, olddata) {
@@ -309,11 +310,11 @@ export default {
         this.spxxQuery();
       }
     },
-    showtabs: function(data, olddata) {
-      if (data) {
-        this.initialize();
-      }
-    },
+    // showtabs: function(data, olddata) {
+    //   if (data) {
+    //     // this.initialize();
+    //   }
+    // },
     dialogVisible: function(data, olddata) {
       if (data) {
         this.reportjqbh = ''; //初始化导入机器编号
@@ -329,11 +330,60 @@ export default {
     dialogaddyzVisible: function(data, olddata) {
       this.initializenow(data, 'formszyz');
     },
-    showNum: function(data, olddata) {
-      this.initialize();
+    showtabs: function(data, olddata) {
+      // console.log(this.mbxx);
+      this.formline.mbid = this.mbxx.mbid;
+      this.editableTabs2 = []; //初始化清空机柜
+      this.tableData = []; //清空货道
+      this.optionsjg.forEach(item => item.disabled = false);
+      for (let item in this.mbxx.hdList) { //添加机柜
+        this.optionsjg[item].disabled = true;
+        this.editableTabs2.push({
+          title: this.optionsjg[item].label,
+          name: item,
+        });
+        this.editableTabsValue2 = item;
+        this.tableData.push(this.mbxx.hdList[item]);
+      }
     },
   },
   methods: {
+    initialize() { //进入货道设置界面进行初始化
+      this.formline.mbid = this.mbxx.mbid;
+      this.tableData = [];
+      this.editableTabs2 = []; //已添加的tabs
+      this.optionsjg.forEach(item => item.disabled = false);
+    },
+    addTab(targetName) { //添加机柜
+      this.$refs['formaddjg'].validate((valid) => {
+        if (valid) {
+          // if (!this.editableTabs2[0].name) { this.editableTabs2.splice(0, 1); }
+          this.optionsjg.filter(item => {
+            if (item.value === this.formaddjg.addjg) {
+              item.disabled = true;
+            }
+          });
+          let newTabName = this.formaddjg.addjg + '';
+          this.editableTabs2.push({
+            title: this.optionsjg[this.formaddjg.addjg].label,
+            name: newTabName,
+          });
+          this.editableTabsValue2 = newTabName;
+          var tabsdata = [];
+          for (let i = 0; i < this.formaddjg.hdcs; i++) {
+            for (let j = 1; j <= this.formaddjg.zdhds; j++) {
+              (j < 10) ? tabsdata.push({ hdbh: this.formaddjg.addjg + "" + i + j }): tabsdata.push({ hdbh: this.formaddjg.addjg + "" + (i + 1) + "0" });
+            }
+          }
+          this.$set(this.tableData, newTabName, tabsdata);
+          this.tableData[newTabName] = tabsdata;
+          this.dialogaddVisible = false;
+        } else {
+          this.$message({ message: '表单验证未通过', type: 'error' });
+          return false;
+        }
+      });
+    },
     handleSizeChange(val) {
       this.listmbQuery.pageSize = val; //修改每页数据量
       this.jqxxfind();
@@ -350,15 +400,7 @@ export default {
       this.listspQuery.pageNum = val;
       this.spxxQuery();
     },
-    sortChange(column) { //服务器端排序
-      if (column.order == "ascending") {
-        this.orderBy1 = column.prop + " asc";
-      } else if (column.order == "descending") {
-        this.orderBy1 = column.prop + " desc";
-      }
-      // this.onloadtable1();
-    },
-    handleSelectionChange(val) {
+    handleSelectionChange(val) { //选中的货道
       this.listyzdata = val;
     },
     handleCurrentspChange(val) { //选择的商品
@@ -367,13 +409,8 @@ export default {
     addhdfun(targetName) { //添加货道
       this.$refs[targetName].validate((valid) => {
         if (valid) {
-          //货道编号小于10补0
           let hdbh = this.formtjhd.addhdbh;
-          if (hdbh >= 10) {
-            hdbh = this.editableTabsValue2 + hdbh;
-          } else {
-            hdbh = this.editableTabsValue2 + "0" + hdbh;
-          }
+          (hdbh >= 10) ? hdbh = this.editableTabsValue2 + hdbh: hdbh = this.editableTabsValue2 + "0" + hdbh; //货道编号小于10补0
           this.tableData[this.editableTabsValue2].push({ hdbh: hdbh });
           this.dialogaddhdVisible = false;
           this.$message({ message: '货道添加成功', type: 'success' });
@@ -387,6 +424,7 @@ export default {
     removehd(row, index) { //删除货道
       if (this.tableData[this.editableTabsValue2].length > 1) {
         this.tableData[this.editableTabsValue2].splice(index, 1);
+        this.$message({ type: 'success', message: '删除成功!' });
       } else {
         this.$message({ message: '机柜货道不能全部删除', type: 'warning' });
       }
@@ -407,45 +445,8 @@ export default {
         }
       });
     },
-    addTab(targetName) { //添加机柜
-      this.$refs['formaddjg'].validate((valid) => {
-        if (valid) {
-          if (!this.editableTabs2[0].name) { this.editableTabs2.splice(0, 1); }
-          this.optionsjg.filter(item => { if (item.value == this.formaddjg.addjg) { item.disabled = true; } });
-          let newTabName = this.formaddjg.addjg + '';
-          this.editableTabs2.push({
-            title: this.optionsjg[this.formaddjg.addjg].label,
-            name: newTabName,
-          });
-          this.editableTabsValue2 = newTabName;
-          var tabsdata = [];
-          for (let i = 0; i < this.formaddjg.hdcs; i++) {
-            for (let j = 1; j <= this.formaddjg.zdhds; j++) {
-              if (j < 10) {
-                tabsdata.push({ hdbh: this.formaddjg.addjg + "" + i + j });
-              } else {
-                tabsdata.push({ hdbh: this.formaddjg.addjg + "" + (i + 1) + "0" });
-              }
-            }
-          }
-          this.$set(this.tableData, newTabName, tabsdata);
-          // this.tableData[newTabName] = tabsdata;
-          this.dialogaddVisible = false;
-        } else {
-          this.$message({ message: '表单验证未通过', type: 'error' });
-          return false;
-        }
-      });
-    },
     removeTab(targetName) { //删除机柜
-      var sfsc = 0;
-      for (var key in this.tableData) {
-        if (key && this.tableData[key]) {
-          sfsc++;
-        }
-      }
-      console.log(sfsc);
-      if (sfsc <= 1) { return this.$message({ message: '货道设置必须保留一个机柜', type: 'warning' }); }
+      if (this.editableTabs2.length <= 1) { return this.$message({ message: '货道设置必须保留一个机柜', type: 'warning' }); }
       this.optionsjg[targetName].disabled = false;
       let tabs = this.editableTabs2;
       let activeName = this.editableTabsValue2;
@@ -454,8 +455,7 @@ export default {
           if (tab.name === targetName) {
             let nextTab = tabs[index + 1] || tabs[index - 1];
             if (nextTab) {
-              activeName = nextTab.name;
-              //清除数组中的元素
+              activeName = nextTab.name; //清除数组中的元素
               this.tableData.splice(targetName, 1);
             }
           }
@@ -463,16 +463,15 @@ export default {
       }
       this.editableTabsValue2 = activeName;
       this.editableTabs2 = tabs.filter(tab => tab.name !== targetName);
-      if (this.editableTabs2.length == 0) { this.editableTabs2 = [{}]; }
+      this.$message({ type: 'success', message: '删除成功!' });
     },
-    jqxxfind: function(val) { //查询模板
-      this.oldsp = val;
-      this.dialogxzmb = true;
+    jqxxfind: function(val) { //机器货道模板查询
       var queryjqxx = {
         pageNum: this.listmbQuery.pageNum,
         pageSize: this.listmbQuery.pageSize,
         jqxx: this.forjqcc.jqxx,
-      }
+      };
+      this.loading = true;
       request({ url: 'service-machine/mbgl/jqxxQueryByJqSh', method: 'post', data: queryjqxx }).then(response => {
         this.jqData = response.data;
         this.listmbQuery.totalCount = response.total;
@@ -481,126 +480,80 @@ export default {
         Message.error("error：" + "请检查网络是否连接");
       });
     },
-    handleCurrentmbChange(val) { //选择的模板
+    handleCurrentmbChange(val) { //选中的机器货道模板
       if (val) {
         this.reportjqbh = val.jqbh;
       }
     },
-    removedata(value, lx, index) {
-      var title = (lx == "hd") ? '货道' : '机柜';
+    removedata(value, lx, index) { //删除货道机柜
+      var title = (lx === "hd") ? '货道' : '机柜';
       this.$confirm('此操作删除该' + title + ',是否继续?', '提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' }).then(() => {
-        this.$message({ type: 'success', message: '删除成功!' });
-        if (lx == 'hd') { this.removehd(value, index); } else {
-          this.removeTab(value);
-        }
+        (lx === 'hd') ? this.removehd(value, index): this.removeTab(value);
       }).catch(() => {
         this.$message({ type: 'info', message: '已取消删除' });
       });
     },
     tabclickfun(tab, event) {
       this.initializemul();
-      // this.$refs.table[this.editableTabsValue2][0].clearSelection();
-      // console.log(this.$refs.table[this.editableTabsValue2]);
-      // console.log(this.editableTabsValue2);
     },
-    sethdyzsubmit() {
+    sethdyzsubmit() { //设置阈值
       if (!this.listyzdata.length) { return this.$message({ type: 'warning', message: '未选择机柜货道' }); }
       this.dialogaddyzVisible = true;
-    },
-    initialize() { //进入货道设置界面进行初始化
-      this.formline.mbid = this.mbxx.mbid;
-      this.tableData = [];
-      this.editableTabs2 = [{}]; //已添加的tabs
-      this.optionsjg.filter(item => { item.disabled = false; });
-      if (this.mbxx.mbid) {
-        for (var key in this.mbxx.hdList) {
-          this.optionsjg.filter(item => { if (item.value == key) { item.disabled = true; } });
-          let newTabName = key + '';
-          this.editableTabs2.push({
-            title: this.optionsjg[key].label,
-            name: newTabName,
-          });
-          if (!this.editableTabs2[0].name) { this.editableTabs2.splice(0, 1); }
-          this.editableTabsValue2 = newTabName;
-          var tabsdata = this.mbxx.hdList[key];
-
-          this.$set(this.tableData, newTabName, tabsdata);
-        }
-      }
     },
     initializenow(val, formName) { //弹框初始化 
       if (!val) {
         this.$refs[formName].resetFields();
-      } else {
-        //添加机柜 默认选择下一个未添加机柜
-        var nextselect = -1;
+      } else { //添加机柜 默认选择下一个未添加机柜
         for (let i = 0; i < this.optionsjg.length; i++) {
           if (!this.optionsjg[i].disabled) {
-            nextselect = this.optionsjg[i].value;
+            this.formaddjg.addjg = this.optionsjg[i].value;
             break;
+          } else {
+            this.formaddjg.addjg = '';
           }
         }
-        if (nextselect != -1) {
-          this.formaddjg.addjg = nextselect;
-        } else {
-          this.formaddjg.addjg = '';
-        }
+        // debugger;
       }
     },
-    initializemul() { //制空多选
+    initializemul() { //清空多选
       this.listyzdata = [];
       for (var i = 0; i < this.$refs.multipleTable.length; i++) {
         this.$refs.multipleTable[i].clearSelection();
       }
     },
-    reporthd() { //导入货道
-      if (this.reportjqbh) {
-        var queryjqhd = {
-          jqbh: this.reportjqbh,
+    reporthd() { //导入机器货道模板
+      if (!this.reportjqbh) { return this.$message({ type: 'warning', message: '请选择需要导入的机器' }); }
+      this.loading = true;
+      request({ url: 'service-machine/mbgl/hdxxQueryByJqbh', method: 'post', data: { jqbh: this.reportjqbh } }).then(response => {
+        this.editableTabs2 = []; //初始化清空机柜
+        this.tableData = []; //清空货道
+        for (let item in response.data) { //添加机柜
+          this.optionsjg[item].disabled = true;
+          this.editableTabs2.push({
+            title: this.optionsjg[item].label,
+            name: item,
+          });
+          this.editableTabsValue2 = item;
+          this.tableData.push(response.data[item]);
         }
-        request({ url: 'service-machine/mbgl/hdxxQueryByJqbh', method: 'post', data: queryjqhd }).then(response => {
-          //初始化tab清空
-          this.editableTabs2 = [{}];
-          this.optionsjg.filter(item => { item.disabled = false; });
-          //if (this.editableTabs2[0] && !this.editableTabs2[0].name) { this.editableTabs2.splice(0, 1); }
-
-          for (var key in response.data) {
-            if (key) {
-              this.optionsjg.filter(item => { if (item.value == key) { item.disabled = true; } });
-              if (key == "0") {
-                this.editableTabs2.push({ title: "主机", name: key, });
-              } else {
-                this.editableTabs2.push({ title: "副机" + key, name: key, });
-              }
-
-              this.editableTabsValue2 = newTabName;
-              let tabsdata = response.data[key];
-              console.log(tabsdata);
-              this.$set(this.tableData, newTabName, tabsdata);
-            }
-          }
-
-          this.loading = false;
-        }).catch(error => {
-          Message.error("error：" + "请检查网络是否连接");
-        });
+        this.loading = false;
         this.dialogVisible = false;
-      } else {
-        this.$message({ message: '请选择需要导入的机器', type: 'warning' });
-      }
+      }).catch(error => {
+        Message.error("error：" + "请检查网络是否连接");
+      });
     },
     spSelectShow(row) {
       this.dialogspxxVisible = true;
       this.selectrow = row;
     },
-    spxxQuery() {
-      //每次查询清空选中
-      this.selectspxx = {};
+    spxxQuery() { //查询商品模板 
+      this.selectspxx = {}; //初始化选中的商品
       var queryspxx = {
         pageNum: this.listspQuery.pageNum,
         pageSize: this.listspQuery.pageSize,
         spxx: this.spcc.spxx,
-      }
+      };
+      this.loading = true;
       request({ url: 'service-machine/mbgl/spxxQuery', method: 'post', data: queryspxx }).then(response => {
         this.spData = response.data;
         this.listspQuery.totalCount = response.total;
@@ -609,19 +562,20 @@ export default {
         Message.error("error：" + "请检查网络是否连接");
       });
     },
-    selectsp() {
+    selectsp() { //货道编号发生更改table才会刷新???
       let hdbh = this.selectrow.hdbh;
       this.selectrow.spmc = this.selectspxx.spmc;
       this.selectrow.spbh = this.selectspxx.spbh;
       this.selectrow.spjg = this.selectspxx.spdj;
-      //货道编号发生更改table才会刷新???
       this.selectrow.hdbh = 0;
       this.selectrow.hdbh = hdbh;
       this.dialogspxxVisible = false;
     },
     hdxxSave() {
       this.formline.hdList = this.tableData;
-
+      this.mbxx.hdList = this.tableData;
+      // console.log(this.mbxx);
+      // debugger;
       request({ url: 'service-machine/mbgl/hdmbcz', method: 'post', data: this.formline }).then(response => {
         if (response.msg) {
           this.$message({ type: 'success', message: response.msg });
@@ -629,28 +583,35 @@ export default {
             this.mbxx.mbid = response.mbid;
             this.formline.mbid = response.mbid;
           }
-          this.mbxx.hdList = this.tableData;
         }
       }).catch(error => {
         Message.error("error：" + "请检查网络是否连接");
-      })
+      });
     }
   }
 }
 
 </script>
 <style scoped>
-.smain {
-  padding: 10px;
-  padding-left: 0px;
+.showzz {
+  width: 100%;
+  z-index: 3;
+  background: #F5F7FA;
+  position: absolute;
+  height: 40px;
+}
+
+.el-tab-pane div.smain {
+  position: relative;
+  padding: 35px 0 10px 0;
   margin-left: -5px;
 }
 
 .titlebtn {
   z-index: 10;
   position: absolute;
-  top: 55px;
-  right: 40px;
+  top: 40px;
+  right: 25px;
   /*padding: 13px;*/
 }
 
@@ -666,6 +627,10 @@ export default {
 .mbbtn {
   float: right;
   margin-top: -60px;
+}
+
+.addjg {
+  padding: 20px 1px 1px 1px;
 }
 
 .addjg div.el-input {
@@ -694,6 +659,12 @@ export default {
 
 .dialogadd {
   margin-top: 20px;
+}
+
+</style>
+<style>
+.jqsztk .el-table__body tr td {
+  padding: 5px;
 }
 
 </style>

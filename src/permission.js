@@ -1,12 +1,13 @@
 import router from './router'
 import store from './store'
 import { Message } from 'element-ui'
-import { getSession, removeToken } from '@/utils/auth' // 验权
+import { getSession, removeSession } from '@/utils/auth' // 验权
 
 const whiteList = ['/login'] // 不重定向白名单
 router.beforeEach((to, from, next) => { //全局前置守卫
   if (getSession()) { //验证登陆权限通过，进入主界面
     if (to.path === '/login') {
+      removeSession();
       next({ path: '/' });
     } else {
       next();

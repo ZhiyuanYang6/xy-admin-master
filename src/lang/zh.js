@@ -61,6 +61,8 @@ export default {
     jszyqx: '角色资源权限',
     bjjs: '编辑角色',
     xzjs: '新增角色',
+    shjMbadd:"模板添加",
+    shjMbset: '模板修改',
     // exportZip: 'Export Zip',
     theme: '换肤',
     // clipboardDemo: 'Clipboard',

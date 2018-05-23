@@ -37,7 +37,7 @@
         </el-pagination>
       </div>
       <!-- 添加修改商户 -->
-      <el-dialog :title="row.title" :visible.sync="dialogVisible" width="45%">
+      <el-dialog :title="row.title" :visible.sync="dialogVisible" width="50%">
         <shdaglform :listrow="row" :dialogVisible="dialogVisible" @dialog1Changed="childchanged($event)"></shdaglform>
       </el-dialog>
     </el-card>
@@ -153,7 +153,8 @@ export default {
         type: 'warning'
       }).then(() => {
         var deleteData = {
-          shbh: row.shbh
+          shbh: row.shbh,
+          userid: row.userid
         };
         request({
             url: 'service-machine/shdagl/shdaglDelete',

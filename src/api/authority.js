@@ -17,6 +17,14 @@ export function findRoleresource(data) {
     data
   });
 }
+//查询用户权限
+export function getRoleresourceByRoleId(roleId) {
+  return request({
+    url: '/sram/distribution/getRoleresourceByRoleId',
+    method: 'get',
+    params: { roleId },
+  });
+}
 //保存角色资源权限
 export function setRoleResource(data) {
   return request({
@@ -29,7 +37,7 @@ export function setRoleResource(data) {
 /**************roles********************/
 
 //查看角色列表
-export function queryRoleinfo(data){
+export function queryRoleinfo(data) {
   return request({
     url: '/sram/authority/queryRoleinfo',
     method: 'post',
@@ -37,15 +45,15 @@ export function queryRoleinfo(data){
   })
 }
 //根据id查看角色
-export function getRoleById(id){
+export function getRoleById(id) {
   return request({
     url: '/sram/authority/getRoleById',
     method: 'get',
-    params: {id},
+    params: { id },
   })
 }
 //新增角色
-export function newRoleinfo(data){
+export function newRoleinfo(data) {
   return request({
     url: '/sram/authority/newRoleinfo',
     method: 'post',
@@ -53,7 +61,7 @@ export function newRoleinfo(data){
   })
 }
 //编辑角色
-export function editRoleinfo(data){
+export function editRoleinfo(data) {
   return request({
     url: '/sram/authority/editRoleinfo',
     method: 'post',
@@ -61,10 +69,10 @@ export function editRoleinfo(data){
   })
 }
 //删除角色
-export function delRoleinfo(id){
+export function delRoleinfo(id) {
   return request({
     url: '/sram/authority/delRoleinfo',
     method: 'get',
-    params:{id}
+    params: { id }
   })
 }

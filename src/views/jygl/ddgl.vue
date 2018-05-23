@@ -85,7 +85,7 @@ export default {
       formInline: {
         jqbh: '',
         jqmme: '',
-        ftime: ['', ''],
+        ftime: [new Date(), new Date()],
         ftitarttime: new Date(),
         //endtime: new Date(),
       },

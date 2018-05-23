@@ -1,6 +1,7 @@
 <template>
   <div class="smain mbgl">
-    <el-tabs type="border-card" tab-position="left" style="height: 560px" @tab-click="handleClick" v-model="activeName">
+    <el-tabs type="border-card" class="tabsmbgl" tab-position="left" @tab-click="handleClick" v-model="activeName">
+      <el-button size="medium" type="primary" style="z-index: 10;position: absolute;top: 5px;right: 20px;" @click="$router.go(-1)">返回</el-button>
       <div>
         <i class="iconfont icon-ai-set"></i>
         <div class="tlt"><span>{{listrow.title}}</span></div>
@@ -36,6 +37,7 @@
   </div>
 </template>
 <script>
+import { Message, MessageBox } from 'element-ui'
 import request from '@/utils/request'
 import jbsz from './jbsz'
 // import hdms from './hdms'
@@ -50,7 +52,6 @@ import mbtitle from './mbtitle'
 
 
 export default {
-  props: ['mbxx', 'mbszdialogVisible'],
   components: { jbsz, jqsz, hdsp, wdyj, llyj, chgz, mbtitle },
   data() {
     return {
@@ -69,65 +70,44 @@ export default {
         title: '模板基本信息设置',
       },
       activeName: '',
+      mbid: '',
+      mbxx: {},
       showNum: 0, //每次打开窗口自增   用于通用模板赋值
+    };
+  },
+  created: function() { //修改模板  查询模板信息
+    this.mbid = this.$route.query.mbid; //获取本页面的mbid
+    this.activeName = "0"; //默认打开基本设置
+    if (this.mbid) {
+      this.mbxxInit();
     }
   },
-  created: function() {
-    //修改模板  查询模板信息
-    this.mbxxInit();
-  },
-  watch: {
-    mbszdialogVisible: function(newQuestion, oldQuestion) {
-      if (newQuestion) {
-        //货道tab默认为第一个
-        this.activeName = "0";
-        this.listrow.title = this.menuData[0].value;
-        //通过模板id判断操作类型是新增还是修改 同时赋值
-        //修改模板  查询模板信息
-        this.mbxxInit();
-      }
-    }
-  },
+  watch: {},
   methods: {
     handleClick(tab, event) {
-      for (var i = 0; i < this.menuData.length; i++) {
-        this.menuData[i].show = false;
-      }
-      this.menuData[tab.index].show = true;
-      this.listrow.title = this.menuData[tab.index].value;
-      console.log(this.mbxx);
+      this.listrow.title = this.menuData[this.activeName].value;
+      this.menuData.forEach(item => {
+        item.show = (tab.index === item.index) ? true : false;
+      });
     },
     mbxxInit() {
-      if (this.mbxx.mbid) {
-        var queryData = {
-          mbid: this.mbxx.mbid,
-        }
-
-        request({ url: 'service-machine/mbgl/mbxxQuery', method: 'post', data: queryData }).then(response => {
-            //模板信息赋值
-            this.mbxx.shbh = response.shbh;
-            this.mbxx.mbid = response.mbid;
-            this.mbxx.mbmc = response.mbmc;
-            this.mbxx.remark = response.remark;
-            this.mbxx.rllyj = response.rllyj;
-            this.mbxx.yllyj = response.yllyj;
-            this.mbxx.wdList = response.wdList;
-            this.mbxx.hdList = response.hdList;
-
-            this.showNum++;
-          })
-          .catch(error => {
-            Message.error("error：" + "请检查网络是否连接");
-          })
-      } else {
-        this.showNum++;
-      }
+      request({ url: 'service-machine/mbgl/mbxxQuery', method: 'post', data: { mbid: this.mbid } }).then(response => {
+        this.mbxx = response; //模板信息赋值
+        // this.showNum++; 
+      }).catch(error => {
+        Message.error("error：" + "请检查网络是否连接");
+      });
+      // this.showNum++;    
     }
   }
-}
+};
 
 </script>
 <style scoped>
+.mbgl {
+  padding: 10px;
+}
+
 .el-tab-pane .smain {
   padding: 35px 10px 10px 0;
 }
@@ -148,6 +128,7 @@ main.el-main {
 .tlt {
   float: left;
   width: 90%;
+  margin-top: -4px;
   font-size: 18px;
 }
 
@@ -160,6 +141,10 @@ hr {
   top: 45px;
   width: 90%;
   border: 1px solid #ccc;
+}
+
+.tabsmbgl {
+  height: 620px;
 }
 
 </style>

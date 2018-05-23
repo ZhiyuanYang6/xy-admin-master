@@ -36,9 +36,12 @@
         <el-form-item label="资源地址" prop="url">
           <el-input v-model="form.url" style="width: 250px"></el-input>
         </el-form-item>
-                  <el-form-item label="排序编号">
-            <el-input v-model.trim="form.orderNo" style="width: 250px"></el-input>
-          </el-form-item>
+        <el-form-item label="排序编号">
+          <el-input v-model.trim="form.orderNo" style="width: 250px"></el-input>
+        </el-form-item>
+        <el-form-item label="图标管理">
+          <el-input v-model.trim="form.subsidiary4" style="width: 250px"></el-input>
+        </el-form-item>
         <el-form-item v-if="isEdit" label="上级节点编号" prop="fatherId">
           <el-input v-model.trim="form.fatherId" style="width: 250px" disabled></el-input>
         </el-form-item>
@@ -87,6 +90,7 @@ export default {
         url: '',
         fatherId: '',
         orderNo: '', //排序
+        subsidiary4:''//图标
       },
       rules: {
         name: [
@@ -157,7 +161,6 @@ export default {
       this.receiveStore = store;
     },
     submitForm(formName) {
-      this.form.orderNo='';
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (this.isEdit) {

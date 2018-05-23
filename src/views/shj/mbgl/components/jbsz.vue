@@ -24,20 +24,29 @@ export default {
         mbmc: '',
         remark: ''
       }
-    }
+    };
   },
-  created: function() {},
+  created: function() {
+    // if (this.mbxx) {
+    // console.log(this.mbxx);
+    // }
+  },
   watch: {
+    mbxx: function(val, old) {
+      this.formline.mbid = this.mbxx.mbid;
+      this.formline.mbmc = this.mbxx.mbmc;
+      this.formline.remark = this.mbxx.remark;
+    },
     jbszshow: function(newQuestion, oldQuestion) {
       this.formline.mbid = this.mbxx.mbid;
       this.formline.mbmc = this.mbxx.mbmc;
       this.formline.remark = this.mbxx.remark;
     },
-    showNum: function(newQuestion, oldQuestion) {
-      this.formline.mbid = this.mbxx.mbid;
-      this.formline.mbmc = this.mbxx.mbmc;
-      this.formline.remark = this.mbxx.remark;
-    }
+    // showNum: function(newQuestion, oldQuestion) {
+    //   this.formline.mbid = this.mbxx.mbid;
+    //   this.formline.mbmc = this.mbxx.mbmc;
+    //   this.formline.remark = this.mbxx.remark;
+    // }
   },
   methods: {
     save() {
@@ -56,7 +65,7 @@ export default {
       });
     }
   }
-}
+};
 
 </script>
 <style scoped>

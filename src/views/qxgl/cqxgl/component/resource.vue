@@ -36,7 +36,7 @@
     <!--树形资源列表-->
     <div class="wrapper" v-show="toData.resourcetype!=='2'">
       <div class="tree-resource-list">树形资源列表</div>
-      <el-tree default-expand-all :props="propsmenu" :data="treeData" ref="tree" node-key="resourceid" show-checkbox></el-tree>
+      <el-tree  default-expand-all :props="propsmenu" @check="handleCheckChange" :data="treeData" ref="tree" node-key="resourceid" show-checkbox></el-tree>
       <!-- <vue-z-tree ref="zTree2" :zNodes="treeData" :setting="treeSetting"></vue-z-tree> -->
     </div>
     <!--普通资源按钮-->
@@ -51,7 +51,7 @@
 <script>
 import { getDicts } from '@/api/index'
 import request from '@/utils/request'
-import { findRoleresource, setRoleResource } from '@/api/authority'
+import { findRoleresource, setRoleResource,getRoleresourceByRoleId } from '@/api/authority'
 // import { unique } from '@/filters/index'
 // import vueZTree from '@/components/vueZTree'
 
@@ -63,10 +63,12 @@ export default {
       isTree: false,
       loading: false,
       tableData: [],
+      listkeyid:[],
       multipleSelection: [],
       ALLSYSTEMAllData: [],
       RESOURCETYPEAllData: [],
       organizationData: [], // 组织源数据
+      checklist:[],
       name: '',
       toData: {
         systemid: 'sram',
@@ -132,6 +134,17 @@ export default {
         { value: '2', label: 'URL' },
         { value: 't0', label: '功能权限' },
       ];
+      this.loading = true;
+      getRoleresourceByRoleId(this.$route.query.roleid).then(response => {
+        this.loading = false;
+        this.checklist =[];
+        response.forEach(item =>{
+          this.checklist.push(item.resourceid);
+        });
+      }).catch(error => {
+        this.loading = false;
+        console.log(error);
+      });
       // this.ALLSYSTEMAllData = response.ALLSYSTEM;
       // }
       // }).catch(error => {
@@ -166,7 +179,7 @@ export default {
           this.$message.error(response.data.msg);
         } else {
           this.tableData = response;
-          // this.$nextTick(() => { this.filterCheckedRows(); })
+          // this.$nextTick(() => { this.filterCheckedRows(); });
         }
       }).catch(error => {
         this.tableData = [];
@@ -191,6 +204,10 @@ export default {
         } else {
           this.treeData = [];
           this.treeData.push(response);
+          // this.checklist.push(439);
+          // console.log(this.checklist);
+          // this.$refs.tree.setCheckedKeys([596]);
+          this.$refs.tree.setCheckedKeys(this.checklist);
         }
       }).catch(error => {
         this.treeData = [];
@@ -216,13 +233,18 @@ export default {
         console.log(error);
       });
     },
+    handleCheckChange(data, checked) {
+      this.listkeyid = checked.checkedKeys+','+checked.halfCheckedKeys
+        // console.log(this.listkeyid);
+        // debugger;
+      },
     //保存树形资源数据
     handleTreePreserve() {
       let newSubmitData = {
         systemid: this.toData.systemid,
         resourcetype: 't0',
         roleId: this.toData.roleid,
-        resourceIds: this.$refs.tree.getCheckedKeys().join()
+        resourceIds: this.listkeyid
       };
       this.loading = true;
       setRoleResource(newSubmitData).then(response => {
@@ -238,7 +260,7 @@ export default {
       });
     },
     filterCheckedRows() {
-      this.tableData.filter(s => s.grantFlag === 1).forEach(row => {
+      this.tableData.filter(s => {return s.grantFlag === 1}).forEach(row => {
         this.$refs.multipleTable.toggleRowSelection(row);
       });
     },

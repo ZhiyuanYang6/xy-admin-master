@@ -37,7 +37,7 @@ export default {
     }
   },
   created: function() {
-            this.cformline={};
+            this.cformline={rll:2,yll:2};
     console.log(this.listrow)
     this.cformline = this.listrow;
     this.onloadtable();
@@ -45,7 +45,7 @@ export default {
   watch: {
     dialogllbjsz: function(data, olddata) {
       if (data) {
-        this.cformline={};
+        this.cformline={rll:2,yll:2};
         this.onloadtable();
       }
     }

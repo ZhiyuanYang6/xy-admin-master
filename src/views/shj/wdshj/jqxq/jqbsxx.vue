@@ -16,19 +16,19 @@
       </el-form-item>
       </el-form-item>
       <el-form-item label="区域">
-        <el-select v-model="formInline.qyid" placeholder="请选择" clearable @change="selelx('xl',formInline.qyid)">
+        <el-select v-model="formInline.qyid" placeholder="请选择" filterable  @change="selelx('xl',formInline.qyid)">
           <el-option v-for="item in qyoptions" :key="item.value" :label="item.qymc" :value="item.qyid">
           </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="线路">
-        <el-select v-model="formInline.xlid" placeholder="请选择" clearable @change="selelx('dw',formInline.qyid)">
+        <el-select v-model="formInline.xlid" placeholder="请选择" filterable  @change="selelx('dw',formInline.xlid)">
           <el-option v-for="item in xloption" :key="item.value" :label="item.xlmc" :value="item.xlid">
           </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="点位">
-        <el-select v-model="formInline.dwid" placeholder="请选择" clearable>
+        <el-select v-model="formInline.dwid" placeholder="请选择" filterable >
           <el-option v-for="item in dwoption" :key="item.value" :label="item.dwmc" :value="item.dwid">
           </el-option>
         </el-select>
@@ -46,7 +46,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="当前状态">
-        <el-select v-model="formInline.dqzt" placeholder="请选择" clearable>
+        <el-select v-model="formInline.dqzt" disabled  placeholder="请选择" clearable>
           <el-option v-for="item in ztoptions6" :key="item.value" :label="item.valuename" :value="item.value">
           </el-option>
         </el-select>
@@ -67,8 +67,8 @@
   </div>
        <!--  <el-input v-model="formInline.bssj" class="inpxq"></el-input> -->
       </el-form-item>
-      <el-form-item label="部署地址">
-        <el-input v-model="formInline.bsdz" class="inpxq"></el-input>
+      <el-form-item label="备注">
+        <el-input v-model="formInline.remark" class="inpxq"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button style="margin-left:950%;" @click="submitsetdetil" type="primary">修 改</el-button>
@@ -123,6 +123,7 @@ export default {
           Message.error("error：" + "请检查网络是否连接");
         })
     },
+   
     selelx(val, id) {
       if (val == "xl") { //请求线路opt
         var queryQyxx = { qyid: id };
