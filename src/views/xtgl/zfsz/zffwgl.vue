@@ -20,7 +20,7 @@
     <!-- 表格 -->
     <div class="stable">
       <!-- @sort-change="sortChange" -->
-      <el-table :data="tableData" @sort-change="sortChange" v-loading="loading" style="width:100%" border>
+      <el-table :data="tableData" @sort-change="sortChange" max-height="398" v-loading="loading" style="width:100%" border>
         <el-table-column prop="id" label="id" align="center"> </el-table-column>
         <el-table-column prop="channel" label="支付编号" align="center"> </el-table-column>
         <el-table-column prop="sn" label="缩写编码" align="center"> </el-table-column>

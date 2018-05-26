@@ -41,7 +41,7 @@
         <el-table-column prop="remark" label="备注" align="center"> </el-table-column>
         <el-table-column label="操作" width="100" fixed="right" align="center">
           <template slot-scope="scope">
-            <el-button type="text" @click="refund(scope.row)" size="mini">查看</el-button>
+            <el-button type="text" @click="refund(scope.row)" size="mini">退款</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -55,6 +55,7 @@ import request from '@/utils/request'
 import { Message, MessageBox } from 'element-ui'
 import axios from 'axios'
 export default {
+  name: 'sh',
   data() {
     return {
       formInline: {

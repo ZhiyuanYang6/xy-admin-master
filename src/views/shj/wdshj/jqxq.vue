@@ -2,7 +2,7 @@
   <div class="smain wdshjspsz">
     <el-tabs type="card" @tab-click="handleClick">
       <el-tab-pane label="机器部署信息">
-        <jqbsxx :jqbsxxdata="jqbsxxdata" :qyoptions="qyoptions"></jqbsxx>
+        <jqbsxx :jqbsxxdata="jqbsxxdata" :showbtn="showbtn" :qyoptions="qyoptions"></jqbsxx>
       </el-tab-pane>
       <el-tab-pane label="主控设备信息">
         <zksbxx :zksbxxdata="zksbxxdata"></zksbxx>
@@ -17,7 +17,7 @@ import jqbsxx from './jqxq/jqbsxx'
 import zksbxx from './jqxq/zksbxx'
 export default {
   components: { zksbxx, jqbsxx },
-  props: ['listrow', "dialogVisible"],
+  props: ['listrow', "dialogVisible", 'userid'],
   data() {
     return {
       row: "",
@@ -27,23 +27,26 @@ export default {
       xloptions: [], //线路选择项
       dwoptions: [], //点位选择项
       onceover: true,
+      showbtn: false,
     };
   },
   watch: {
     dialogVisible: function(data, olddata) {
-      if (data) { this.initialize(); 
-      this.zksbxxdata={};
-        this.jqbsxxdata={};
-        this.zksbxxdata=this.listrow;
-        this.jqbsxxdata=this.listrow;
-       // url = 'service-machine/shjgl/queryEditJqbsxx';
-       // this.jqbsxxdata = this.onloadtable(url, queryShjData, 'jqbs');
-  }
+      if (data) {
+        this.showbtn = (this.userid === this.listrow.shbh) ? true : false;
+        this.initialize();
+        this.zksbxxdata = {};
+        this.jqbsxxdata = {};
+        this.zksbxxdata = this.listrow;
+        this.jqbsxxdata = this.listrow;
+        // url = 'service-machine/shjgl/queryEditJqbsxx';
+        // this.jqbsxxdata = this.onloadtable(url, queryShjData, 'jqbs');
+      }
     }
   },
   created: function() {
-    this.zksbxxdata={};
-    this.jqbsxxdata={};
+    this.zksbxxdata = {};
+    this.jqbsxxdata = {};
     this.initialize();
   },
   methods: {
@@ -54,10 +57,10 @@ export default {
         url = 'service-machine/shjgl/queryEditJqbsxx';
         this.jqbsxxdata = this.onloadtable(url, queryShjData, 'jqbs');
       } else if (tab.label == "主控设备信息") {
-       // url = 'service-machine/shjgl/queryJqztxx';
+        // url = 'service-machine/shjgl/queryJqztxx';
         //this.zksbxxdata = this.onloadtable(url, queryShjData, 'jqxq');
-        this.zksbxxdata=this.listrow;
-        debugger;
+        this.zksbxxdata = this.listrow;
+        // debugger;
       } else {}
     },
     onloadtable(url, val, lx) { //表单内容

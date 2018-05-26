@@ -28,13 +28,10 @@
     </el-form>
     <!-- 表格 -->
     <div class="stable">
-      <div>
-        <img src="file:///F:\upload\0000000001_fsdfsd a70f1d5a-0379-43f1-8544-3bb8e929b19f_0.jpg">
-      </div>
       <!-- @sort-change="sortChange"v-loading="loading" -->
       <el-table :data="tableData" style="width:100%" border>
         <el-table-column type="index" label="序号" width="50" align="center"> </el-table-column>
-        <el-table-column prop="fjlj" :formatter="sptujz" label="图片" align="center">
+        <el-table-column prop="fjlj"  label="图片" align="center">
           <template slot-scope="scope">
             <img :src="imgurl+scope.row.fjlj" width="40" height="40" class="head_pic" />
           </template>
@@ -122,7 +119,6 @@ export default {
       };
       request({ url: 'service-goods/goods/queryShGoodsByShbh', method: 'post', data: queryDdxxData }).then(response => {
         this.tableData = response.list;
-        console.log(this.tableData[0].showimgurl);
         this.listQuery.totalCount = response.total;
       }).catch(error => {
         Message.error("error：" + "请检查网络是否连接");
@@ -146,8 +142,8 @@ export default {
         var delectsp = { spid: value.spid };
         request({ url: 'service-goods/goods/delectSpxx', method: 'post', data: delectsp }).then(response => {
           this.$message({ message: '商品删除成功', type: 'success' });
-          this.$message({ type: 'success', message: response.Msg });
-          this.onloadtable()
+/*          this.$message({ type: 'success', message: response.Msg });
+*/          this.onloadtable()
         }).catch(error => {
           Message.error("error：" + "请检查网络是否连接");
         });
@@ -157,9 +153,7 @@ export default {
       });
 
     },
-    sptujz(row, column, cellValue, index) {
-      return "https://gss1.bdstatic.com/-vo3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike92%2C5%2C5%2C92%2C30/sign=1a3d82d42f2dd42a4b0409f9625230d0/314e251f95cad1c86a912b9a753e6709c93d5161.jpg"
-    },
+   
     upspshglform(row, add) {
       if (add == "add") {
         this.listrow.btn = "添加";

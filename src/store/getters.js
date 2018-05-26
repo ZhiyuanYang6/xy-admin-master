@@ -5,6 +5,7 @@ const getters = {
   // name: state => state.user.name,
   // roles: state => state.user.roles
   permission_routers: state => state.user.routers, //动态路由
+  userInfo: state => state.user.userInfo, //用户信息
   sidebar: state => state.app.sidebar, //侧边栏是否隐藏
   jqbjtreedata: state => state.plug.jqbjtreedata, //机器报警树结构
   language: state => state.app.language, //语言

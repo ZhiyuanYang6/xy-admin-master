@@ -1,7 +1,7 @@
 <template>
   <div class="hdys wdyj">
-    <el-tabs type="card" @tab-click="handleClick">
-      <el-tab-pane v-for="item in tabslx" :key="item.key" :label="item.label">
+    <el-tabs type="card" @tab-click="handleClick" v-model="showtabs">
+      <el-tab-pane v-for="item in tabslx" :key="item.key" :label="item.label" :name="item.key">
         <div class="wdbj">
           <i class="iconfont icon-wenkongqi"></i>
           <span>温度报警设置</span>
@@ -56,11 +56,9 @@
       <el-tab-pane label="副机2">副机2</el-tab-pane> -->
     </el-tabs>
     <hr>
-     <div class="frommain" >
-      <el-button type="primary" size="small" @click="copydate()">复制主机设置</el-button>
-    </div>
     <div class="frommain">
       <el-button type="primary" size="small" @click="onloadwdyj()">保存</el-button>
+      <el-button type="primary" style="margin: 10px 20px;" v-show="showtabs!=='0'" size="small" @click="copydate()">复制主机设置</el-button>
     </div>
   </div>
 </template>
@@ -71,21 +69,21 @@ export default {
   data() {
     return {
       tabslx: [],
-      tabeldates:[],
+      tabeldates: [],
       oldtab: "主机",
-
       activeName2: 'first',
       wformline: {
         zdwd: "0",
         zgwd: "100"
       },
+      showtabs: '0',
       wformline2: {
-         gzms: "1",
-         mbwd: "0",
-         typeOptions: ['制冷'],
-         time1: ['00:00:00', '23:59:59'],
-         time2: ['00:00:00', '23:59:59'],
-         time3: ['00:00:00', '23:59:59']
+        gzms: "1",
+        mbwd: "0",
+        typeOptions: ['制冷'],
+        time1: ['00:00:00', '23:59:59'],
+        time2: ['00:00:00', '23:59:59'],
+        time3: ['00:00:00', '23:59:59']
       }
     };
   },
@@ -95,18 +93,18 @@ export default {
     for (var i = 1; i < this.listrow.jgsl; i++) {
       tabname[i] = { value: 'i', label: "副机" + i }
     }
-    this.wformline2={
-         gzms: "1",
-         mbwd: "0",
-         typeOptions: ['制冷'],
-         time1: ['00:00:00', '23:59:59'],
-         time2: ['00:00:00', '23:59:59'],
-         time3: ['00:00:00', '23:59:59']
-      };
-      this.wformline={
-         zdwd: "0",
-        zgwd: "100"
-      }
+    this.wformline2 = {
+      gzms: "1",
+      mbwd: "0",
+      typeOptions: ['制冷'],
+      time1: ['00:00:00', '23:59:59'],
+      time2: ['00:00:00', '23:59:59'],
+      time3: ['00:00:00', '23:59:59']
+    };
+    this.wformline = {
+      zdwd: "0",
+      zgwd: "100"
+    }
     this.tabslx = tabname;
     console.log(this.listrow)
     this.onloadtable()
@@ -115,48 +113,39 @@ export default {
   watch: {
     dialogwdyj: function(data, olddata) {
       if (data) {
-             this.wformline2={
-         gzms: "1",
-         mbwd: "0",
-         typeOptions: ['制冷'],
+        this.wformline2 = {
+          gzms: "1",
+          mbwd: "0",
+          typeOptions: ['制冷'],
           time1: ['00:00:00', '23:59:59'],
-         time2: ['00:00:00', '23:59:59'],
-         time3: ['00:00:00', '23:59:59']
-      };
-      this.wformline={
-         zdwd: "0",
-        zgwd: "100"
-      }
+          time2: ['00:00:00', '23:59:59'],
+          time3: ['00:00:00', '23:59:59']
+        };
+        this.wformline = {
+          zdwd: "0",
+          zgwd: "100"
+        }
         this.onloadtable();
-         var tabname = new Array();
-    tabname[0] = { key: "0", label: "主机" }
-    for (var i = 1; i < this.listrow.jgsl; i++) {
-      tabname[i] = { value: 'i', label: "副机" + i }
-    }
-    this.tabslx = tabname;
-    console.log(this.listrow)
-    this.onloadtable()
+        var tabname = new Array();
+        tabname[0] = { key: "0", label: "主机" }
+        for (var i = 1; i < this.listrow.jgsl; i++) {
+          tabname[i] = { value: 'i', label: "副机" + i }
+        }
+        this.tabslx = tabname;
+        console.log(this.listrow)
+        this.onloadtable()
       }
     }
-    /*,
-        dialogwdyj: function(data, olddata) {
-          if (data) {
-            this.wformline = this.listrow;
-          }
-        }*/
   },
   methods: {
     handleClick(tab, event) { //选中的 机器 类型 （主副机）
-
       for (var i = 0; i < this.listrow.jgsl; i++) {
-
         if (tab.label == "副机" + i) {
-          console.log(this.tabeldates[i])
           if (this.tabeldates[i] != undefined) {
             this.wformline = this.tabeldates[i];
             this.wformline2 = this.tabeldates[i];
-          }else{
-              this.wformline = {};
+          } else {
+            this.wformline = {};
             this.wformline2 = {};
           }
           this.oldtab = "副机" + i;
@@ -170,11 +159,11 @@ export default {
           break;
         }
       }
-      this.onloadtable() ;
+      this.onloadtable();
     },
-    copydate(){
-       this.wformline = this.tabeldates[0];
-       this.wformline2 = this.tabeldates[0];
+    copydate() {
+      this.wformline = this.tabeldates[0];
+      this.wformline2 = this.tabeldates[0];
     },
     onloadtable() {
       var url = 'service-machine/shjgl/queryjqwdbj';

@@ -42,8 +42,8 @@
         </el-button>
       </el-form-item>
       <div class="tips">
-        <span style="margin-right:20px;">{{$t('login.username')}}: admin</span>
-        <span> {{$t('login.password')}}: 000000</span>
+        <!-- <span style="margin-right:20px;">{{$t('login.username')}}: admin</span> -->
+        <!-- <span> {{$t('login.password')}}: 000000</span> -->
       </div>
     </el-form>
   </div>
@@ -129,7 +129,6 @@ export default {
             console.log('登录失败');
           });
         } else {
-
           console.log('error submit!!')
           return false
         }
@@ -137,6 +136,7 @@ export default {
     },
     replaceCode() { //获取验证码
       getReplaceCode().then(response => {
+        this.loading = false;
         this.initverificaCode = response;
         if (this.verificaCodeCount === 0) {
           this.loginForm.verificaCode = response;
@@ -145,7 +145,7 @@ export default {
         }
         this.verificaCodeCount++;
       }).catch(error => {
-        // console.log(error.data) 
+        this.loading = false;
         this.initverificaCode = '0000';
         if (this.verificaCodeCount === 0) {
           this.loginForm.verificaCode = '0000';

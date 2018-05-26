@@ -29,8 +29,8 @@ export default {
       bdjqbhs: [],
       bdshbh: '',
       bdshmc: '',
-      usershbh: '0', //当前登录用户商户编号
-      username: '超级管理员', //当前登录用户商户名称
+      usershbh: this.$globalApi.getSessionStorage('userInfo').shbh, //当前登录用户商户编号
+      username: this.$globalApi.getSessionStorage('userInfo').username, //当前登录用户商户名称
     }
   },
   watch: {

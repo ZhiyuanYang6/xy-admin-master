@@ -43,7 +43,8 @@
         </div>
       </el-col>
       <el-col :xs="8" :sm="8" :md="1">
-        <div class="userName">{{userInfo.username}}</div>
+        <!-- <div class="userName">{{userInfo.username}}</div> -->
+        <div class="userName">{{usermate.username}}</div>
         <div class="user-header">
           <el-dropdown trigger="click">
             <div class="avatar-wrapper">
@@ -52,20 +53,22 @@
             </div>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>
-                <div class="setting-div">
-                  <router-link to="/">
+                <router-link to="/">
+                  <div class="setting-div">
                     <span class="setting-icon">
                     <i class="icon iconfont icon-yonghu"></i>
                   </span>
                     <span class="setting-string"> {{$t('navbar.dashboard')}}</span>
-                  </router-link>
-                </div>
+                  </div>
+                </router-link>
               </el-dropdown-item>
               <el-dropdown-item divided>
-                <div class="setting-div">
-                  <span class="setting-icon"><i class="icon iconfont icon-shezhi"></i></span>
-                  <span class="setting-string"> {{$t('navbar.setting')}}</span>
-                </div>
+                <router-link to="/xtgl/setpwd">
+                  <div class="setting-div">
+                    <span class="setting-icon"><i class="icon iconfont icon-shezhi"></i></span>
+                    <span class="setting-string"> {{$t('navbar.setting')}}</span>
+                  </div>
+                </router-link>
               </el-dropdown-item>
               <el-dropdown-item divided>
                 <div class="setting-div" @click="logout">
@@ -95,6 +98,7 @@ export default {
   },
   data() {
     return {
+      usermate: this.$globalApi.getSessionStorage('userInfo'),
       name: 'linxin',
       tasks: [
         { id: 1, rank: 1, content: '完成JSPangAdmin头部头部组件的编写。', overTime: '2017/3/9' },
@@ -243,7 +247,7 @@ export default {
   position: absolute;
   z-index: 2;
   color: #fff;
-  right: 30px;
+  right: 50px;
 }
 
 </style>

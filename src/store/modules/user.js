@@ -14,7 +14,7 @@ const user = {
     spurlImg: 'http://www.xynetweb.com:8086/spImg/',
     roles: [],
     // routers: sessionStorage.getItem('routers'),
-    routers: window.sessionStorage.getItem('routers')?JSON.parse(window.sessionStorage.getItem('routers'))[0].children:[],
+    routers: window.sessionStorage.getItem('routers') ? JSON.parse(window.sessionStorage.getItem('routers'))[0].children : [],
     // routers: [
     //   { path: '/', children: [{ path: "dashboard", meta: { title: '首页', icon: 'icon-danweiguanli' } }] },
     //   {
@@ -142,11 +142,11 @@ const user = {
       state.Authorization = token;
     },
     SET_NAME: (state, name) => {
-      state.name = name
+      state.name = name;
     },
     SET_AVATAR: (state, avatar) => {
-      state.avatar = avatar
-      state.userInfo = avatar
+      state.avatar = avatar;
+      state.userInfo = avatar;
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles;
@@ -166,6 +166,7 @@ const user = {
             sessionStorage.setItem('Authorization', response.session_key);
             let routers = window.JSON.stringify(response.userInfo.menuJsonTree);
             sessionStorage.setItem('routers', routers);
+            sessionStorage.setItem('userInfo', window.JSON.stringify(response.userInfo));
           }
           resolve(response);
         }).catch(error => {

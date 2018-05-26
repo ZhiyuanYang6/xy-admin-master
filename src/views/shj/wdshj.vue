@@ -74,7 +74,7 @@
             <el-button type="text" size="mini" @click="dialogshow('jqxq',scope.row)">{{scope.row.jqbh}}</el-button>
           </template>
         </el-table-column>
-        <el-table-column v-if="viewstable[3].value" prop="jqmc" label="机器名称" align="center">
+        <el-table-column v-if="viewstable[3].value" prop="jqmc" show-overflow-tooltip label="机器名称" align="center">
           <template slot-scope="scope">
             <el-button type="text" size="mini" @click="dialogshow('jqxq',scope.row)">{{scope.row.jqmc}}</el-button>
           </template>
@@ -82,12 +82,14 @@
         <el-table-column v-if="viewstable[4].value" prop="jqlb" label="机器类型" align="center"> </el-table-column>
         <el-table-column prop="jgsl" label="机柜数" align="center" v-if="viewstable[5].value">
           <template slot-scope="scope">
-            <el-button type="text" size="mini" @click="dialogshow('hdxq',scope.row)">{{scope.row.jgsl}}</el-button>
+            <el-button type="text" v-if="scope.row.shbh===usermate.shbh" size="mini" @click="dialogshow('hdxq',scope.row)">{{scope.row.jgsl}}</el-button>
+            <span v-else>{{scope.row.jgsl}}</span>
           </template>
         </el-table-column>
         <el-table-column v-if="viewstable[6].value" prop="hdsl" label="货道数" align="center">
           <template slot-scope="scope">
-            <el-button type="text" size="mini" @click="dialogshow('hdxq',scope.row)">{{scope.row.hdsl}}</el-button>
+            <el-button type="text" v-if="scope.row.shbh===usermate.shbh" size="mini" @click="dialogshow('hdxq',scope.row)">{{scope.row.hdsl}}</el-button>
+            <span v-else>{{scope.row.hdsl}}</span>
           </template>
         </el-table-column>
         <el-table-column v-if="viewstable[7].value" prop="swrjbb" label="上位机软件版本" width="120" align="center"> </el-table-column>
@@ -104,7 +106,7 @@
         <el-table-column v-if="viewstable[18].value" prop="ccrq" show-overflow-tooltip label="出厂日期" align="center"> </el-table-column>
         <el-table-column label="操作" fixed="right" align="center" width="110">
           <template slot-scope="scope">
-            <el-dropdown trigger="click">
+            <el-dropdown trigger="click" v-if="scope.row.shbh===usermate.shbh">
               <el-button type="primary" size="mini">
                 管理<i class="el-icon-arrow-down el-icon--right"></i>
               </el-button>
@@ -129,6 +131,7 @@
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
+            <span v-else>无权限</span>
           </template>
         </el-table-column>
       </el-table>
@@ -166,7 +169,7 @@
     </el-dialog>
     <!-- 机器详情  -->
     <el-dialog title="机器详情" :visible.sync="dialogjqxq" width="73%">
-      <jqxq :dialogVisible="dialogjqxq" :listrow="listrow"></jqxq>
+      <jqxq :userid="usermate.shbh" :dialogVisible="dialogjqxq" :listrow="listrow"></jqxq>
     </el-dialog>
   </div>
 </template>
@@ -187,6 +190,7 @@ export default {
   components: { spsz, bjsz, wdyj, qchd, hdcsh, llbjsz, hdxq, jqxq },
   data() {
     return {
+      usermate: this.$globalApi.getSessionStorage('userInfo'),
       cities: cityOptions,
       viewstable: [
         { value: true, label: '商户名称' },

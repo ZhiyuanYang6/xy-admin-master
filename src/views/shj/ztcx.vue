@@ -8,7 +8,7 @@
       <el-form-item>
         <el-input v-model="formInline.jqmc" style="width: 200px;" placeholder="机器名称/编号"></el-input>
       </el-form-item>
-      <el-select v-model="formInline.jqlx" style="width: 200px;margin-right:20px;" placeholder="机器类型" clearable @change="onloadtable">
+      <el-select v-model="formInline.jqlx" style="width: 200px;margin-right:20px;" placeholder="机器状态" clearable @change="onloadtable">
         <el-option v-for="item in lxoptions" :key="item.value" :label="item.valuename" :value="item.value">
         </el-option>
       </el-select>
@@ -37,6 +37,8 @@
         <el-table-column prop="jqmc" label="机器名称" width="110" show-overflow-tooltip align="center"> </el-table-column>
         <el-table-column prop="showjqlx" label="机器类型" align="center"> </el-table-column>
         <el-table-column prop="showmzt" label="网络状态" align="center"> </el-table-column>
+        <el-table-column prop="speed" label="当前网速" align="center"> </el-table-column>
+        <el-table-column prop="speedState" label="网速状态" align="center"> </el-table-column>
         <el-table-column prop="showwlzt" label="门状态" align="center"> </el-table-column>
         <el-table-column prop="wdxx" label="温度" width="50" align="center"> </el-table-column>
         <el-table-column prop="zbye" label="纸币余额" width="100" align="center"> </el-table-column>

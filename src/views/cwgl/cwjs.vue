@@ -61,7 +61,7 @@ export default {
       loading: false,
       row: {},
       dialogVisible: false,
-    }
+    };
   },
   created: function() {
     this.onloadtable();
@@ -69,11 +69,11 @@ export default {
   methods: {
     handleSizeChange(val) {
       this.listQuery.pageSize = val; //修改每页数据量
-      // this.onloadtable();
+      this.onloadtable();
     },
     handleCurrentChange(val) { //跳转第几页
       this.listQuery.pageNum = val;
-      // this.onloadtable();
+      this.onloadtable();
     },
     onloadtable() { //
       var queryData = {
@@ -83,16 +83,17 @@ export default {
         pageNum: this.listQuery.pageNum,
         pageSize: this.listQuery.pageSize,
         shbh: 0,
-      }
+      };
+      this.loading = true;
       request({ url: 'service-order/jqjymx/queryjyjs', method: 'post', data: queryData }).then(response => {
-          console.log(response);
+          this.loading = false;
           this.tableData1 = response.data;
           this.listQuery.totalCount = response.total;
-          console.log(response.data);
         })
         .catch(error => {
+          this.loading = false;
           Message.error("error：" + "请检查网络是否连接");
-        })
+        });
     },
     detilecwjs(row) {
       console.log(row);

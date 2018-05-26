@@ -138,6 +138,7 @@ export default {
       this.mbid = this.mbxx.mbid;
       this.wformline = []; //初始化机柜
       this.editableTabs2 = []; //初始化参数
+      this.optionsjg.forEach(item => item.disabled = false);
       for (let item in this.mbxx.wdList) { //添加机柜
         this.optionsjg[item].disabled = true;
         this.editableTabs2.push({

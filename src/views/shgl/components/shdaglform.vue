@@ -2,20 +2,17 @@
   <div class="smain">
     <!-- 左侧表单 -->
     <el-form :inline="true" label-width="80px" label-position="left" :model="formInline" :rules="rules2" ref="form" size="small" class="demo-form-inline">
-      <el-form-item label="登录账号" prop="accountname" v-show="accountnameVisible">
-        <el-input v-model="formInline.accountname" maxlength="30"></el-input>
-      </el-form-item>
       <el-form-item label="商户名称" prop="shmc">
-        <el-input v-model="formInline.shmc" :disabled='!accountnameVisible' maxlength="30"></el-input>
+        <el-input v-model="formInline.shmc" maxlength="30"></el-input>
       </el-form-item>
-      <el-form-item label="公司名称">
+      <el-form-item label="公司名称" v-show="accountnameVisible">
         <el-input v-model="formInline.gsmc" maxlength="50"></el-input>
       </el-form-item>
       <el-form-item label=" 联 系 人">
         <el-input v-model="formInline.lxr" maxlength="30"></el-input>
       </el-form-item>
-      <el-form-item label="联系电话">
-        <el-input v-model="formInline.lxdh" :disabled='!accountnameVisible' maxlength="30"></el-input>
+      <el-form-item label="联系电话" prop="lxdh">
+        <el-input v-model="formInline.lxdh" maxlength="30"></el-input>
       </el-form-item>
       <!--       <el-form-item label="开户账号">
   <el-input v-model="formInline.khzh" maxlength="30"></el-input>
@@ -60,13 +57,13 @@ export default {
         callback();
       }, 400);
     };
-    var validaccountname = (rule, value, callback) => {
+    var validlxdh = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error('登录账号不能为空'));
+        return callback(new Error('联系电话不能为空'));
       } else {
         value = value.replace(/(^\s*)|(\s*$)/g, ''); //去首尾空格
         if (!value) {
-          return callback(new Error('登录账号不能为空'));
+          return callback(new Error('联系电话不能为空'));
         }
       }
       setTimeout(() => {
@@ -77,7 +74,7 @@ export default {
       formInline: {},
       rules2: {
         shmc: [{ validator: validshmc, trigger: 'blur' }],
-        accountname: [{ validator: validaccountname, trigger: 'blur' }],
+        lxdh: [{ validator: validlxdh, trigger: 'blur' }],
       },
       options: [
         { value: '1', label: "可收款" },
@@ -112,10 +109,15 @@ export default {
             .then(response => {
               //成功时 消息不为空
               if (response.msg) {
-                this.$message({ type: 'success', message: response.msg });
+                //this.$message({ type: 'success', message: response.msg });
                 //新增商户返回编号
                 if (this.listrow.btn == "添加") {
                   this.formInline.shbh = response.shbh;
+                  this.$alert(response.msg, '', {
+                    confirmButtonText: '确定'
+                  });
+                } else {
+                  this.$message({ type: 'success', message: response.msg });
                 }
                 this.ADSubmit();
               }
@@ -130,9 +132,13 @@ export default {
       })
     },
     initialize() { ////////////////////////进入初始化
+      if(this.$globalApi.getSessionStorage('userInfo').shbh == "0") {
+        this.accountnameVisible = true;
+      } else {
+        this.accountnameVisible = false;
+      }
       if (this.listrow.btn == "修改") {
         //this.formInline = this.listrow;
-        this.accountnameVisible = false;
         this.formInline = {
           shbh: this.listrow.shbh,
           shmc: this.listrow.shmc,
@@ -150,7 +156,6 @@ export default {
         //console.log(this.listrow);
         // this.listrow = this.form;
       } else {
-        this.accountnameVisible = true;
         this.formInline = {
           shmc: '',
           shdz: '',

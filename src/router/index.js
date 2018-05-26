@@ -40,7 +40,6 @@ export const constantRouterMap = [
     children: [
       { path: 'sh', name: 'sh', component: _import('jygl/sh'), meta: { noCache: false, title: 'sh', icon: 'example' } },
       { path: 'ddgl', name: 'ddgl', component: _import('jygl/ddgl'), meta: { noCache: false, title: 'ddgl', icon: 'example' } },
-      { path: 'jqjytj', name: 'jqjytj', component: _import('jygl/jqjytj'), meta: { noCache: false, title: 'jqjytj', icon: 'example' } },
       { path: 'jqjymx', name: 'jqjymx', component: _import('jygl/jqjymx'), meta: { noCache: false, title: 'jqjymx', icon: 'example' } },
       { path: 'gk', name: 'gk', component: _import('jygl/gk'), meta: { noCache: false, title: 'gk', icon: 'example' } }
     ]
@@ -64,7 +63,6 @@ export const constantRouterMap = [
     children: [
       { path: 'wdgys', name: 'wdgys', component: _import('jxcgl/wdgys'), meta: { noCache: false, title: 'wdgys', icon: 'example' } },
       { path: 'gysspsz', name: 'gysspsz', component: _import('jxcgl/gysspsz'), meta: { noCache: false, title: 'gysspsz', icon: 'example' } },
-      { path: 'spgl', name: 'spgl', component: _import('jxcgl/spgl'), meta: { noCache: false, title: 'spgl', icon: 'example' } },
       { path: 'ccgl', name: 'ccgl', component: _import('jxcgl/ccgl'), meta: { noCache: false, title: 'ccgl', icon: 'example' } },
       { path: 'cgjh', name: 'cgjh', component: _import('jxcgl/cgjh'), meta: { noCache: false, title: 'cgjh', icon: 'example' } },
       { path: 'cgd', name: 'cgd', component: _import('jxcgl/cgd'), meta: { noCache: false, title: 'cgd', icon: 'example' } },
@@ -92,11 +90,22 @@ export const constantRouterMap = [
     path: '/cwgl',
     component: Layout,
     name: "cwgl",
-    redirect: '/cwgl/cwjsgl',
+    redirect: '/cwgl/cwjs',
     meta: { noCache: false, title: 'cwgl', icon: 'icon-caiwuzhutifenxi' },
     children: [
-      { path: 'cwjsgl', name: 'cwjsgl', component: _import('cwgl/index'), meta: { noCache: false, title: 'cwgl', icon: 'icon-caiwuzhutifenxi' } },
-      { path: 'jyjscx', name: 'jyjscx', component: _import('cwgl/jyjscx'), meta: { noCache: false, title: 'jyjscx', icon: 'icon-caiwuzhutifenxi' } }
+      { path: 'cwjs', name: 'cwjs', component: _import('cwgl/cwjs'), meta: { noCache: false, title: 'cwjs', icon: 'icon-caiwuzhutifenxi' } },
+      { path: 'jyjs', name: 'jyjs', component: _import('cwgl/jyjs'), meta: { noCache: false, title: 'jyjs', icon: 'icon-caiwuzhutifenxi' } }
+    ]
+  },
+  //统计分析
+  {
+    path: '/tjfx',
+    component: Layout,
+    name: "tjfx",
+    redirect: '/tjfx/jqjytj',
+    meta: { noCache: false, title: 'tjfx', icon: 'icon-caiwuzhutifenxi' },
+    children: [
+      { path: 'jqjytj', name: 'jqjytj', component: _import('tjfx/jqjytj'), meta: { noCache: false, title: 'jqjytj', icon: 'icon-caiwuzhutifenxi' } },
     ]
   },
   //商户管理
@@ -104,63 +113,27 @@ export const constantRouterMap = [
     path: '/shgl',
     component: Layout,
     name: "shgl",
-    redirect: '/shgl/cwjsgl',
+    redirect: '/shgl/shjqsq',
     meta: { noCache: false, title: 'shgl', icon: 'icon-yonghuguanli' },
     children: [
-      { path: 'cwjsgl', name: 'cwjsgl', component: _import('shgl/cwjsgl'), meta: { noCache: false, title: 'cwjsgl', icon: 'icon-yonghuguanli' } },
-      { path: 'shdagl', name: 'shdagl', component: _import('shgl/shdagl'), meta: { noCache: false, title: 'shdagl', icon: 'icon-yonghuguanli' } },
-      { path: 'shjqgl', name: 'shjqgl', component: _import('shgl/shjqgl'), meta: { noCache: false, title: 'shjqgl', icon: 'icon-yonghuguanli' } },
-      { path: 'shspgl', name: 'shspgl', component: _import('shgl/shspgl'), meta: { noCache: false, title: 'shspgl', icon: 'icon-yonghuguanli' } },
-      { path: 'jqsq', name: 'jqsq', component: _import('shgl/jqsq'), meta: { noCache: false, title: 'jqsq', icon: 'icon-yonghuguanli' } },
+      { path: 'shjqsq', name: 'shjqsq', component: _import('shgl/shjqsq'), meta: { noCache: false, title: 'shjqsq', icon: 'icon-yonghuguanli' } },
+      { path: 'wdsh', name: 'wdsh', component: _import('shgl/wdsh'), meta: { noCache: false, title: 'wdsh', icon: 'icon-yonghuguanli' } },
+      { path: 'tdjqsq', name: 'tdjqsq', component: _import('shgl/tdjqsq'), meta: { noCache: false, title: 'tdjqsq', icon: 'icon-yonghuguanli' } },
+      { path: 'wdtd', name: 'wdtd', component: _import('shgl/wdtd'), meta: { noCache: false, title: 'wdtd', icon: 'icon-yonghuguanli' } },
+      { path: 'bjyh', component: _import('shgl/components/edit'), name: 'bjyh', meta: { title: 'bjyh', isEdit: true, noCache: false, } },
+      { path: 'xzyh', component: _import('shgl/components/edit'), name: 'xzyh', meta: { title: 'xzyh', isEdit: false, noCache: false, } },
+      { path: 'management', component: _import('shgl/components/management'), name: 'management', meta: { noCache: false, title: 'gljs' } },
     ]
   },
-  //权限管理 
+  //商品管理
   {
-    path: 'qxgl',
+    path: '/spgl',
     component: Layout,
-    redirect: '/qxgl/dagl/yhgl',
-    name: 'qxgl',
-    meta: { title: 'qxgl', icon: 'example' },
-    children: [{
-        path: '/qxgl/dagl',
-        component: _import('qxgl/index'),
-        redirect: '/qxgl/dagl/yhgl',
-        name: 'dagl',
-        meta: { title: 'dagl', icon: 'example' },
-        children: [
-          { path: 'yhgl', component: _import('qxgl/dagl/yhgl'), name: 'yhgl', meta: { noCache: false, title: 'yhgl', icon: 'example' } },
-          { path: 'zzgl', component: _import('qxgl/dagl/zzgl'), name: 'zzgl', meta: { noCache: false, title: 'zzgl', icon: 'example' } },
-          { path: 'bjyh', component: _import('qxgl/dagl/component/edit'), name: 'bjyh', meta: { title: 'bjyh', isEdit: true, noCache: false, } },
-          { path: 'xzyh', component: _import('qxgl/dagl/component/edit'), name: 'xzyh', meta: { title: 'xzyh', isEdit: false, noCache: false, } },
-          { path: 'management', component: _import('qxgl/dagl/component/management'), name: 'management', meta: { noCache: false, title: 'gljs' } },
-        ]
-      },
-      {
-        path: '/qxgl/zygl',
-        component: _import('qxgl/index'),
-        redirect: '/qxgl/zygl/ptzygl',
-        name: 'zygl',
-        meta: { title: 'zygl', icon: 'example' },
-        children: [
-          { path: 'gngl', component: _import('qxgl/zygl/ptzygl'), name: 'ptzygl', meta: { noCache: false, title: 'ptzygl', icon: 'example' } },
-          { path: 'cdgl', component: _import('qxgl/zygl/sxzygl'), name: 'sxzygl', meta: { noCache: false, title: 'sxzygl', icon: 'example' } },
-          { path: 'xzptzy', component: _import('qxgl/zygl/component/edit'), name: 'xzptzy', meta: { noCache: false, isEdit: false, title: 'xzptzy', icon: 'example' } },
-          { path: 'bjptzy', component: _import('qxgl/zygl/component/edit'), name: 'bjptzy', meta: { noCache: false, isEdit: true, title: 'bjptzy', icon: 'example' } },
-        ]
-      },
-      {
-        path: '/qxgl/cqxgl',
-        component: _import('qxgl/index'),
-        redirect: '/qxgl/cqxgl/cqxgl/jsgl',
-        name: 'cqxgl',
-        meta: { title: 'qxgl', icon: 'example' },
-        children: [
-          { path: 'jsgl', component: _import('qxgl/cqxgl/jsgl'), name: 'jsgl', meta: { noCache: false, title: 'jsgl', icon: 'example' } },
-          { path: 'xzjs', component: _import('qxgl/cqxgl/component/edit'), name: 'xzjs', meta: { noCache: false, isEdit: false, title: 'xzjs', icon: 'example' } },
-          { path: 'bjjs', component: _import('qxgl/cqxgl/component/edit'), name: 'bjjs', meta: { noCache: false, isEdit: true, title: 'bjjs', icon: 'example' } },
-          { path: 'jszyqx', component: _import('qxgl/cqxgl/component/resource'), name: 'jszyqx', meta: { noCache: false, isEdit: false, title: 'jszyqx', icon: 'example' } },
-        ]
-      },
+    name: "spgl",
+    redirect: '/spgl/wdsp',
+    meta: { noCache: false, title: 'spgl', icon: 'icon-yonghuguanli' },
+    children: [
+      { path: 'wdsp', name: 'wdsp', component: _import('spgl/wdsp'), meta: { noCache: false, title: 'wdsp', icon: 'icon-yonghuguanli' } },
     ]
   },
   //系统管理 
@@ -172,7 +145,7 @@ export const constantRouterMap = [
     meta: { title: 'xtgl', icon: 'example' },
     children: [{
         path: '/xtgl/zfsz',
-        component: _import('xtgl/zfsz/index'),
+        component: _import('xtgl/index'),
         redirect: '/xtgl/zfsz/zffwgl',
         name: 'zfsz',
         meta: { title: 'zfsz', icon: 'example' },
@@ -180,13 +153,49 @@ export const constantRouterMap = [
           { path: 'zffwgl', component: _import('xtgl/zfsz/zffwgl'), name: 'zffwgl', meta: { noCache: false, title: 'zffwgl', icon: 'example' } },
           { path: 'fwscssz', component: _import('xtgl/zfsz/shzffwcssz'), name: 'shzffwcssz', meta: { noCache: false, title: 'shzffwcssz', icon: 'example' } },
           { path: 'shzhsz', component: _import('xtgl/zfsz/zshcssz'), name: 'zshcssz', meta: { noCache: false, title: 'zshcssz', icon: 'example' } },
+          { path: 'rjs', component: _import('xtgl/zfsz/rjs'), name: 'rjs', meta: { noCache: false, title: 'rjs', icon: 'example' } },
         ]
       },
-      { path: '/xtgl/index', icon: 'example', component: _import('xtgl/index'), name: 'tab', meta: { title: 'xtgl' } }
+      {
+        path: '/xtgl/dagl',
+        component: _import('xtgl/index'),
+        redirect: '/xtgl/dagl/zzgl',
+        name: 'dagl',
+        meta: { title: 'dagl', icon: 'example' },
+        children: [
+          { path: 'zzgl', component: _import('xtgl/dagl/zzgl'), name: 'zzgl', meta: { noCache: false, title: 'zzgl', icon: 'example' } },
+        ]
+      },
+      {
+        path: '/xtgl/zygl',
+        component: _import('xtgl/index'),
+        redirect: '/xtgl/zygl/gngl',
+        name: 'zygl',
+        meta: { title: 'zygl', icon: 'example' },
+        children: [
+          { path: 'gngl', component: _import('xtgl/zygl/gngl'), name: 'gngl', meta: { noCache: false, title: 'gngl', icon: 'example' } },
+          { path: 'cdgl', component: _import('xtgl/zygl/cdgl'), name: 'cdgl', meta: { noCache: false, title: 'cdgl', icon: 'example' } },
+          { path: 'xzptzy', component: _import('xtgl/zygl/component/edit'), name: 'xzptzy', meta: { noCache: false, isEdit: false, title: 'xzptzy', icon: 'example' } },
+          { path: 'bjptzy', component: _import('xtgl/zygl/component/edit'), name: 'bjptzy', meta: { noCache: false, isEdit: true, title: 'bjptzy', icon: 'example' } },
+        ]
+      },
+      {
+        path: '/xtgl/cxtgl',
+        component: _import('xtgl/index'),
+        redirect: '/xtgl/cqxgl/cqxgl/jsgl',
+        name: 'cqxgl',
+        meta: { title: 'qxgl', icon: 'example' },
+        children: [
+          { path: 'jsgl', component: _import('xtgl/cqxgl/jsgl'), name: 'jsgl', meta: { noCache: false, title: 'jsgl', icon: 'example' } },
+          { path: 'xzjs', component: _import('xtgl/cqxgl/component/edit'), name: 'xzjs', meta: { noCache: false, isEdit: false, title: 'xzjs', icon: 'example' } },
+          { path: 'bjjs', component: _import('xtgl/cqxgl/component/edit'), name: 'bjjs', meta: { noCache: false, isEdit: true, title: 'bjjs', icon: 'example' } },
+          { path: 'jszyqx', component: _import('xtgl/cqxgl/component/resource'), name: 'jszyqx', meta: { noCache: false, isEdit: false, title: 'jszyqx', icon: 'example' } },
+        ]
+      },
+      { path: '/xtgl/index', icon: 'example', component: _import('xtgl/index'), name: 'tab', meta: { title: 'xtgl' } },
+      { path: '/xtgl/setpwd', icon: 'example', component: _import('xtgl/setpwd'), name: 'setpwd', meta: { title: 'setpwd' } }
     ]
   },
-
-
   //登陆界面
   { path: '/login', component: _import('login/index'), hidden: true, },
   //主页
@@ -201,17 +210,7 @@ export const constantRouterMap = [
       meta: { title: 'sy', icon: 'sy', icon: 'icon-danweiguanli', noCache: true }
     }]
   },
-  //模板设置
-  // {
-  //   path: '/mbsz',
-  //   component: Layout,
-  //   redirect: 'dashboard',
-  //   children: [{
-  //     path: 'dashboard',
-  //     component: _import('shj/mbgl/mbsz'),
-  //     name: 'dashboard',
-  //   }]
-  // },
+
 ]
 export default new Router({
   // mode: 'history', //后端支持可开

@@ -3,7 +3,7 @@
     <!-- 左侧表单 -->
     <el-form :inline="true" :model="jqbsxxdata" label-position="left" size="small" class="demo-form-inline" label-width="96px">
       <el-form-item label="机器编号">
-        <el-input v-model="formInline.jqbh" class="inpxq"></el-input>
+        <el-input v-model="formInline.jqbh" disabled class="inpxq"></el-input>
       </el-form-item>
       <el-form-item label="机器名称" style="margin-right: 28px;">
         <el-input v-model="formInline.jqmc" c ss="inpxq"></el-input>
@@ -16,19 +16,19 @@
       </el-form-item>
       </el-form-item>
       <el-form-item label="区域">
-        <el-select v-model="formInline.qyid" placeholder="请选择" filterable  @change="selelx('xl',formInline.qyid)">
+        <el-select v-model="formInline.qyid" placeholder="请选择" filterable @change="selelx('xl',formInline.qyid)">
           <el-option v-for="item in qyoptions" :key="item.value" :label="item.qymc" :value="item.qyid">
           </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="线路">
-        <el-select v-model="formInline.xlid" placeholder="请选择" filterable  @change="selelx('dw',formInline.xlid)">
+        <el-select v-model="formInline.xlid" placeholder="请选择" filterable @change="selelx('dw',formInline.xlid,'clear')">
           <el-option v-for="item in xloption" :key="item.value" :label="item.xlmc" :value="item.xlid">
           </el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="点位">
-        <el-select v-model="formInline.dwid" placeholder="请选择" filterable >
+        <el-select v-model="formInline.dwid" placeholder="请选择" filterable>
           <el-option v-for="item in dwoption" :key="item.value" :label="item.dwmc" :value="item.dwid">
           </el-option>
         </el-select>
@@ -46,7 +46,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="当前状态">
-        <el-select v-model="formInline.dqzt" disabled  placeholder="请选择" clearable>
+        <el-select v-model="formInline.dqzt" placeholder="请选择" clearable>
           <el-option v-for="item in ztoptions6" :key="item.value" :label="item.valuename" :value="item.value">
           </el-option>
         </el-select>
@@ -59,18 +59,15 @@
       </el-form-item>
       <el-form-item label="部署时间">
         <div class="block">
-      <el-date-picker
-      v-model="formInline.bssj" value-format="yyyy-MM-dd"
-      type="date"
-      placeholder="选择日期">
-    </el-date-picker>
-  </div>
-       <!--  <el-input v-model="formInline.bssj" class="inpxq"></el-input> -->
+          <el-date-picker v-model="formInline.bssj" style="  width: 200px;" value-format="yyyy-MM-dd" type="date" placeholder="选择日期">
+          </el-date-picker>
+        </div>
+        <!--  <el-input v-model="formInline.bssj" class="inpxq"></el-input> -->
       </el-form-item>
       <el-form-item label="备注">
-        <el-input v-model="formInline.remark" class="inpxq"></el-input>
+        <el-input type="textarea" :autosize="{ minRows: 3, maxRows: 4}" v-model="formInline.remark" class="inpxq"></el-input>
       </el-form-item>
-      <el-form-item>
+      <el-form-item v-show="showbtn">
         <el-button style="margin-left:950%;" @click="submitsetdetil" type="primary">修 改</el-button>
       </el-form-item>
     </el-form>
@@ -79,7 +76,7 @@
 <script>
 import request from '@/utils/request'
 export default {
-  props: ['jqbsxxdata', 'qyoptions'],
+  props: ['jqbsxxdata', 'qyoptions', 'showbtn'],
   data() {
     return {
       ztoptions6: [],
@@ -90,7 +87,7 @@ export default {
       dwoption: [],
       qyoption: [],
       formInline: {},
-    }
+    };
   },
   watch: {
     qyoptions: function(data, olddata) {
@@ -101,14 +98,11 @@ export default {
     },
     jqbsxxdata: function(data, olddata) {
       this.formInline = this.jqbsxxdata;
-      console.log(this.formInline.qyid);
-      if (this.jqbsxxdata.qyid != null) this.selelx('xl', this.jqbsxxdata.qyid);
+      if (this.jqbsxxdata.qyid) this.selelx('xl', this.jqbsxxdata.qyid);
     },
     xloption: function(data, olddata) {
-      debugger;
       if (data) this.selelx('dw', this.jqbsxxdata.xlid);
-      this.form.xlid = this.form.xlid ? this.form.xlid : '';
-      console.log(this.form.xlid);
+      // this.formInline.xlid = this.formInline.xlid ? this.formInline.xlid : '';
     }
   },
   methods: {
@@ -121,23 +115,22 @@ export default {
         })
         .catch(error => {
           Message.error("error：" + "请检查网络是否连接");
-        })
+        });
     },
-   
-    selelx(val, id) {
-      if (val == "xl") { //请求线路opt
+
+    selelx(val, id, clear) {
+      this.jqbsxxdata.dwid = clear ? '' : this.jqbsxxdata.dwid;
+      if (val === "xl") { //请求线路opt
         var queryQyxx = { qyid: id };
         var url = 'service-machine/shjgl/queryXlxxbyqyid';
-      } else if (val == 'dw') { //请求点位opt
+      } else if (val === 'dw') { //请求点位opt
         var queryQyxx = { xlid: id };
         var url = 'service-machine/shjgl/queryXlxxbyxlid';
       }
       request({ url: url, method: 'post', data: queryQyxx }).then(response => {
-        if (val == "xl") { //请求线路opt
-          this.loading = false;
+        if (val === "xl") { //请求线路opt;
           this.xloption = response;
-        } else if (val == 'dw') { //请求点位opt
-          this.loading = false;
+        } else if (val === 'dw') { //请求点位opt
           this.dwoption = response;
         }
       }).catch(error => {
@@ -147,10 +140,10 @@ export default {
     dictSelect(type, valuename) {
       var queryType = { type: type };
       request({ url: 'service-machine/shjgl/queryDict', method: 'post', data: queryType }).then(response => {
-        if (valuename == 'ztoptions6') { this.ztoptions6 = response; }
-        if (valuename == 'sqoptions5') { this.sqoptions5 = response; }
-        if (valuename == 'gjoptions4') { this.gjoptions4 = response; }
-        if (valuename == 'lboption') { this.lboption = response; }
+        if (valuename === 'ztoptions6') { this.ztoptions6 = response; }
+        if (valuename === 'sqoptions5') { this.sqoptions5 = response; }
+        if (valuename === 'gjoptions4') { this.gjoptions4 = response; }
+        if (valuename === 'lboption') { this.lboption = response; }
       }).catch(error => {
         Message.error("error：" + "请检查网络是否连接");
       });

@@ -17,6 +17,7 @@
     <!-- 表格 -->
     <el-card class="stablecard" shadow="hover" :body-style="{ padding: '0' ,'margin-bottom': '-2px'}">
       <div class="stable">
+        <el-input placeholder="输入机器编号或名称" v-model="jqfilterText"></el-input>
         <el-table :data="tableData" style="width:100%" @selection-change="handleSelectionChange" :ref="tableData" border>
           <el-table-column type="selection" align="center"> </el-table-column>
           <el-table-column prop="shmc" label="所属商户" align="center"> </el-table-column>
@@ -64,6 +65,7 @@ export default {
       clickshbh: '0', // 点击树商户编号 默认赋值当前登录用户商户编号
       usershbh: '0', //当前登录用户商户编号
       username: '超级管理员', //当前登录用户商户名称
+      jqfilterText: '',
     }
   },
   watch: {
@@ -73,11 +75,13 @@ export default {
         this.dllist = response;
       })
       //this.$refs.tree2.filter(val);
+    },
+    jqfilterText: function(val, oldval) {
+      this.onloadtable(this.clickshbh);
     }
   },
   created: function() {
-    this.onloadtable(this.usershbh
-);
+    this.onloadtable(this.usershbh);
   },
   methods: {
     handleSizeChange(val) {
@@ -92,6 +96,7 @@ export default {
       var queryData = {
         orderBy: '',
         shbh: shbh,
+        jqxx: this.jqfilterText,
         pageNum: this.listQuery.pageNum,
         pageSize: this.listQuery.pageSize,
       }

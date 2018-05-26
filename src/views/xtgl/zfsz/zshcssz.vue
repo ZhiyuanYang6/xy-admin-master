@@ -24,7 +24,7 @@
     <!-- 表格 -->
     <div class="stable">
       <!-- @sort-change="sortChange" -->
-      <el-table :data="tableData" @sort-change="sortChange" v-loading="loading" style="width:100%" border>
+      <el-table :data="tableData" max-height="398" @sort-change="sortChange" v-loading="loading" style="width:100%" border>
         <el-table-column prop="id" label="ID" align="center"> </el-table-column>
         <el-table-column prop="merchantCode" label="商户编号" align="center"> </el-table-column>
         <el-table-column prop="subMchName" label="商户名称" align="center"> </el-table-column>

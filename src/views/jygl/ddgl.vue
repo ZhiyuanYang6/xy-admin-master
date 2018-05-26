@@ -49,7 +49,7 @@
         <el-table-column prop="strddbh" label="订单编号" align="center"> </el-table-column>
         <el-table-column prop="bspzj" label="订单原价" align="center"> </el-table-column>
         <el-table-column prop="yhje" label="优惠金额" align="center"> </el-table-column>
-        <el-table-column prop="bddzj" sortable='custom' label="付款金额" align="center"> </el-table-column>
+        <el-table-column prop="ddzj" sortable='custom' label="付款金额" align="center"> </el-table-column>
         <el-table-column prop="spsl" label="商品数量" width="80" align="center"> </el-table-column>
         <el-table-column prop="showzfzt" label="支付状态" width="80" align="center"> </el-table-column>
         <el-table-column prop="showchzt" label="出货状态" width="80" align="center"> </el-table-column>
@@ -78,6 +78,7 @@ import request from '@/utils/request'
 import { Message } from 'element-ui'
 import Ddetails from './ddgl/components/details'
 export default {
+  name: 'ddgl',
   components: { Ddetails },
   data() {
     return {
@@ -85,7 +86,7 @@ export default {
       formInline: {
         jqbh: '',
         jqmme: '',
-        ftime: [new Date(), new Date()],
+        ftime: [new Date(new Date(new Date().toLocaleDateString()).getTime()), new Date()],
         ftitarttime: new Date(),
         //endtime: new Date(),
       },

@@ -5,7 +5,9 @@
         <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange" :ref="tableData" border>
           <el-table-column type="selection" label="上传商品编号" align="center"></el-table-column>
           <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
-          <el-table-column prop="hdbh" label="货道编号" align="center"></el-table-column>
+          <el-table-column prop="hdbh" label="货道编号" width="100" align="center"></el-table-column>
+                    <el-table-column prop="hdzt" label="货道状态"  align="center"></el-table-column>
+
         </el-table>
         <div class="frommain">
           <el-button type="primary" size="small" @click="delclick()">删除</el-button>
@@ -79,6 +81,10 @@ export default {
       })
     },
     delclick() { //删除
+      if(this.rows.length===0){
+        this.$message({ type: 'error：', message: "请选择要清除的货道！" });
+        return
+      }
       //alert(this.rows)
       this.$confirm('确认删除货道，删除货道后货道商品也将删除?', '提示', {
         confirmButtonText: '确认',

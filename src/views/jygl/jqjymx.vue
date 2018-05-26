@@ -63,6 +63,7 @@ import request from '@/utils/request'
 import axios from 'axios'
 import { Message } from 'element-ui'
 export default {
+  name: 'jqjymx',
   data() {
     return {
       formInline: {

@@ -2,7 +2,7 @@
   <div class="smain">
     <el-tabs type="card" @tab-click="handleClick">
       <el-tab-pane v-for="item in tabslx" :key="item.label" :label="item.label">
-        <el-table :data="tableData" border style="width: 100%" current-row-key="hdbh">
+        <el-table :data="tableData" border style="width: 100%;border-bottom: 1px solid #ebeef5;" current-row-key="hdbh" max-height="350">
           <el-table-column prop="hdbh" label="货道编号"></el-table-column>
           <el-table-column prop="hdzt" label="货道状态"></el-table-column>
           <el-table-column prop="spbh" label="上传商品编号"></el-table-column>
@@ -14,7 +14,8 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="spjg" label="设置商品价格"></el-table-column>
+          <el-table-column prop="szspjg" label="设置商品价格(元)"></el-table-column>
+          <el-table-column prop="spjg" label="上传商品价格(元)"></el-table-column>
           <el-table-column prop="kcsl" label="库存数"></el-table-column>
           <el-table-column prop="kcrl" label="库存容量"></el-table-column>
         </el-table>
@@ -24,7 +25,7 @@
       <el-button type="primary" @click="mbxx()">导入模板</el-button>
       <el-button type="primary" @click="submitsetdetil">保存</el-button>
     </div>
-    <el-dialog title="选择商品" :visible.sync="dialogspxx" width="60%"  append-to-body class="wdshjspsz">
+    <el-dialog title="选择商品" :visible.sync="dialogspxx" width="60%" append-to-body class="wdshjspsz">
       <el-form :inline="true" :model="formInline" size="small" class="demo-form-inline">
         <el-form-item>
           <el-input v-model="formInline.spmc" style="width: 150px;" placeholder="商品名称"></el-input>
@@ -56,7 +57,7 @@
         </el-form-item>
         <el-button type="warning" @click="mbxx()">查询</el-button>
       </el-form>
-      <el-table :data="mbData" highlight-current-row @current-change="handleCurrentmbChange" style="width: 100%; cursor: pointer;" border>
+      <el-table :data="mbData" highlight-current-row @current-change="handleCurrentmbChange" max-height="300" style="width: 100%; cursor: pointer;" border>
         <el-table-column prop="mbid" label="模板ID" align="center"> </el-table-column>
         <el-table-column prop="mbmc" label="模板名称" align="center"> </el-table-column>
         <!-- <el-table-column prop="lmmc" label="商品品牌" align="center"> </el-table-column>
@@ -79,7 +80,7 @@ export default {
     return {
       formInline: {
         spmc: '',
-        spbh:'',
+        spbh: '',
       },
       formbcc: {
         mbmc: '',
@@ -87,8 +88,7 @@ export default {
       activeName: "second",
       tabslx: [],
       spData: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-      mbData: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
-
+      mbData: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
       tabeldates: [],
       tableData: [],
       oldtab: "主机",
@@ -143,7 +143,7 @@ export default {
       this.listQuery.pageNum = val;
       this.spxx();
     },
-     handleSizeChangemb(val) {
+    handleSizeChangemb(val) {
       this.listmbQuery.pageSize = val; //修改每页数据量
       this.mbxx();
     },
@@ -152,16 +152,16 @@ export default {
       this.mbxx();
     },
     handleCurrentspChange(val) {
-     this.formInline.spmc='';
-       this.formInline.spbh='';
-    //选择的商品
-       var hdbh= this.oldsp.hdbh;
+      this.formInline.spmc = '';
+      this.formInline.spbh = '';
+      //选择的商品
+      var hdbh = this.oldsp.hdbh;
       this.oldsp.spmc = val.spmc;
       this.oldsp.szspbh1 = val.spbh;
-      this.oldsp.spjg = val.spjg;
+      this.oldsp.szspjg = val.spjg;
       this.mbid = '';
       this.oldsp.hdbh = 111;
-      this.oldsp.hdbh=hdbh;
+      this.oldsp.hdbh = hdbh;
       // this.mbrow = val;
     },
     handleCurrentmbChange(val) { //选择的模板
@@ -192,6 +192,7 @@ export default {
             this.oldtab = "副机" + i;
             break;
           } else if (this.oldtab == "主机") {
+            this.tableData = [];
             this.tableData = this.tabeldates[0];
             this.oldtab = "主机";
             break;
@@ -213,14 +214,12 @@ export default {
       if (this.mbid == '') {
         var editspxx = {
           map: this.tableData,
-          szry: "ssss",
-          shbh: 0
+          szry: "ssss"
         }
       } else {
         var editspxx = {
           szry: "ssss",
           mbid: this.mbid,
-          shbh: 0,
           jqbh: this.listrow.jqbh
         }
       }
@@ -234,20 +233,22 @@ export default {
     },
     spxx: function(val) {
 
-     this.oldsp = val;
+      this.oldsp = val;
       this.dialogspxx = true
-      var editspxx = {
+      var queryspxx = {
         jqbh: this.listrow.jqbh,
         pageNum: this.listQuery.pageNum,
         pageSize: this.listQuery.pageSize,
         spmc: this.formInline.spmc,
         spbh: this.formInline.spbh
-
-      }
-      request({ url: 'service-machine/shjgl/queryshspxx', method: 'post', data: editspxx }).then(response => {
+      };
+      request({ url: 'service-machine/shjgl/queryshspxx', method: 'post', data: queryspxx }).then(response => {
         this.spData = response.list;
-        this.listQuery.totalCount = response.total
-        console.log(response)
+        for (var a = 0; a < 20; a++) {
+          this.spData.push({});
+          debugger;
+        }
+        this.listQuery.totalCount = response.total;
         this.loading = false;
       }).catch(error => {
         Message.error("error：" + "请检查网络是否连接");
@@ -260,14 +261,14 @@ export default {
       console.log(val);
       this.dialogxzmb = true;
       var querymbxx = {
-      //  shbh: "0",
+        shbh: this.listrow.shbh,
         pageNum: this.listmbQuery.pageNum,
         pageSize: this.listmbQuery.pageSize,
         mbmc: this.formbcc.mbmc,
 
       }
       request({ url: 'service-machine/mbgl/mbglQuery', method: 'post', data: querymbxx }).then(response => {
-        this.mbData = response.data;
+        // this.mbData = response.data;
         this.listmbQuery.totalCount = response.total
         console.log(response)
         this.loading = false;
@@ -326,8 +327,17 @@ export default {
   float: right;
   margin-top: -60px;
 }
-.el-dialog_body{
-      height: 100%;
+
+.el-dialog_body {
+  height: 100%;
+}
+
+</style>
+<style>
+div.wdshjspsz div.el-dialog__body {
+  padding: 20px;
+  min-height: 400px;
+  overflow-y: scroll;
 }
 
 </style>

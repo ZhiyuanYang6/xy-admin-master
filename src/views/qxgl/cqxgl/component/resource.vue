@@ -2,18 +2,13 @@
   <el-card class="full-card">
     <div class="top-tool">
       <el-form size="medium" :model="toData" :inline="true" ref="ruleForm">
-        <!-- <el-form-item>
-          <el-select class="form-item-width" v-model="toData.systemid" clearable placeholder="选择系统名称">
-            <el-option v-for="(value,key) in ALLSYSTEMAllData" :key="key" :label="value" :value="key"></el-option>
-          </el-select>
-        </el-form-item> -->
         <el-form-item>
           <el-select class="form-item-width" v-model="toData.resourcetype" clearable placeholder="选择资源类型" @change="changed">
             <el-option v-for="(value,key) in RESOURCETYPEAllData" :key="key" :label="value.label" :value="value.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item v-show="toData.resourcetype==='2'">
-          <el-cascader v-model.trim="toData.orgidCope" clearable :options="organizationData" style="width:200px;" :props="props" placeholder="选择所属组织" :change-on-select=true></el-cascader>
+          <el-cascader v-model.trim="toData.orgidCope" clearable :options="organizationData" style="width:200px;" :props="propsopt" placeholder="选择所属菜单" :change-on-select=true></el-cascader>
         </el-form-item>
         <el-form-item v-show="toData.resourcetype==='2'">
           <el-input class="form-item-width" v-model.trim="toData.name" style="width:200px;" placeholder="资源名称"></el-input>
@@ -104,32 +99,27 @@ export default {
         label: 'nodeName',
         children: 'childList'
       },
-      propsmenu: {
-        value: 'resourceid',
+      propsopt:{
+       value: 'resourceid',
         label: 'name',
         children: 'childList'
+      },
+      propsmenu: {
+       value: 'resourceid',
+        label: 'name',
+        children: 'childList' 
       }
     };
   },
   mounted() {
     this.name = this.$route.query.name; //获取角色名称
-    //获取角色roleid
     this.toParam.roleId = Number(this.$route.query.roleid); //获取本页面的roleid
-    this.toData.roleid = Number(this.$route.query.roleid);
+    this.toData.roleid = Number(this.$route.query.roleid);  //获取角色roleid
     this.initData(); // 查询并且初始化页面数据
     this.getResourceData();
   },
   methods: {
     initData() { // 获取资源类型和系统类型数据
-      request({ url: '/sram/archives/getMyOrgTree', method: 'post' }).then(response => {
-        this.organizationData = response;
-      }).catch(error => {
-        Message.error("error：" + "请检查网络是否连接");
-      });
-      // getDicts('resourceTypeView,ALLSYSTEM').then(response => {
-      // if (response.code) {
-      // this.$message.error(response.data.msg);
-      // } else {
       this.RESOURCETYPEAllData = [
         { value: '2', label: 'URL' },
         { value: 't0', label: '功能权限' },
@@ -138,30 +128,29 @@ export default {
       getRoleresourceByRoleId(this.$route.query.roleid).then(response => {
         this.loading = false;
         this.checklist =[];
+        this.listkeyid=[];
+        // debugger;
         response.forEach(item =>{
-          this.checklist.push(item.resourceid);
+          if(!item.hasChild){this.checklist.push(item.resourceid)};
+          this.listkeyid.push(item.resourceid);
+          // console.log(item.resourceid);
         });
+        this.listkeyid=this.listkeyid.toString();
       }).catch(error => {
         this.loading = false;
         console.log(error);
       });
-      // this.ALLSYSTEMAllData = response.ALLSYSTEM;
-      // }
-      // }).catch(error => {
-      // console.log(error);
-      // });
+      findRoleresource({systemid: this.toData.systemid,resourcetype: 't0',roleid: this.toData.roleid,}).then(response => {   
+         this.organizationData.push(response);
+      }).catch(error => {
+        this.loading = false;
+        console.log(error);
+      });
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-    //根据资源类型处理数据
-    getData() {
-      // console.log(this.toData.resourcetype.indexOf('t'))
-      // if (this.toData.resourcetype.indexOf('t') === -1) {
-      //   this.isTree = false;
-      // } else {
-      //   this.isTree = true;
-      // }
+    getData() {    //根据资源类型处理数据
       if (this.toData.resourcetype === '2') {
         this.getResourceData();
       } else {
@@ -204,9 +193,6 @@ export default {
         } else {
           this.treeData = [];
           this.treeData.push(response);
-          // this.checklist.push(439);
-          // console.log(this.checklist);
-          // this.$refs.tree.setCheckedKeys([596]);
           this.$refs.tree.setCheckedKeys(this.checklist);
         }
       }).catch(error => {
@@ -234,12 +220,10 @@ export default {
       });
     },
     handleCheckChange(data, checked) {
+      // debugger;
       this.listkeyid = checked.checkedKeys+','+checked.halfCheckedKeys
-        // console.log(this.listkeyid);
-        // debugger;
-      },
-    //保存树形资源数据
-    handleTreePreserve() {
+    },
+    handleTreePreserve() {    //保存树形资源数据
       let newSubmitData = {
         systemid: this.toData.systemid,
         resourcetype: 't0',
@@ -266,7 +250,6 @@ export default {
     },
 
     changed(val) { //选中资源类型时触发
-      // val.indexOf("t") !== -1 && (this.treeSetting.check.chkboxType = this.treeTypeConfig(val));
       if (this.toData.resourcetype === '2') {
         this.getResourceData();
       } else {
@@ -317,8 +300,7 @@ export default {
         } else if (i === 3 && v === '1') {
           type.N += 's'
         }
-      })
-      // console.log('type', type);
+      });
       return type;
     }
   }

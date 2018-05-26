@@ -29,3 +29,23 @@ export function logout() {
     method: 'post',
   })
 }
+
+export function getCheckCode(phone) {
+  return request({
+    url: '/sram/archives/getCheckCode',
+    method: 'get',
+    params: { phone }
+  });
+}
+
+export function resetPass(data) {
+  return request({
+    url: '/sram/archives/resetPass',
+    method: 'get',
+    params: {
+      checkCode: data.checkCode,
+      phone: data.phone,
+      pass: data.pass,
+    }
+  });
+}
