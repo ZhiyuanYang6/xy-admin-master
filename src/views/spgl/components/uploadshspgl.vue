@@ -4,11 +4,11 @@
 
 :inline="true">
       <el-form-item label="商品编号">
-        <el-input v-model="formline.spbh" style="width:250px;margin-right:10px;"></el-input>
+        <el-input v-model="formline.spbh" style="width:250px;margin-right:10px;"  :disabled="true"></el-input>
       </el-form-item>
       <el-form-item label="" prop="spmc">
-        <div class="dsfspbh">第三方商品编号</div>
-        <el-input v-model="formline.dsfspbh" style="width:200px;"></el-input>
+        <div class="dsfspbh">商城商品编号</div>
+        <el-input v-model="formline.dsfspbh" style="width:200px;"  :disabled="true"></el-input>
       </el-form-item>
       <el-form-item label="品牌分类">
         <el-select v-model="formline.yjfl" style="width:190px;" placeholder="大类" clearable @change="selet('dl',formline.yjfl)">
@@ -28,7 +28,7 @@
       <el-form-item label="商品名称">
         <el-input v-model="formline.spmc" style="width:250px;margin-right:20px;"></el-input>
       </el-form-item>
-      <el-form-item label="单价">
+      <el-form-item label="单价/元">
         <el-input v-model="formline.spdj" style="width:250px;"></el-input>
         <!-- <el-select v-model="formline.hblx" style="width:120px;" placeholder="货币类型" clearable>
           <el-option v-for="item in hblxoptions" :key="item.value" :label="item.label" :value="item.value">
@@ -37,7 +37,7 @@
       </el-form-item>
       <el-form-item label="规格">
         <el-input v-model="formline.spgg" style="width:250px;"></el-input>
-        <el-select v-model="formline.spdw" style="width:120px;" placeholder="单位" clearable>
+        <el-select v-model="formline.spdw" style="width:120px;margin-right: 200px;"" placeholder="单位" clearable >
           <el-option v-for="item in spdwoptions" :key="item.value" :label="item.valuename" :value="item.value">
           </el-option>
         </el-select>
@@ -48,7 +48,7 @@
       <el-form-item label="缩略图">
         <div class="imglabe">
           <div class="box">
-            <input id="slt" name="files" type="file" @change="handleFileChange('slt')" ref="inputerzt" />
+            <input id="slt"  name="files" type="file" @change="handleFileChange('slt')" ref="inputerzt" />
             <label for="slt"></label>
             <img :src="detilslt.src" :class="{'ztimg':true,'ztimgshow':listrow.showzt}" />
             <i class="el-icon-plus"></i>
@@ -69,7 +69,7 @@
         </div>
       </el-form-item>
       <el-form-item label="备注">
-        <el-input type="textarea" style="width:600px;" v-model="formline.remark" :rows="5"></el-input>
+        <el-input type="textarea" style="width:580px;" v-model="formline.remark" :rows="5"></el-input>
       </el-form-item>
       <el-form-item>
         <div class="subbtn">
@@ -357,6 +357,8 @@ export default {
       for (var i = 0; i < this.formline.xqt.length; i++) { //详情图
         formdata1.append('xqtimg', this.formline.xqt[i]);
       }
+                 //alert()
+
       formdata1.append('remark', this.formline.remark);
       formdata1.append('spid', this.listrow.spid);
       formdata1.append('shid', this.listrow.shbh);
@@ -372,7 +374,7 @@ export default {
       formdata1.append("xh",this.xgxh);
       formdata1.append("oldxh",this.oldxhadd);
       formdata1.append("sctp",this.xgtp);
-      formdata1.append("sltp",this.oldslt.substring(this.imgurl.length));
+      formdata1.append("sltp",this.oldslt);
       request({ url: 'service-goods/goods/editSpxx', method: 'post', data: formdata1 }).then(response => {
         this.$message({ message: '商品修改成功', type: 'success' });
         this.ADSubmit();
@@ -403,6 +405,7 @@ export default {
           this.formline.xqt = []; //详情图
            this.oldxqtp=[];
            this.oldslt="";
+           this.oldslt=response.smartimglj;
           this.detiltp = []; //详情图展示
           for (var i = 1; i < response.fjxx.length; i++) { 
           debugger;//添加展示的详情图
@@ -413,7 +416,7 @@ export default {
             this.xhadd.push(response.fjxx[i].fjxh);
              this.oldxhadd.push(response.fjxx[i].fjxh);
              this.oldxqtp.push(itemxqimg);
-             this.oldslt=response.smartimglj;
+             //this.oldslt=response.smartimglj;
            // this.fileimg.push(itemxqimg); //添加上传的详情图
           }
 
@@ -457,7 +460,7 @@ div.el-form-item {
 }
 
 .subbtn {
-  width: 670px;
+  width: 630px;
 }
 
 .subbtn .el-button--small {

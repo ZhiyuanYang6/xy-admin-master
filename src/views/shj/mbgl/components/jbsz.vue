@@ -16,6 +16,7 @@
 </template>
 <script>
 import request from '@/utils/request'
+import { Message } from 'element-ui'
 export default {
   props: ['mbxx', 'jbszshow', 'showNum'],
   data() {
@@ -49,7 +50,13 @@ export default {
     // }
   },
   methods: {
+    validator() {
+      if (!this.formline.mbmc) return true;
+    },
     save() {
+      if (this.validator()) {
+        return Message.warning("请输入模板名称");
+      }
       request({ url: 'service-machine/mbgl/tymbcz', method: 'post', data: this.formline }).then(response => {
         if (response.msg) {
           this.$message({ type: 'success', message: response.msg });

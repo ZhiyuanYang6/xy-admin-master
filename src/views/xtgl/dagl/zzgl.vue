@@ -2,7 +2,9 @@
   <el-card class="full-tree">
     <div class="left-tree-list">
       <div class="tree-title">
-        <div class="names">组织结构</div>
+        <div class="names">
+          <span style="margin-right: 20px;">组织结构</span>
+          <el-button size="mini" type="primary" @click='() => addDatamenu()'>新增组织</el-button></div>
         <div class="operation">操作</div>
       </div>
       <!-- <el-tree v-loading="loading" element-loading-text="加载中..." class="organization-tree" :data="treeData" :props="defaultProps" node-key="nodeId" :expand-on-click-node="false" :render-content="renderContent" highlight-current> -->
@@ -20,12 +22,12 @@
     <!--弹框内容-->
     <el-dialog title="组织管理" :visible.sync="dialogFormVisible" :close-on-click-modal="false" width="40%" :before-close="handleClose">
       <el-form :rules="rules" ref="ruleForm" :model="form" label-width="85px">
-        <el-form-item label="组织类型" prop="orgtype">
-          <el-select v-model="form.orgtype" placeholder="选择组织类型" style="width: 250px">
+        <el-form-item label="组织类型" prop="orgtype" v-if="false">
+          <el-select v-model="form.orgtype" disabled placeholder="选择组织类型" style="width: 250px">
             <el-option v-for="(value,key) in ORGTYPEAllData" :key="key" :label="value" :value="key"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="组织名称" prop="orgname">
+        <el-form-item label="组织名称">
           <el-input v-model.trim="form.orgname" style="width: 250px"></el-input>
         </el-form-item>
         <el-form-item label="组织描述" prop="description">
@@ -43,7 +45,7 @@
   </el-card>
 </template>
 <script>
-import { getMyOrgTree, delOrgInfo, newOrgInfo, getOrgById, editOrgInfo } from '@/api/file'
+import { getMyOrgTree, delOrgInfo, newOrgInfo, getOrgById, editOrgInfo,newRootOrgInfo  } from '@/api/file'
 import { getDict } from '@/api/index';
 
 export default {
@@ -56,6 +58,7 @@ export default {
       isEdit: false, //判断编辑还是添加
       dialogFormVisible: false, //是否显示对话框
       loading: false, //加载
+      zgtree:false,
       treeData: [], //树节点数据
       ORGTYPEAllData: {}, //组织结构数据
       defaultProps: {
@@ -65,15 +68,12 @@ export default {
       },
       form: { //表单数据
         orgid: '',
-        orgtype: '',
+        orgtype: 'support',
         orgname: '',
         description: '',
         superorgid: ''
       },
       rules: {
-        orgtype: [
-          { required: true, message: '组织类型不能为空', trigger: 'blur' },
-        ],
         orgname: [
           { required: true, message: '组织名称不能为空', trigger: 'blur' },
         ],
@@ -86,15 +86,15 @@ export default {
   },
   methods: {
     initData() { // 获取组织类型数据
-      getDict('ORGTYPE').then(response => {
-        if (response.code) {
-          this.$message.error(response.data.msg);
-        } else {
-          this.ORGTYPEAllData = response;
-        }
-      }).catch(error => {
-        console.log(error.data);
-      });
+      // getDict('ORGTYPE').then(response => {
+      //   if (response.code) {
+      //     this.$message.error(response.data.msg);
+      //   } else {
+    this.ORGTYPEAllData = {areaMarket:"区域市场",areaNet:"区域网络",areaSupport:"区域运营",brand:"品牌",city:"城市",company:"公司",general:"网络部",market:"门店市场",service:"服务社",store:"门店",support:"运营类型"};
+      //   }
+      // }).catch(error => {
+      //   console.log(error.data);
+      // });
     },
     getEditData() { // 编辑的时候根据id 获取原本信息
       getOrgById(this.form.orgid).then(response => {
@@ -128,6 +128,30 @@ export default {
       this.getEditData();
       this.editOrgData = data;
     },
+    addDatamenu(){
+      this.zgtree=true;
+      this.dialogFormVisible = true;
+    },
+    submitezgrtree(){
+      this.loading = true;
+      newRootOrgInfo({name:this.form.orgname}).then(response=>{
+        this.loading = false;
+        this.zgtree=false;
+        this.dialogFormVisible = false;
+        this.treeData.push({ nodeId: response, nodeName: this.form.orgname, childList: [] });
+        this.form.orgid = '';
+        this.form.orgname = '';
+        this.form.description = '';
+        this.form.superorgid = this.receiveData.nodeId;
+        // console.log(response);
+        // console.log(this.treeData);
+        this.$message({ message: '添加成功！', type: 'success' });
+      }).catch(error => {
+        this.zgtree=false;
+        this.loading = false;
+        console.log(error.data);
+      });
+    },
     addData(store, data) { //添加节点内容
       this.dialogFormVisible = true;
       this.form.superorgid = data.nodeId;
@@ -137,6 +161,10 @@ export default {
     submitForm(formName) { //提交操作 判断是编辑还是添加
       this.$refs[formName].validate(valid => {
         if (valid) {
+          if(this.zgtree){
+            this.submitezgrtree();
+            return;
+          }
           if (this.isEdit) {
             this.submitEdit();
             this.isEdit = false;
@@ -162,7 +190,7 @@ export default {
           this.editOrgData.description = this.form.description;
           this.dialogFormVisible = false;
           this.form.orgid = '';
-          this.form.orgtype = '';
+          // this.form.orgtype = '';
           this.form.orgname = '';
           this.form.description = '';
           this.form.superorgid = this.receiveData.nodeId;
@@ -187,7 +215,7 @@ export default {
           this.receiveData.childList.push(newChild);
           this.dialogFormVisible = false;
           this.form.orgid = '';
-          this.form.orgtype = '';
+          // this.form.orgtype = '';
           this.form.orgname = '';
           this.form.description = '';
           this.form.superorgid = this.receiveData.nodeId;
@@ -223,7 +251,7 @@ export default {
     handleClose() {
       this.dialogFormVisible = false;
       this.form.orgid = '';
-      this.form.orgtype = '';
+      // this.form.orgtype = '';
       this.form.orgname = '';
       this.form.description = '';
       this.form.superorgid = this.editOrgData.nodeId;
@@ -232,7 +260,7 @@ export default {
     handleCancel() {
       this.dialogFormVisible = false;
       this.form.orgid = '';
-      this.form.orgtype = '';
+      // this.form.orgtype = '';
       this.form.orgname = '';
       this.form.description = '';
       this.form.superorgid = this.editOrgData.nodeId;
@@ -265,7 +293,7 @@ export default {
     color #20a0ff
     line-height 30px
     .names
-      width 150px
+      width 200px
       text-align center
     .operation
       margin-right 140px

@@ -65,7 +65,7 @@
         <!--  <el-input v-model="formInline.bssj" class="inpxq"></el-input> -->
       </el-form-item>
       <el-form-item label="备注">
-        <el-input type="textarea" :autosize="{ minRows: 3, maxRows: 4}" v-model="formInline.remark" class="inpxq"></el-input>
+        <el-input type="textarea" style="min-height: 69px;height: 69px;width: 536px;" :autosize="{ minRows: 4, maxRows: 6}" v-model="formInline.remark" class="inpxq"></el-input>
       </el-form-item>
       <el-form-item v-show="showbtn">
         <el-button style="margin-left:950%;" @click="submitsetdetil" type="primary">修 改</el-button>

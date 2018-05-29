@@ -24,7 +24,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-date-picker v-model="formInline.ftime" type="daterange" :picker-options="pickerOptions2" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+        <el-date-picker v-model="formInline.ftime" style="width:300px;padding-right: 0;" type="daterange" :picker-options="pickerOptions2" range-separator="~" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
         </el-date-picker>
       </el-form-item>
       <!-- 右侧按钮 -->
@@ -35,21 +35,21 @@
     <!-- 表格 -->
     <div class="stable">
       <el-table :data="tableData" @sort-change="sortChange" v-loading="loading" style="width:100%" border>
-        <el-table-column prop="shbh" label="商户编号" width="100" align="center"> </el-table-column>
-        <el-table-column prop="shmc" label="商户名称" width="100" align="center"> </el-table-column>
-        <el-table-column prop="jqbh" sortable='custom' label="机器编号" align="center"> </el-table-column>
-        <el-table-column prop="jqmc" label="机器名称" width="100" align="center"> </el-table-column>
+        <el-table-column prop="shbh" label="商户编号" show-overflow-tooltip  width="100" align="center"> </el-table-column>
+        <el-table-column prop="shmc" label="商户名称"  show-overflow-tooltip width="100" align="center"> </el-table-column>
+        <el-table-column prop="jqbh" sortable='custom' label="机器编号" show-overflow-tooltip width="110" align="center"> </el-table-column>
+        <el-table-column prop="jqmc" label="机器名称" show-overflow-tooltip  width="100" align="center"> </el-table-column>
         <el-table-column prop="showjqlx" label="机器类型" align="center"> </el-table-column>
-        <el-table-column prop="jyid" label="交易编号" width="80" align="center"> </el-table-column>
+        <el-table-column prop="jyid" label="交易编号" show-overflow-tooltip  width="80" align="center"> </el-table-column>
         <el-table-column prop="bddzj" label="销售额" align="center"> </el-table-column>
-        <el-table-column prop="ddbh" label="订单编号" align="center"> </el-table-column>
+        <el-table-column prop="ddbh" label="订单编号" show-overflow-tooltip align="center"> </el-table-column>
         <el-table-column prop="spmc" label="商品" width="90" align="center"> </el-table-column>
         <el-table-column prop="showzffs" label="支付方式" width="80" align="center"> </el-table-column>
         <el-table-column prop="bzfje" label="支付金额" width="80" align="center"> </el-table-column>
         <el-table-column prop="byhje" label="优惠金额" width="80" align="center"> </el-table-column>
         <el-table-column prop="showchzt" label="出货状态" width="80" align="center"> </el-table-column>
         <el-table-column prop="btkje" label="退款" width="50" align="center"> </el-table-column>
-        <el-table-column prop="jysj" sortable='custom' label="时间" width="100" align="center"> </el-table-column>
+        <el-table-column prop="jysj" sortable='custom' show-overflow-tooltip label="时间" width="100" align="center"> </el-table-column>
         <!-- <el-table-column prop="operation" label="操作" fixed="right"></el-table-column> -->
       </el-table>
     </div>

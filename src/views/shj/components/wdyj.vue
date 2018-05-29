@@ -94,16 +94,8 @@ export default {
       tabname[i] = { value: 'i', label: "副机" + i }
     }
     this.wformline2 = {
-      gzms: "1",
-      mbwd: "0",
-      typeOptions: ['制冷'],
-      time1: ['00:00:00', '23:59:59'],
-      time2: ['00:00:00', '23:59:59'],
-      time3: ['00:00:00', '23:59:59']
     };
     this.wformline = {
-      zdwd: "0",
-      zgwd: "100"
     }
     this.tabslx = tabname;
     console.log(this.listrow)
@@ -114,16 +106,8 @@ export default {
     dialogwdyj: function(data, olddata) {
       if (data) {
         this.wformline2 = {
-          gzms: "1",
-          mbwd: "0",
-          typeOptions: ['制冷'],
-          time1: ['00:00:00', '23:59:59'],
-          time2: ['00:00:00', '23:59:59'],
-          time3: ['00:00:00', '23:59:59']
         };
         this.wformline = {
-          zdwd: "0",
-          zgwd: "100"
         }
         this.onloadtable();
         var tabname = new Array();

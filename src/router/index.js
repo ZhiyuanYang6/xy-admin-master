@@ -35,10 +35,10 @@ export const constantRouterMap = [
     path: '/jygl',
     name: 'jygl',
     component: Layout,
-    redirect: '/jygl/sh',
+    redirect: '/jygl/tkgl',
     meta: { noCache: false, title: 'jygl', icon: 'icon-jiaoyi' },
     children: [
-      { path: 'sh', name: 'sh', component: _import('jygl/sh'), meta: { noCache: false, title: 'sh', icon: 'example' } },
+      { path: 'tkgl', name: 'tkgl', component: _import('jygl/tkgl'), meta: { noCache: false, title: 'tkgl', icon: 'example' } },
       { path: 'ddgl', name: 'ddgl', component: _import('jygl/ddgl'), meta: { noCache: false, title: 'ddgl', icon: 'example' } },
       { path: 'jqjymx', name: 'jqjymx', component: _import('jygl/jqjymx'), meta: { noCache: false, title: 'jqjymx', icon: 'example' } },
       { path: 'gk', name: 'gk', component: _import('jygl/gk'), meta: { noCache: false, title: 'gk', icon: 'example' } }

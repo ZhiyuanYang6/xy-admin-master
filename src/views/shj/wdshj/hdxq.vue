@@ -45,6 +45,12 @@ export default {
   watch: {
     dialogVisible: function(data, olddata) {
       if (data) {
+         var tabname = new Array();
+    tabname[0] = { value: '0', label: "主机" }
+    for (var i = 1; i < this.listrow.jgsl; i++) {
+      tabname[i] = { value: '0', label: "副机" + i }
+    }
+    this.tabslx = tabname;
         this.onloadtable(this.listrow.jqbh);
       }
     }

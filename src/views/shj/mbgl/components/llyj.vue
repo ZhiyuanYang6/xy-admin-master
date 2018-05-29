@@ -2,7 +2,7 @@
   <div class="smain llyj" style="width:50%;">
     <el-card class="box-card">
       <el-form ref="form" :model="formline" label-width="90px" size="mini">
-        <span style="font-size: 10px;"> * 报警流量取值范围：0 ~ 10240</span>
+        <!-- <span style="font-size: 10px;"> * 报警流量取值范围：0 ~ 10240</span> -->
         <el-form-item label="日流量报警">
           <el-input v-model="formline.rllyj" type="number"></el-input>
           <div class="deil">
@@ -12,7 +12,7 @@
           </div>
         </el-form-item>
         <el-form-item label="月流量报警">
-          <el-input v-model="formline.yllyj" type="number"></el-input>
+          <el-input v-model="formline.yllyj" type="number" ></el-input>
           <div class="deil">
             <span style="padding:0 5px;">M</span>
             <span>月</span> 流量
@@ -59,7 +59,7 @@ export default {
     },
     save() {
       if (this.validator()) {
-        return Message.warning("请设置正确的流量报警值");
+        return Message.warning("流量报警值必须在0 ~ 10240 M之间");
       }
       this.formline.rllyj = (this.formline.rllyj - 0).toFixed(2) - 0;
       this.formline.yllyj = (this.formline.yllyj - 0).toFixed(2) - 0;

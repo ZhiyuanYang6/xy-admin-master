@@ -42,12 +42,17 @@
           <el-form-item>
             <el-input v-model="forjqcc.jqxx" style="width: 150px;" placeholder="机器名称/编号"></el-input>
           </el-form-item>
+          <el-select v-model="forjqcc.jqlb" style="width: 150px;" placeholder="机器类别" clearable>
+            <el-option v-for="item in jqlboptions" :key="item.value" :label="item.valuename" :value="item.value">
+            </el-option>
+          </el-select>
           <el-button type="warning" @click="jqxxQuery()">查询</el-button>
         </el-form>
         <el-table :data="jqData" highlight-current-row @selection-change="jqhandleSelectionChange" style="width: 100%; cursor: pointer;" border>
           <el-table-column type="selection" align="center"> </el-table-column>
           <el-table-column prop="jqbh" label="机器编号" align="center"> </el-table-column>
           <el-table-column prop="jqmc" label="机器名称" align="center"> </el-table-column>
+          <el-table-column prop="showjqlb" label="机器类别" align="center"> </el-table-column>
         </el-table>
         <!-- 分页 -->
         <el-pagination background @size-change="jqhandleSizeChange" @current-change="jqhandleCurrentChange" :current-page="listjqQuery.currentPage" :page-sizes="[10, 30, 50, 100]" :page-size="listjqQuery.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="listjqQuery.totalCount">
@@ -95,6 +100,7 @@ export default {
       jqrows: [],
       zpmbid: '',
       mbxx: {},
+      jqlboptions: [],
     }
   },
   activated() {
@@ -188,7 +194,9 @@ export default {
     mbzpjqShow(index, row) {
       this.zpmbid = row.mbid;
       this.forjqcc.jqxx = '';
+      this.jqlboptions = [];
       this.dialogVisible = true;
+      this.dictSelect();
       this.jqxxQuery();
     },
     jqxxQuery() {
@@ -196,6 +204,7 @@ export default {
         pageNum: this.listjqQuery.pageNum,
         pageSize: this.listjqQuery.pageSize,
         jqxx: this.forjqcc.jqxx,
+        jqlb: this.forjqcc.jqlb,
       }
       request({ url: 'service-machine/mbgl/jqxxQueryByJqSh', method: 'post', data: queryjqxx }).then(response => {
         this.jqData = response.data;
@@ -228,7 +237,19 @@ export default {
       } else {
         this.$message({ message: '请选择需要指派的机器', type: 'warning' });
       }
-    }
+    },
+    dictSelect() {
+      request({ url: 'service-machine/xyplat/dict/getDict?dictName=1000', method: 'post'}).then(response => {
+        for (let item in response) {
+          this.jqlboptions.push({
+            value: item,
+            valuename: response[item],
+          });
+        }
+      }).catch(error => {
+        Message.error("error：" + "请检查网络是否连接");
+      });
+    },
   }
 }
 

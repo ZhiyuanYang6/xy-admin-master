@@ -83,7 +83,15 @@ export function newOrgInfo(data) {
     data
   });
 }
-
+//增加企业
+export function newRootOrgInfo(data) {
+  return request({
+    // url: '/archives/newRootOrgInfo',
+    url: '/sram/archives/newRootOrgInfo',
+    method: 'post',
+    data
+  });
+}
 // 删
 export function delOrgInfo(id) {
   return request({

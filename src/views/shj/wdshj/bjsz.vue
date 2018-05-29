@@ -1,14 +1,14 @@
 <template>
   <div class="smain wdshjspsz">
-    <el-tabs type="card" @tab-click="handleClick">
-      <el-tab-pane v-for="item in tabslx" :key="item.label" :label="item.label">
-        <el-table :data="tableData" border style="width: 100%">
+    <el-tabs type="card" @tab-click="handleClick" >
+      <el-tab-pane v-for="item in tabslx" :key="item.label" :label="item.label"  >
+        <el-table :data="tableData" border style="width: 100%" max-height="450">
           <el-table-column prop="jqbh" label="机器编号"></el-table-column>
-          <el-table-column prop="hdbh" label="货道编号"></el-table-column>
+          <el-table-column prop="hdb" label="货道编号"></el-table-column>
 
           <el-table-column label="货道模式">
            <template slot-scope="scope">
-              <el-select size="mini" v-model="scope.row.hdms"  placeholder="请选择">
+              <el-select size="mini" v-model="scope.row.hdms"  placeholder="请选择"  >
                 <el-option v-for="item in optionsms" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
@@ -21,9 +21,9 @@
           <el-table-column prop="name" label="库存数"></el-table-column>
           <el-table-column prop="hdrl" label="货道容量"></el-table-column>
           <el-table-column prop="kcrl" label="库存容量"></el-table-column>
-          <el-table-column label="报警阀值" width="150">
+          <el-table-column label="货道报警阀值" width="150">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.yjyz" suffix-icon="iconfont icon-shuzishurukuang" style="width: 120px;" size="mini" placeholder="请输入数量"></el-input>
+              <el-input v-model="scope.row.yjyz" suffix-icon="iconfont icon-shuzishurukuang" style="width: 120px;" size="mini" placeholder="货道报警阀值"></el-input>
             </template>
           </el-table-column>
           <!--  <el-table-column prop="name" label="是否支持订货" width="150">
@@ -79,6 +79,14 @@ export default {
   watch: {
     dialogVisible: function(data, olddata) {
       if (data) {
+         var tabname = new Array();
+    tabname[0] = { value: '0', label: "主机" }
+    for (var i = 1; i < this.listrow.jgsl; i++) {
+      tabname[i] = { value: '0', label: "副机" + i }
+    }
+    this.tabslx = tabname;
+    console.log(this.tabname);
+    this.onloadtable(this.listrow.jqbh);
         this.onloadtable(this.listrow.jqbh);
       }
     }

@@ -2,6 +2,8 @@
   <div class="smain">
     <div :class="{'showzz':!editableTabs2.length}"></div>
     <div class="titlebtn">
+      <el-button size="mini" :disabled="!editableTabs2.length" type="primary" @click="dialogzctbVisible=true">整层同步</el-button>
+      <el-button size="mini" :disabled="!editableTabs2.length" type="primary" @click="dialogzjtbVisible=true">整机同步</el-button>
       <el-button size="mini" type="primary" @click="dialogaddVisible=true">添加机柜</el-button>
       <el-button size="mini" type="primary" @click="dialogVisible=true">导入机器货道</el-button>
       <el-button size="mini" :disabled="!editableTabs2.length" type="primary" @click="dialogaddhdVisible=true">添加货道</el-button>
@@ -30,7 +32,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="spjg" label="商品价格" align="center"> </el-table-column>
-          <el-table-column prop="yjyz" label="货道库存阈值" align="center">
+          <el-table-column prop="yjyz" label="库存报警阈值" align="center">
             <template slot-scope="scope">
               <el-input size="mini" v-model="scope.row.yjyz" type="number" placeholder="请输入内容"></el-input>
             </template>
@@ -94,8 +96,8 @@
     <el-dialog title="添加货道" append-to-body :visible.sync="dialogaddhdVisible" width="35%">
       <div class="dialogadd"></div>
       <el-form status-icon :model=" formtjhd" size="small" ref="formtjhd" :rules="rules1" class="demo-form-inline" :inline="true">
-        <el-form-item label="货道编号" prop="addhdbh">
-          <el-input v-model.number=" formtjhd.addhdbh" style="width:250px;margin-right:30px;" placeholder="请输入内容"></el-input>
+        <el-form-item label="货道编号">
+          <el-input v-model=" formtjhd.addhdbh" style="width:250px;margin-right:30px;" placeholder="请输入内容"></el-input>
           <el-button type="primary" @click="addhdfun('formtjhd')">添加</el-button>
         </el-form-item>
       </el-form>
@@ -111,7 +113,7 @@
       </el-form>
     </el-dialog>
     <!-- 设置商品 -->
-    <el-dialog title="选择商品" class="jqsztk" :visible.sync="dialogspxxVisible" width="70%" append-to-body>
+    <el-dialog title="选择商品(双击选择商品)" class="jqsztk" :visible.sync="dialogspxxVisible" width="70%" append-to-body>
       <div class="smain addjg">
         <el-form :inline="true" :model="spcc" size="small" class="demo-form-inline">
           <el-form-item>
@@ -119,7 +121,7 @@
           </el-form-item>
           <el-button type="warning" :loading="loading" @click="spxxQuery()">查询</el-button>
         </el-form>
-        <el-table v-loading="loading" :data="spData" highlight-current-row @current-change="handleCurrentspChange" style="width: 100%; cursor: pointer;" border>
+        <el-table v-loading="loading" :data="spData" highlight-current-row @row-dblclick="selectsp" style="width: 100%; cursor: pointer;" border>
           <el-table-column prop="spbh" label="商品编号" align="center"> </el-table-column>
           <el-table-column prop="spmc" label="商品名称" align="center"> </el-table-column>
           <el-table-column prop="spdj" label="商品价格" align="center"> </el-table-column>
@@ -127,10 +129,61 @@
         <!-- 分页 -->
         <el-pagination background @size-change="sphandleSizeChange" @current-change="sphandleCurrentChange" :current-page="listspQuery.currentPage" :page-sizes="[10, 30, 50, 100]" :page-size="listspQuery.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="listspQuery.totalCount">
         </el-pagination>
-        <div class="mbbtn">
-          <el-button type="primary" :loading="loading" @click="selectsp">确定</el-button>
-        </div>
       </div>
+    </el-dialog>
+    <!-- 整层同步 -->
+    <el-dialog title="机柜整层同步" append-to-body :visible.sync="dialogzctbVisible" width="35%">
+      <div class="dialogadd"></div>
+      <el-form status-icon :model="formjgzctb" size="small" ref="formszyz" class="demo-form-inline" :inline="true">
+        <el-form-item label="选择机柜">
+          <el-select v-model="formjgzctb.xzjg" clearable placeholder="请选择" @change="selsyncPlies(formjgzctb.xzjg,'选中')" style="width: 300px;">
+            <el-option v-for="item in optionsjg" :key="item.value" :label="item.label" :value="item.value" :disabled="!item.disabled">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="选择层数">
+          <el-select v-model="formjgzctb.xzcs" clearable placeholder="请选择" style="width: 300px;">
+            <el-option v-for="item in xzcsopt" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="同步机柜">
+          <el-select v-model="formjgzctb.tbjg" clearable placeholder="请选择" @change="selsyncPlies(formjgzctb.tbjg,'同步')" style="width: 300px;">
+            <el-option v-for="item in optionsjg" :key="item.value" :label="item.label" :value="item.value" :disabled="!item.disabled">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="同步层数">
+          <el-select v-model="formjgzctb.tbcs" clearable placeholder="请选择" style="width: 300px;">
+            <el-option v-for="item in tbcsopt" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="synccPlies()">同步整层</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+    <!-- 整机同步 -->
+    <el-dialog title="机柜整机同步" append-to-body :visible.sync="dialogzjtbVisible" width="35%">
+      <div class="dialogadd"></div>
+      <el-form status-icon :model="formjgzjtb" size="small" ref="formszyz" :rules="rules1" class="demo-form-inline" :inline="true">
+        <el-form-item label="选择机柜" prop="szhdkcyz">
+          <el-select v-model="formjgzjtb.xzjg" clearable placeholder="请选择" style="width: 300px;">
+            <el-option v-for="item in optionsjg" :key="item.value" :label="item.label" :value="item.value" :disabled="!item.disabled">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="同步机柜" prop="szhdkcyz">
+          <el-select v-model="formjgzjtb.tbjg" clearable placeholder="请选择" style="width: 300px;">
+            <el-option v-for="item in optionsjg" :key="item.value" :label="item.label" :value="item.value" :disabled="!item.disabled">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="synccMachin()">同步整机</el-button>
+        </el-form-item>
+      </el-form>
     </el-dialog>
   </div>
 </template>
@@ -153,37 +206,6 @@ export default {
       setTimeout(() => {
         callback();
       }, 400);
-    };
-    var validadhdbh = (rule, value, callback) => { //添加货道验证
-      if (!value) {
-        return callback(new Error('货道编号不能为空'));
-      }
-      setTimeout(() => {
-        if (!Number.isInteger(value)) {
-          callback(new Error('请输入为正整数的数字'));
-        } else {
-          if (0 < value && value <= 99) {
-            if (this.tableData[this.editableTabsValue2].length >= 99) {
-              callback(new Error('该机柜货道已满，不能添加新货道.'));
-            } else {
-              var data = this.tableData[this.editableTabsValue2].find(item => {
-                if (value >= 10) {
-                  return item.hdbh == (this.editableTabsValue2 + value);
-                } else {
-                  return item.hdbh == (this.editableTabsValue2 + "0" + value);
-                }
-              });
-              if (data) {
-                callback(new Error('该机柜货道已添加货道为' + data.hdbh + '的货道.'));
-              } else {
-                callback();
-              }
-            }
-          } else {
-            callback(new Error('货道编号必须大于0且小于100'));
-          }
-        }
-      }, 500);
     };
     var valiszhdkcyz = (rule, value, callback) => { //阈值验证
       if (!value) {
@@ -243,6 +265,8 @@ export default {
       dialogaddVisible: false,
       dialogaddhdVisible: false,
       dialogaddyzVisible: false,
+      dialogzctbVisible: false,
+      dialogzjtbVisible: false,
       options: [
         { label: '皮带', value: 1 },
         { label: '弹簧', value: 2 },
@@ -254,12 +278,29 @@ export default {
         { label: '副机2', value: 2, disabled: false },
         { label: '副机3', value: 3, disabled: false },
         { label: '副机4', value: 4, disabled: false },
+        { label: '副机5', value: 5, disabled: false },
+        { label: '副机6', value: 6, disabled: false },
+        { label: '副机7', value: 7, disabled: false },
+        { label: '副机8', value: 8, disabled: false },
+        { label: '副机9', value: 9, disabled: false },
       ],
       formaddjg: {
         addjg: '',
         hdcs: '',
         zdhds: '',
       },
+      formjgzjtb: {
+        xzjg: '',
+        tbjg: '',
+      },
+      formjgzctb: {
+        xzjg: "",
+        xzcs: "",
+        tbjg: "",
+        tbcs: "",
+      },
+      xzcsopt: [],
+      tbcsopt: [],
       formszyz: {
         szhdkcyz: "", // 设置阈值
       },
@@ -272,7 +313,6 @@ export default {
         addjg: [{ validator: validdlmc, trigger: 'blur', required: true }],
         hdcs: [{ validator: validhdcs, trigger: 'blur', required: true }],
         szhdkcyz: [{ validator: valiszhdkcyz, trigger: 'blur', required: true }],
-        addhdbh: [{ validator: validadhdbh, trigger: 'blur', required: true }],
       },
       forjqcc: { // 机器信息查询表单
         jqxx: '',
@@ -296,13 +336,12 @@ export default {
         pageNum: 1, //查询的页码
         totalCount: 50,
       },
-      selectspxx: {}, // 选择的商品
       selectrow: {}, //修改的货道行
       formline: {}
-    }
+    };
   },
   created: function() {
-    // this.initialize();
+    this.initialize();
   },
   watch: {
     dialogspxxVisible: function(data, olddata) {
@@ -310,11 +349,6 @@ export default {
         this.spxxQuery();
       }
     },
-    // showtabs: function(data, olddata) {
-    //   if (data) {
-    //     // this.initialize();
-    //   }
-    // },
     dialogVisible: function(data, olddata) {
       if (data) {
         this.reportjqbh = ''; //初始化导入机器编号
@@ -331,7 +365,6 @@ export default {
       this.initializenow(data, 'formszyz');
     },
     showtabs: function(data, olddata) {
-      // console.log(this.mbxx);
       this.formline.mbid = this.mbxx.mbid;
       this.editableTabs2 = []; //初始化清空机柜
       this.tableData = []; //清空货道
@@ -367,6 +400,8 @@ export default {
           this.editableTabs2.push({
             title: this.optionsjg[this.formaddjg.addjg].label,
             name: newTabName,
+            hdcs: this.formaddjg.hdcs,
+            zdhds: this.formaddjg.zdhds,
           });
           this.editableTabsValue2 = newTabName;
           var tabsdata = [];
@@ -375,8 +410,10 @@ export default {
               (j < 10) ? tabsdata.push({ hdbh: this.formaddjg.addjg + "" + i + j }): tabsdata.push({ hdbh: this.formaddjg.addjg + "" + (i + 1) + "0" });
             }
           }
+          this.mbxx.hdList = this.tableData; //保存货道信息
+          this.mbxx.editableTabsValue2 = this.editableTabsValue2; //保存机柜信息
+          this.mbxx.editableTabs2 = this.editableTabs2; //保存active机柜
           this.$set(this.tableData, newTabName, tabsdata);
-          this.tableData[newTabName] = tabsdata;
           this.dialogaddVisible = false;
         } else {
           this.$message({ message: '表单验证未通过', type: 'error' });
@@ -402,24 +439,6 @@ export default {
     },
     handleSelectionChange(val) { //选中的货道
       this.listyzdata = val;
-    },
-    handleCurrentspChange(val) { //选择的商品
-      this.selectspxx = val;
-    },
-    addhdfun(targetName) { //添加货道
-      this.$refs[targetName].validate((valid) => {
-        if (valid) {
-          let hdbh = this.formtjhd.addhdbh;
-          (hdbh >= 10) ? hdbh = this.editableTabsValue2 + hdbh: hdbh = this.editableTabsValue2 + "0" + hdbh; //货道编号小于10补0
-          this.tableData[this.editableTabsValue2].push({ hdbh: hdbh });
-          this.dialogaddhdVisible = false;
-          this.$message({ message: '货道添加成功', type: 'success' });
-          this.tableDat = this.tableDat;
-        } else {
-          this.$message({ message: '表单验证未通过', type: 'error' });
-          return false;
-        }
-      });
     },
     removehd(row, index) { //删除货道
       if (this.tableData[this.editableTabsValue2].length > 1) {
@@ -547,7 +566,6 @@ export default {
       this.selectrow = row;
     },
     spxxQuery() { //查询商品模板 
-      this.selectspxx = {}; //初始化选中的商品
       var queryspxx = {
         pageNum: this.listspQuery.pageNum,
         pageSize: this.listspQuery.pageSize,
@@ -562,11 +580,110 @@ export default {
         Message.error("error：" + "请检查网络是否连接");
       });
     },
-    selectsp() { //货道编号发生更改table才会刷新???
+    addhdfun(targetName) { //添加货道
+      if (this.formtjhd.addhdbh.indexOf(',') !== -1) {
+        let listaddhd = this.formtjhd.addhdbh.split(',');
+        let listaddhdqc = [];
+        let hdbharr = '';
+        for (let item of listaddhd) { //去重
+          if (listaddhdqc.indexOf(item) === -1) { //判断在s数组中是否存在，不存在则push到s数组中
+            listaddhdqc.push(item);
+          }
+        }
+        for (let i = 0; i < listaddhdqc.length; i++) { // 规则 验证
+          hdbharr = listaddhdqc[i];
+          (hdbharr >= 10) ? hdbharr = this.editableTabsValue2 + hdbharr: hdbharr = this.editableTabsValue2 + "0" + hdbharr; //货道编号小于10补0
+          if (this.validadhdbh(hdbharr)) { return; }
+        }
+        listaddhdqc.forEach(item => { //添加多个货道
+          this.tableData[this.editableTabsValue2].push({ hdbh: item >= 10 ? this.editableTabsValue2 + item : item = this.editableTabsValue2 + "0" + item });
+        });
+      } else { //添加单个货道
+        var hdbh = this.formtjhd.addhdbh;
+        (hdbh >= 10) ? hdbh = this.editableTabsValue2 + hdbh: hdbh = this.editableTabsValue2 + "0" + hdbh; //货道编号小于10补0
+        if (this.validadhdbh(hdbh)) { return; }
+        this.tableData[this.editableTabsValue2].push({ hdbh: hdbh });
+      }
+      this.$message({ message: '货道添加成功', type: 'success' });
+      this.dialogaddhdVisible = false;
+      this.formtjhd.addhdbh = '';
+    },
+    validadhdbh(hdbh) { //货道验证
+      if (!hdbh) {
+        this.$message({ message: '货道编号不能为空', type: 'warning' });
+        return true;
+      } else if (hdbh - 0 > 0 && hdbh - 0 < 1000) {
+        var data = this.tableData[this.editableTabsValue2].find(item => {
+          if (item.hdbh === hdbh) {
+            this.$message({ message: '货道编号 ' + hdbh + ' 已添加', type: 'warning' });
+          }
+          return item.hdbh === hdbh;
+        });
+        return data;
+      } else {
+        this.$message({ message: '货道编号格式有误', type: 'warning' });
+        return true;
+      }
+    },
+    selsyncPlies(val, lx) { //选中同步层数
+      this.tbcsopt = [];
+      this.xzcsopt = [];
+      for (let i = 0; i < this.editableTabs2[val].hdcs; i++) {
+        if (lx === '同步') {
+          let n = i - 0 + 1;
+          this.tbcsopt.push({ label: '第 ' + n + ' 层 , 编号：0' + i + "1~0" + n + '0', value: n * 10 });
+        } else {
+          let n = i - 0 + 1;
+          this.xzcsopt.push({ label: '第 ' + n + ' 层 , 编号：0' + i + "1~0" + n + '0', value: n * 10 });
+        }
+      }
+    },
+    synccPlies() { //同步整层
+
+      let xzcsrow = [];
+      let tbcsrow = [];
+      let mix = this.formjgzctb.xzcs - 10;
+      let max = this.formjgzctb.xzcs;
+      let tmix = this.formjgzctb.tbcs - 10;
+      let tmax = this.formjgzctb.tbcs;
+      this.tableData[this.formjgzctb.xzjg + ''].forEach(item => {
+        let xzbh = item.hdbh.slice(1, 3) - 0;
+        if (xzbh < max && xzbh > mix) {
+          xzcsrow.push(JSON.parse(JSON.stringify(item)));
+        }
+      });
+      xzcsrow.forEach(item => {
+        for (var i = 0; i < this.tableData[this.formjgzctb.tbjg + ''].length; i++) {
+          let tbbhfz = this.tableData[this.formjgzctb.tbjg + ''][i].hdbh.slice(1, 3) - 0;
+          if (tbbhfz < tmax && tbbhfz > tmix) {
+            let addarrycs = JSON.parse(JSON.stringify(item));
+            addarrycs.hdbh = "0" + tbbhfz;
+            this.$set(this.tableData[this.formjgzctb.tbjg + ''], i + '', addarrycs);
+          }
+        }
+      });
+      this.formjgzctb = { xzjg: "", xzcs: "", tbjg: "", tbcs: "" };
+      this.dialogzctbVisible = false;
+    },
+    synccMachin() { //整机同步
+      if (this.formjgzjtb.tbjg === this.formjgzjtb.xzjg) { return this.$message({ message: '选择机柜与同步机柜不能相同', type: 'warning' }); }
+      if (this.formjgzjtb.tbjg + '' || this.formjgzjtb.xzjg + '') {
+        this.tableData[this.formjgzjtb.tbjg + ''] = [];
+        this.tableData[this.formjgzjtb.xzjg + ''].forEach(item => {
+          let addarry = JSON.parse(JSON.stringify(item));
+          addarry.hdbh = addarry.hdbh.replace(this.formjgzjtb.xzjg + '', this.formjgzjtb.tbjg + '');
+          this.tableData[this.formjgzjtb.tbjg + ''].push(addarry);
+        });
+        this.dialogzjtbVisible = false;
+      } else {
+        this.$message({ message: '选择机柜与同步机柜不能为空', type: 'warning' });
+      }
+    },
+    selectsp(row) { //货道编号发生更改table才会刷新???
       let hdbh = this.selectrow.hdbh;
-      this.selectrow.spmc = this.selectspxx.spmc;
-      this.selectrow.spbh = this.selectspxx.spbh;
-      this.selectrow.spjg = this.selectspxx.spdj;
+      this.selectrow.spmc = row.spmc;
+      this.selectrow.spbh = row.spbh;
+      this.selectrow.spjg = row.spdj;
       this.selectrow.hdbh = 0;
       this.selectrow.hdbh = hdbh;
       this.dialogspxxVisible = false;
@@ -610,8 +727,8 @@ export default {
 .titlebtn {
   z-index: 10;
   position: absolute;
-  top: 40px;
-  right: 25px;
+  top: -5px;
+  right: 80px;
   /*padding: 13px;*/
 }
 
@@ -657,7 +774,7 @@ export default {
   padding: 10px 30px;
 }
 
-.dialogadd {
+.dialog add {
   margin-top: 20px;
 }
 

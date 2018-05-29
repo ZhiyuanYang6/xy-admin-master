@@ -36,19 +36,19 @@
         <el-table-column prop="jqbh" sortable='custom' width="110" show-overflow-tooltip label="机器编号" align="center"> </el-table-column>
         <el-table-column prop="jqmc" label="机器名称" width="110" show-overflow-tooltip align="center"> </el-table-column>
         <el-table-column prop="showjqlx" label="机器类型" align="center"> </el-table-column>
-        <el-table-column prop="showmzt" label="网络状态" align="center"> </el-table-column>
+        <el-table-column prop="showwlzt" label="网络状态" align="center"> </el-table-column>
         <el-table-column prop="speed" label="当前网速" align="center"> </el-table-column>
         <el-table-column prop="speedState" label="网速状态" align="center"> </el-table-column>
-        <el-table-column prop="showwlzt" label="门状态" align="center"> </el-table-column>
+        <el-table-column prop="showmzt" label="门状态" align="center"> </el-table-column>
         <el-table-column prop="wdxx" label="温度" width="50" align="center"> </el-table-column>
-        <el-table-column prop="zbye" label="纸币余额" width="100" align="center"> </el-table-column>
+        <el-table-column prop="bzbye" label="纸币余额" width="100" align="center"> </el-table-column>
         <el-table-column prop="kzzb" label="可找纸币" align="center"> </el-table-column>
         <el-table-column prop="showzbqzt" label="纸币器状态" width="100" align="center"> </el-table-column>
-        <el-table-column prop="ybye" label="硬币余额" align="center"> </el-table-column>
+        <el-table-column prop="bybye" label="硬币余额" align="center"> </el-table-column>
         <el-table-column prop="ybqzt" label="可找硬币" align="center"> </el-table-column>
         <el-table-column prop="showybqzt" label="硬币器状态" width="100"> </el-table-column>
-        <el-table-column prop="dflow" label="日流量" width="80" align="center"> </el-table-column>
-        <el-table-column prop="mflow" label="月流量" width="80" align="center"> </el-table-column>
+        <el-table-column prop="bdflow" label="日流量" width="80" align="center"> </el-table-column>
+        <el-table-column prop="bmflow" label="月流量" width="80" align="center"> </el-table-column>
         <el-table-column prop="zhgxsj" label="最后更新时间" width="110" show-overflow-tooltip align="center"> </el-table-column>
         <!-- <el-table-column prop="operation" label="操作" fixed="right"></el-table-column> -->
       </el-table>
@@ -86,7 +86,7 @@ export default {
   },
   created: function() {
     this.onloadtable();
-    this.dictSelect("1023", 'lxoptions');
+    this.dictSelect("1008", 'lxoptions');
     this.isData();
   },
   methods: {

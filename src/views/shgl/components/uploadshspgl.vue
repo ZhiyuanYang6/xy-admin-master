@@ -4,11 +4,11 @@
 
 :inline="true">
       <el-form-item label="商品编号">
-        <el-input v-model="formline.spbh" style="width:250px;margin-right:10px;"></el-input>
+        <el-input v-model="formline.spbh" style="width:250px;margin-right:10px;"  :disabled="true"></el-input>
       </el-form-item>
       <el-form-item label="" prop="spmc">
         <div class="dsfspbh">第三方商品编号</div>
-        <el-input v-model="formline.dsfspbh" style="width:200px;"></el-input>
+        <el-input v-model="formline.dsfspbh" style="width:200px;"  :disabled="true"></el-input>
       </el-form-item>
       <el-form-item label="品牌分类">
         <el-select v-model="formline.yjfl" style="width:190px;" placeholder="大类" clearable @change="selet('dl',formline.yjfl)">
@@ -28,7 +28,7 @@
       <el-form-item label="商品名称">
         <el-input v-model="formline.spmc" style="width:250px;margin-right:20px;"></el-input>
       </el-form-item>
-      <el-form-item label="单价">
+      <el-form-item label="单价/元">
         <el-input v-model="formline.spdj" style="width:250px;"></el-input>
         <!-- <el-select v-model="formline.hblx" style="width:120px;" placeholder="货币类型" clearable>
           <el-option v-for="item in hblxoptions" :key="item.value" :label="item.label" :value="item.value">

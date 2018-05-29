@@ -39,7 +39,7 @@
         <el-table-column prop="spbh" label="商品编号" align="center"> </el-table-column>
         <el-table-column prop="dsfspbh" label="第三方商品编号" align="center"> </el-table-column>
         <el-table-column prop="spmc" label="名称" align="center"> </el-table-column>
-        <el-table-column prop="ppmc" label="品牌(路径)" align="center"> </el-table-column>
+        <el-table-column prop="ppmc" label="品牌" align="center"> </el-table-column>
         <el-table-column prop="remark" label="备注" align="center"> </el-table-column>
         <el-table-column label="操作" width="100" fixed="right" align="center">
           <template slot-scope="scope">
@@ -52,7 +52,7 @@
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.currentPage" :page-sizes="[10, 30, 50, 100]" :page-size="listQuery.pageSize" layout="total, sizes, prev, pager, next, jumper" :total="listQuery.totalCount">
       </el-pagination>
     </div>
-    <el-dialog :visible.sync="dialogDetailVisible" :title="listrow.title" class="ddgl" width="52%">
+    <el-dialog :visible.sync="dialogDetailVisible" :title="listrow.title" class="ddgl" width="50%">
       <uploadshspgl :listrow="listrow" :dialogDetailVisible="dialogDetailVisible" @dialog1Changed="childchanged($event)"></uploadshspgl>
     </el-dialog>
   </div>
